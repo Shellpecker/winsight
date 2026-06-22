@@ -1,0 +1,13 @@
+{
+  "generated_at": null,
+  "source": {
+    "msrc_cvrf": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/",
+    "msrc_updates": "https://api.msrc.microsoft.com/cvrf/v3.0/updates"
+  },
+  "months_requested": [],
+  "months_with_data": [],
+  "count": 0,
+  "filters": { "versions": [], "impacts": [] },
+  "cves": [],
+  "note": "Placeholder. Run the 'Refresh index' GitHub Action (Actions tab -> Run workflow) to populate this for real."
+}

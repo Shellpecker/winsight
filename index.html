@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>winsight — Windows CVE index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1D22;
+    --ink-soft:#3A3F47;
+    --paper:#F7F6F3;
+    --panel:#FFFFFF;
+    --line:#DDD9D1;
+    --line-soft:#EAE7E0;
+    --muted:#6E6A61;
+    --muted-2:#9A958A;
+    --rce:#8A2A20;       /* remote code execution - the worst case */
+    --rce-bg:#F7E9E6;
+    --eop:#8A5A12;       /* elevation of privilege */
+    --eop-bg:#F7EEDD;
+    --dos:#4A5560;
+    --dos-bg:#E9ECEE;
+    --info:#1F5C66;
+    --info-bg:#E4F0F1;
+    --other:#5E5A52;
+    --other-bg:#EFEDE8;
+    --exploit:#A3231A;
+    --exploit-bg:#FBE8E6;
+    --accent:#1F5C8A;    /* the one cool, distinct accent for interactive elements */
+    --accent-bg:#E6EEF5;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --display:'Source Serif 4',Georgia,serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:var(--body);
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  ::selection{background:var(--accent-bg)}
+  a{color:var(--accent)}
+
+  /* ---------- header ---------- */
+  header.top{
+    border-bottom:1px solid var(--line);
+    background:var(--panel);
+  }
+  .top-inner{max-width:1240px;margin:0 auto;padding:22px 24px 18px;}
+  .top-inner h1{
+    font-family:var(--display);font-weight:600;font-style:italic;font-size:28px;
+    margin:0;letter-spacing:-.01em;color:var(--ink);
+  }
+  .top-inner .sub{font-size:13.5px;color:var(--muted);margin-top:6px;max-width:62ch}
+  .databar{
+    margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--muted-2);
+    display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+  }
+  .databar .pill{border:1px solid var(--line);border-radius:5px;padding:2px 8px;background:var(--paper)}
+  .databar.warn .pill{background:var(--eop-bg);color:var(--eop);border-color:#E5CFA0}
+
+  /* ---------- query bar (signature element) ---------- */
+  .querybar{
+    background:var(--panel);border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:30;
+  }
+  .querybar-inner{max-width:1240px;margin:0 auto;padding:16px 24px;}
+  .qrow{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+  .qfield{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .qfield label{
+    font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .qfield input[type="text"], .qfield input[type="date"], .qfield select, .qfield input[type="number"]{
+    font-family:var(--mono);font-size:13px;color:var(--ink);
+    border:1px solid var(--line);border-radius:6px;background:var(--paper);
+    padding:7px 9px;outline:none;min-width:0;
+  }
+  .qfield input:focus, .qfield select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+  .qfield.search{flex:1 1 220px}
+  .qfield.daterange{flex-direction:row;align-items:center;gap:6px}
+  .qfield.daterange .dgroup{display:flex;flex-direction:column;gap:5px}
+  .qfield.daterange .to{font-family:var(--mono);font-size:11px;color:var(--muted-2);align-self:flex-end;padding-bottom:8px}
+  .qfield .cvssrange{display:flex;align-items:center;gap:6px}
+  .qfield .cvssrange input{width:52px}
+  .toggles{display:flex;gap:8px;flex-wrap:wrap}
+  .toggle{
+    font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);
+    border:1px solid var(--line);border-radius:999px;padding:6px 12px;
+    cursor:pointer;user-select:none;background:var(--paper);white-space:nowrap;
+    display:flex;align-items:center;gap:6px;
+  }
+  .toggle .dot{width:6px;height:6px;border-radius:50%;background:var(--muted-2)}
+  .toggle.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .toggle.on .dot{background:#fff}
+  .toggle.exploit.on{background:var(--exploit);border-color:var(--exploit)}
+  .resetlink{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);cursor:pointer;
+    border:none;background:none;padding:7px 4px;text-decoration:underline;text-decoration-color:var(--line);
+  }
+  .resetlink:hover{color:var(--accent)}
+
+  /* ---------- results meta ---------- */
+  .meta-row{
+    max-width:1240px;margin:0 auto;padding:14px 24px 0;
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .count{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .count b{color:var(--ink);font-weight:600}
+  .sortctl{font-family:var(--mono);font-size:11.5px;color:var(--muted);display:flex;gap:8px;align-items:center}
+  .sortctl select{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-radius:5px;padding:4px 6px;background:var(--panel)}
+
+  /* ---------- table ---------- */
+  .wrap{max-width:1240px;margin:0 auto;padding:12px 24px 80px}
+  .table{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .thead, .row-top{
+    display:grid;
+    grid-template-columns:150px 1fr 240px 90px 130px 130px;
+    gap:14px;align-items:center;
+  }
+  .thead{
+    padding:10px 18px;border-bottom:1px solid var(--line);background:#FBFAF8;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  }
+  .grp{border-bottom:1px solid var(--line-soft)}
+  .grp:last-child{border-bottom:none}
+  .row-top{padding:13px 18px;cursor:pointer}
+  .grp:hover .row-top{background:#FBFAF8}
+  .grp.open .row-top{background:var(--accent-bg)}
+
+  .cve-id{font-family:var(--mono);font-weight:600;font-size:12.5px;color:var(--ink)}
+  .cve-date{font-family:var(--mono);font-size:10.5px;color:var(--muted-2);margin-top:2px}
+  .title{font-size:13.5px;color:var(--ink);line-height:1.35}
+
+  .versions{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px}
+  .versions .v{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+  .versions .more{color:var(--muted-2)}
+
+  .tag{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.02em;padding:2px 7px;border-radius:4px;width:max-content}
+  .tag.rce{background:var(--rce-bg);color:var(--rce)}
+  .tag.eop{background:var(--eop-bg);color:var(--eop)}
+  .tag.dos{background:var(--dos-bg);color:var(--dos)}
+  .tag.info{background:var(--info-bg);color:var(--info)}
+  .tag.spoofing,.tag.bypass,.tag.tamper,.tag.other{background:var(--other-bg);color:var(--other)}
+
+  .cvss{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .cvss b{color:var(--ink);font-weight:600}
+  .cvss.crit b{color:var(--rce)}
+
+  .flags{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+  .flag{font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;font-weight:600;padding:2px 6px;border-radius:4px;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+  .flag.ex{background:var(--exploit-bg);color:var(--exploit)}
+  .flag.disc{background:var(--other-bg);color:var(--other)}
+  .flag .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+  /* ---------- detail ---------- */
+  .detail{display:none;padding:4px 18px 20px 18px;background:#FBFAF8;border-top:1px dashed var(--line)}
+  .grp.open .detail{display:block}
+  .detail h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;font-weight:600}
+  .detail .desc{font-size:13px;color:var(--ink-soft);max-width:78ch;margin:4px 0 0}
+  .allproducts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .allproducts .p{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:3px 8px;color:var(--ink-soft)}
+  .meta{display:flex;flex-wrap:wrap;gap:24px;margin-top:14px}
+  .meta div{font-size:12px}
+  .meta .k{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);margin-bottom:3px}
+  .meta .v{font-family:var(--mono);font-size:12px;color:var(--ink);font-weight:500}
+  .meta .v a{text-decoration:none}
+  .meta .v a:hover{text-decoration:underline}
+  .kbchips{display:flex;gap:6px;flex-wrap:wrap}
+  .kbchips .kb{font-family:var(--mono);font-size:11px;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:2px 7px}
+
+  .empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:13.5px}
+  .empty b{display:block;font-family:var(--display);font-style:italic;font-size:18px;color:var(--ink);margin-bottom:6px;font-weight:600}
+
+  footer{max-width:1240px;margin:0 auto;padding:0 24px 50px;color:var(--muted-2);font-size:11.5px;font-family:var(--mono)}
+  footer .rule{height:1px;background:var(--line);margin-bottom:16px}
+  footer a{color:var(--muted)}
+
+  @media (max-width:900px){
+    .thead{display:none}
+    .row-top{grid-template-columns:1fr;gap:8px}
+    .qrow{flex-direction:column;align-items:stretch}
+    .qfield.daterange{flex-direction:column;align-items:stretch}
+    .qfield.daterange .to{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <h1>winsight</h1>
+    <p class="sub">A searchable index of Microsoft security advisories — CVE, CVSS, affected Windows versions, and KB, sourced directly from the MSRC Security Update API.</p>
+    <div class="databar" id="databar">Loading…</div>
+  </div>
+</header>
+
+<div class="querybar">
+  <div class="querybar-inner">
+    <div class="qrow">
+      <div class="qfield search">
+        <label for="q">Search</label>
+        <input id="q" type="text" placeholder="CVE-2026-41089, KB5039876, Netlogon…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="qfield daterange">
+        <div class="dgroup">
+          <label for="dfrom">From</label>
+          <input id="dfrom" type="date">
+        </div>
+        <span class="to">to</span>
+        <div class="dgroup">
+          <label for="dto">&nbsp;</label>
+          <input id="dto" type="date">
+        </div>
+      </div>
+      <div class="qfield">
+        <label for="version">Windows version</label>
+        <select id="version"><option value="">All versions</option></select>
+      </div>
+      <div class="qfield">
+        <label for="impact">Vulnerability type</label>
+        <select id="impact"><option value="">All types</option></select>
+      </div>
+      <div class="qfield">
+        <label>CVSS</label>
+        <div class="cvssrange">
+          <input id="cvssmin" type="number" min="0" max="10" step="0.1" placeholder="0">
+          <span style="color:var(--muted-2);font-family:var(--mono);font-size:12px">–</span>
+          <input id="cvssmax" type="number" min="0" max="10" step="0.1" placeholder="10">
+        </div>
+      </div>
+      <button class="resetlink" id="resetall">Reset filters</button>
+    </div>
+    <div class="qrow" style="margin-top:10px">
+      <div class="toggles" id="toggles">
+        <div class="toggle" data-f="exploited"><span class="dot"></span>Exploited in the wild</div>
+        <div class="toggle" data-f="disclosed"><span class="dot"></span>Publicly disclosed</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="meta-row">
+  <div class="count" id="count">—</div>
+  <div class="sortctl">
+    Sort
+    <select id="sortby">
+      <option value="date_desc">Newest first</option>
+      <option value="date_asc">Oldest first</option>
+      <option value="cvss_desc">CVSS, high to low</option>
+      <option value="cvss_asc">CVSS, low to high</option>
+    </select>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="table">
+    <div class="thead">
+      <span>CVE</span>
+      <span>Title</span>
+      <span>Affected versions</span>
+      <span>CVSS</span>
+      <span>Type</span>
+      <span>Flags</span>
+    </div>
+    <div id="rows"></div>
+  </div>
+
+  <footer>
+    <div class="rule"></div>
+    winsight · data from the <a href="https://msrc.microsoft.com/update-guide" target="_blank" rel="noopener">MSRC Security Update Guide</a>, refreshed on a schedule via GitHub Actions · not affiliated with Microsoft
+  </footer>
+</main>
+
+<script>
+const IMPACT_LABEL = {
+  rce:"RCE", eop:"Elevation of Privilege", dos:"Denial of Service",
+  info:"Information Disclosure", spoofing:"Spoofing", bypass:"Security Bypass",
+  tamper:"Tampering", other:"Other"
+};
+
+let DATA = [];
+let FILTERED = [];
+const openRows = new Set();
+const activeToggles = new Set();
+
+async function loadData(){
+  const bar = document.getElementById('databar');
+  try{
+    const res = await fetch('data/index.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('missing');
+    const json = await res.json();
+    if(!json.cves || !json.cves.length) throw new Error('empty');
+    DATA = json.cves;
+    bar.classList.remove('warn');
+    bar.innerHTML = `
+      <span class="pill">generated ${json.generated_at}</span>
+      <span class="pill">${json.count} CVEs</span>
+      <span class="pill">${json.months_with_data?.length || 0} months covered</span>
+      <span class="pill">source: MSRC CVRF API</span>`;
+    populateFilterOptions(json.filters);
+  }catch(err){
+    DATA = [];
+    bar.classList.add('warn');
+    bar.innerHTML = `<span class="pill">No data yet — run the "Refresh index" GitHub Action once to populate data/index.json</span>`;
+  }
+  applyFilters();
+}
+
+function populateFilterOptions(filters){
+  const versionSel = document.getElementById('version');
+  (filters?.versions || []).forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = v;
+    versionSel.appendChild(opt);
+  });
+  const impactSel = document.getElementById('impact');
+  (filters?.impacts || []).forEach(i=>{
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = IMPACT_LABEL[i] || i;
+    impactSel.appendChild(opt);
+  });
+}
+
+function applyFilters(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const dfrom = document.getElementById('dfrom').value;
+  const dto = document.getElementById('dto').value;
+  const version = document.getElementById('version').value;
+  const impact = document.getElementById('impact').value;
+  const cvssMin = parseFloat(document.getElementById('cvssmin').value);
+  const cvssMax = parseFloat(document.getElementById('cvssmax').value);
+  const sortBy = document.getElementById('sortby').value;
+
+  FILTERED = DATA.filter(c=>{
+    if(dfrom && c.date && c.date < dfrom) return false;
+    if(dto && c.date && c.date > dto) return false;
+    if(version && !(c.versions||[]).includes(version)) return false;
+    if(impact && c.impact !== impact) return false;
+    if(!isNaN(cvssMin) && (c.cvss ?? -1) < cvssMin) return false;
+    if(!isNaN(cvssMax) && (c.cvss ?? 99) > cvssMax) return false;
+    if(activeToggles.has('exploited') && !c.exploited) return false;
+    if(activeToggles.has('disclosed') && !c.disclosed) return false;
+    if(q){
+      const hay = (c.id+' '+c.title+' '+(c.kbs||[]).join(' ')+' '+(c.versions||[]).join(' ')).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  FILTERED.sort((a,b)=>{
+    if(sortBy==='date_asc') return (a.date||'').localeCompare(b.date||'');
+    if(sortBy==='cvss_desc') return (b.cvss ?? -1) - (a.cvss ?? -1);
+    if(sortBy==='cvss_asc') return (a.cvss ?? 99) - (b.cvss ?? 99);
+    return (b.date||'').localeCompare(a.date||''); // date_desc default
+  });
+
+  render();
+}
+
+function render(){
+  const rowsEl = document.getElementById('rows');
+  document.getElementById('count').innerHTML = `<b>${FILTERED.length}</b> of ${DATA.length} advisories`;
+
+  if(!FILTERED.length){
+    rowsEl.innerHTML = `<div class="empty"><b>No matches</b>Try widening the date range or clearing a filter.</div>`;
+    return;
+  }
+
+  rowsEl.innerHTML = '';
+  FILTERED.forEach(c=>{
+    const grp = document.createElement('div');
+    grp.className = 'grp' + (openRows.has(c.id) ? ' open' : '');
+    const versionsHtml = (c.versions||[]).slice(0,3).map(v=>`<span class="v">${v}</span>`).join('')
+      + ((c.versions||[]).length > 3 ? `<span class="more">+${c.versions.length-3} more</span>` : '');
+    const flagsHtml = [
+      c.exploited ? `<span class="flag ex"><span class="dot"></span>Exploited</span>` : '',
+      c.disclosed ? `<span class="flag disc">Disclosed</span>` : '',
+    ].join('') || '<span class="cvss" style="opacity:.5">—</span>';
+
+    grp.innerHTML = `
+      <div class="row-top">
+        <div>
+          <div class="cve-id">${c.id}</div>
+          <div class="cve-date">${c.date || 'date unknown'}</div>
+        </div>
+        <div class="title">${c.title}</div>
+        <div class="versions">${versionsHtml || '<span class="more">unspecified</span>'}</div>
+        <div class="cvss ${(c.cvss ?? 0) >= 9 ? 'crit' : ''}">${c.cvss != null ? c.cvss.toFixed(1) : '—'}</div>
+        <div><span class="tag ${c.impact}">${IMPACT_LABEL[c.impact] || c.impact}</span></div>
+        <div class="flags">${flagsHtml}</div>
+      </div>
+      <div class="detail">
+        <p class="desc">${c.title}</p>
+        <h4>Affected products · ${(c.products||[]).length}</h4>
+        <div class="allproducts">${(c.products||[]).map(p=>`<span class="p">${p}</span>`).join('') || '<span class="p">none listed</span>'}</div>
+        <h4>Patched by</h4>
+        <div class="kbchips">${(c.kbs||[]).map(kb=>`<span class="kb">${kb}</span>`).join('') || '<span class="kb">no KB listed</span>'}</div>
+        <div class="meta">
+          <div><div class="k">CVSS base score</div><div class="v">${c.cvss != null ? c.cvss.toFixed(1) : 'not scored'}</div></div>
+          <div><div class="k">Released</div><div class="v">${c.date || 'unknown'}</div></div>
+          <div><div class="k">MSRC advisory</div><div class="v"><a href="https://msrc.microsoft.com/update-guide/vulnerability/${c.id}" target="_blank" rel="noopener">${c.id} ↗</a></div></div>
+        </div>
+      </div>`;
+
+    grp.querySelector('.row-top').addEventListener('click', ()=>{
+      grp.classList.toggle('open');
+      if(grp.classList.contains('open')) openRows.add(c.id); else openRows.delete(c.id);
+    });
+
+    rowsEl.appendChild(grp);
+  });
+}
+
+['q','dfrom','dto','version','impact','cvssmin','cvssmax','sortby'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', applyFilters);
+  document.getElementById(id).addEventListener('change', applyFilters);
+});
+
+document.getElementById('toggles').addEventListener('click', e=>{
+  const t = e.target.closest('.toggle'); if(!t) return;
+  const f = t.dataset.f;
+  if(activeToggles.has(f)){ activeToggles.delete(f); t.classList.remove('on'); }
+  else { activeToggles.add(f); t.classList.add('on'); }
+  applyFilters();
+});
+
+document.getElementById('resetall').addEventListener('click', ()=>{
+  document.getElementById('q').value = '';
+  document.getElementById('dfrom').value = '';
+  document.getElementById('dto').value = '';
+  document.getElementById('version').value = '';
+  document.getElementById('impact').value = '';
+  document.getElementById('cvssmin').value = '';
+  document.getElementById('cvssmax').value = '';
+  document.getElementById('sortby').value = 'date_desc';
+  activeToggles.clear();
+  document.querySelectorAll('.toggle').forEach(t=>t.classList.remove('on'));
+  applyFilters();
+});
+
+document.addEventListener('keydown', e=>{
+  if(e.key === '/' && document.activeElement !== document.getElementById('q')){
+    e.preventDefault();
+    document.getElementById('q').focus();
+  }
+});
+
+loadData();
+</script>
+</body>
+</html>
