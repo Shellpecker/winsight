@@ -1,0 +1,75 @@
+name: Refresh patch index
+
+on:
+  schedule:
+    # Run every Wednesday at 09:00 UTC — the day after Patch Tuesday in
+    # every US time zone, giving MSRC's API time to fully publish.
+    - cron: "0 9 * * 3"
+  workflow_dispatch: {}     # manual "Run workflow" button in the Actions tab
+  push:
+    branches: [main]
+    paths:
+      - "scripts/build_index.py"
+      - ".github/workflows/refresh.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run build_index.py
+        env:
+          DELTA_BACKFILL_MONTHS: "12"
+          DELTA_OUTPUT: "data/index.json"
+        run: |
+          python scripts/build_index.py
+
+      - name: Show summary
+        run: |
+          python -c "
+          import json
+          d = json.load(open('data/index.json'))
+          print(f\"Generated: {d['generated_at']}\")
+          print(f\"CVEs with resolved binaries: {d['count']}\")
+          print(f\"Months covered: {d['months_covered'][-1]} .. {d['months_covered'][0]}\")
+          " >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "delta-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/index.json
+          git diff --cached --quiet && echo "No changes to commit" || git commit -m "chore: refresh patch index $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
