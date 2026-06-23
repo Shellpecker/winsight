@@ -32,8 +32,9 @@
   --low-bg:  rgba(56,160,102,.10);
   --expl:    #D94F45;
   --expl-bg: rgba(217,79,69,.15);
-  --nav-h:   44px;
-  --sb-w:    200px;
+  --nav-h:      44px;
+  --toolbar-h:  38px;
+  --sb-w:       200px;
 }
 
 /* ── tokens: light ── */
@@ -237,6 +238,7 @@ input, select { font-family: inherit; }
 .toolbar {
   display: flex; align-items: center; gap: 10px;
   padding: 7px 14px; border-bottom: 1px solid var(--b1); background: var(--s1);
+  position: sticky; top: var(--nav-h); z-index: 150;
 }
 .tb-stats { font-size: 11px; color: var(--fg3); flex: 1; }
 .tb-stats strong { color: var(--fg); }
@@ -269,20 +271,19 @@ table.cvt thead th {
   text-align: left; font-size: 9px; letter-spacing: .1em;
   text-transform: uppercase; color: var(--fg3); padding: 7px 9px;
   border-bottom: 1px solid var(--b1); background: var(--s1);
-  position: sticky; top: var(--nav-h); white-space: nowrap;
-  cursor: pointer; user-select: none;
+  position: sticky; top: calc(var(--nav-h) + var(--toolbar-h)); white-space: nowrap;
+  cursor: pointer; user-select: none; z-index: 90;
 }
 table.cvt thead th:hover { color: var(--fg2); }
 table.cvt thead th.sorted { color: var(--acc-fg); }
-.th-bar { width: 3px; padding: 0 !important; cursor: default !important; }
-.th-cve  { width: 152px; }
+.th-bar  { width: 3px; padding: 0 !important; cursor: default !important; }
+.th-cve  { width: 300px; }
 .th-sev  { width: 72px; }
-.th-comp { width: 178px; }
-.th-type { width: 100px; }
-.th-ver  { width: 165px; }
-.th-kb   { width: 96px; }
+.th-comp { width: 150px; }
+.th-type { width: 110px; }
 .th-flag { width: 90px; }
 .th-cvss { width: 52px; text-align: right !important; }
+.ctitle  { font-size: 10.5px; color: var(--fg2); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 290px; }
 
 .tr { border-bottom: 1px solid var(--b1); cursor: pointer; }
 .tr:hover td, .tr.open td { background: var(--s2); }
@@ -416,7 +417,7 @@ footer a:hover { color: var(--fg2); }
 
 @media (max-width: 900px) {
   .sidebar { display: none; }
-  .th-comp, .th-ver, .th-kb, .td-comp, .td-ver, .td-kb { display: none; }
+  .th-comp, .td-comp { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
@@ -544,12 +545,10 @@ footer a:hover { color: var(--fg2); }
         <thead>
           <tr>
             <th class="th-bar"></th>
-            <th class="th-cve" data-sort="date_desc">CVE</th>
+            <th class="th-cve" data-sort="date_desc">CVE / Title</th>
             <th class="th-sev" data-sort="cvss_desc">Severity</th>
             <th class="th-comp">Component</th>
             <th class="th-type">Type</th>
-            <th class="th-ver">Affected versions</th>
-            <th class="th-kb">Patched KB</th>
             <th class="th-flag">Exploitability</th>
             <th class="th-cvss" data-sort="cvss_desc">CVSS</th>
           </tr>
@@ -712,7 +711,7 @@ function render() {
   const pgNext  = document.getElementById('pg-next');
 
   if (!DATA.length) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="loading-msg">Loading data…</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="loading-msg">Loading data…</div></td></tr>`;
     pgLabel.textContent = '—';
     pgPrev.disabled = pgNext.disabled = true;
     return;
@@ -726,7 +725,7 @@ function render() {
     ` &middot; ${{ date_desc:'newest first', date_asc:'oldest first', cvss_desc:'CVSS ↓', cvss_asc:'CVSS ↑' }[sortBy]}`;
 
   if (!total) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="empty"><strong>No results</strong>Try a different search or reset the filters.</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><strong>No results</strong>Try a different search or reset the filters.</div></td></tr>`;
     pgLabel.textContent = '—';
     pgPrev.disabled = pgNext.disabled = true;
     return;
@@ -746,15 +745,10 @@ function render() {
   page.forEach(c => {
     const sev  = cvssToSev(c.cvss);
     const comp = extractComp(c.title);
-    const kbs  = c.kbs || [];
-    const vers = c.versions || [];
     const isOpen = openRows.has(c.id);
 
     const tr = document.createElement('tr');
     tr.className = 'tr ' + SEV_CLS[sev] + (isOpen ? ' open' : '');
-
-    const verHtml = vers.slice(0, 3).map(v => `<span class="vch">${v}</span>`).join('') +
-      (vers.length > 3 ? `<span class="vm">+${vers.length - 3}</span>` : '');
 
     let flagHtml = '';
     if (c.exploited) flagHtml += `<div class="fl-ex">Exploited</div>`;
@@ -763,18 +757,16 @@ function render() {
 
     tr.innerHTML = `
       <td class="td-bar"></td>
-      <td><div class="cid">${c.id}</div><div class="cdt">${c.date || 'unknown'}</div></td>
+      <td><div class="cid">${c.id}</div><div class="cdt">${c.date || 'unknown'}</div><div class="ctitle">${c.title || ''}</div></td>
       <td><span class="sv ${sev}">${SEV_LABEL[sev]}</span></td>
       <td class="td-comp"><div class="cn">${comp.name}</div>${comp.bin ? `<div class="cb">${comp.bin}</div>` : ''}</td>
       <td><span class="ty">${IMPACT_LABEL[c.impact] || c.impact}</span></td>
-      <td class="td-ver"><div class="vc">${verHtml || '<span class="vm">unspecified</span>'}</div></td>
-      <td class="td-kb">${kbs[0] ? `<span class="kbv">${kbs[0]}</span>${kbs.length > 1 ? `<span class="kbm"> +${kbs.length - 1}</span>` : ''}` : '<span class="fl-none">—</span>'}</td>
       <td>${flagHtml}</td>
       <td><span class="cs ${sev}">${c.cvss != null ? c.cvss.toFixed(1) : '—'}</span></td>`;
 
     const dtr = document.createElement('tr');
     dtr.className = 'tr-det' + (isOpen ? ' open' : '');
-    dtr.innerHTML = `<td colspan="9">${buildDetail(c, comp, sev)}</td>`;
+    dtr.innerHTML = `<td colspan="7">${buildDetail(c, comp, sev)}</td>`;
 
     tr.addEventListener('click', () => {
       const was = tr.classList.contains('open');
