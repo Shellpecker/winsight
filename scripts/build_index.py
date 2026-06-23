@@ -295,14 +295,19 @@ def parse_cvrf(doc, month_id):
         kbs = kb_ids_from_remediations(vuln)
         pids = product_ids_from_vuln(vuln)
 
-        versions = sorted({
+        all_versions = sorted({
             normalize_version_label(product_labels[pid])
             for pid in pids if pid in product_labels
         })
         full_products = sorted({product_labels[pid] for pid in pids if pid in product_labels})
 
-        # Skip CVEs that don't affect a Windows OS product
-        if not is_windows_cve(versions, full_products):
+        # Keep only Windows OS version labels — strips .NET/ASP.NET/Linux/Mac entries
+        # that appear when a CVE affects both Windows and cross-platform runtimes.
+        versions = [v for v in all_versions if v.startswith((
+            "Windows 10", "Windows 11", "Windows Server", "Windows RT",
+        ))]
+
+        if not versions:
             continue
 
         exploited, disclosed, exploitability = extract_exploited(vuln)
