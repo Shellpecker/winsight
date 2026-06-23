@@ -65,7 +65,7 @@
 
 /* ── reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
+html { height: 100%; }
 body {
   font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
   font-size: 12.5px;
@@ -73,7 +73,9 @@ body {
   background: var(--bg);
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
-  min-height: 100%;
+  /* App-shell layout: body is a flex column, nothing scrolls at body level */
+  display: flex; flex-direction: column;
+  height: 100%; overflow: hidden;
 }
 ::selection { background: var(--acc-bg); }
 a { color: var(--acc-fg); text-decoration: none; }
@@ -83,7 +85,8 @@ input, select { font-family: inherit; }
 
 /* ── nav ── */
 .nav {
-  position: fixed; top: 0; left: 0; right: 0;
+  /* In-flow flex item — body is the flex column so nav is always on top */
+  flex-shrink: 0;
   height: var(--nav-h);
   background: var(--s1);
   border-bottom: 1px solid var(--b1);
@@ -117,7 +120,7 @@ input, select { font-family: inherit; }
 
 /* ── search panel ── */
 .search-panel {
-  margin-top: var(--nav-h);
+  flex-shrink: 0;
   background: var(--s1);
   border-bottom: 1px solid var(--b1);
   padding: 14px 18px;
@@ -154,13 +157,11 @@ input, select { font-family: inherit; }
 .eq:hover { border-color: var(--acc); color: var(--acc-fg); }
 
 /* ── app layout ── */
-.app { display: flex; align-items: flex-start; }
+.app { display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
 /* ── sidebar ── */
 .sidebar {
   width: var(--sb-w); flex-shrink: 0;
-  position: sticky; top: var(--nav-h);
-  max-height: calc(100vh - var(--nav-h));
   overflow-y: auto;
   border-right: 1px solid var(--b1);
   background: var(--s1);
@@ -223,7 +224,7 @@ input, select { font-family: inherit; }
 .rst-btn:hover { border-color: var(--b2); color: var(--fg2); }
 
 /* ── main ── */
-.main { flex: 1; min-width: 0; }
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
 
 /* ── warn ── */
 .warn {
@@ -236,9 +237,8 @@ input, select { font-family: inherit; }
 
 /* ── toolbar ── */
 .toolbar {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
   padding: 7px 14px; border-bottom: 1px solid var(--b1); background: var(--s1);
-  position: sticky; top: var(--nav-h); z-index: 150;
 }
 .tb-stats { font-size: 11px; color: var(--fg3); flex: 1; }
 .tb-stats strong { color: var(--fg); }
@@ -264,15 +264,15 @@ input, select { font-family: inherit; }
 .tb-btn:hover { border-color: var(--b2); color: var(--fg2); }
 
 /* ── table ── */
-.tbl-wrap { overflow-x: auto; }
+.tbl-wrap { flex: 1; overflow: auto; min-height: 0; }
 table.cvt { width: 100%; border-collapse: collapse; table-layout: fixed; }
 
 table.cvt thead th {
   text-align: left; font-size: 9px; letter-spacing: .1em;
   text-transform: uppercase; color: var(--fg3); padding: 7px 9px;
   border-bottom: 1px solid var(--b1); background: var(--s1);
-  position: sticky; top: calc(var(--nav-h) + var(--toolbar-h)); white-space: nowrap;
-  cursor: pointer; user-select: none; z-index: 90;
+  position: sticky; top: 0; white-space: nowrap;
+  cursor: pointer; user-select: none; z-index: 10;
 }
 table.cvt thead th:hover { color: var(--fg2); }
 table.cvt thead th.sorted { color: var(--acc-fg); }
@@ -283,7 +283,7 @@ table.cvt thead th.sorted { color: var(--acc-fg); }
 .th-type { width: 110px; }
 .th-flag { width: 90px; }
 .th-cvss { width: 52px; text-align: right !important; }
-.ctitle  { font-size: 10.5px; color: var(--fg2); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 290px; }
+.ctitle  { font-size: 11px; color: var(--fg2); margin-top: 2px; line-height: 1.4; }
 
 .tr { border-bottom: 1px solid var(--b1); cursor: pointer; }
 .tr:hover td, .tr.open td { background: var(--s2); }
