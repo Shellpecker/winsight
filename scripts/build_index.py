@@ -174,18 +174,16 @@ def extract_score(vuln):
 
 def extract_exploited(vuln):
     """
-    MSRC encodes three distinct exploitability fields in the Threats array:
-
-    1. Exploited (Yes/No) — explicit "Exploitation Detected" signals confirmed
-       in-the-wild use.  We do NOT count "Exploitation More Likely" here.
-    2. Publicly Disclosed (Yes/No) — "Publicly Disclosed:Yes" or equivalent.
-    3. Exploitability Assessment — MSRC's Exploitability Index, one of:
-         "Exploitation Detected"
-         "Exploitation More Likely"
-         "Exploitation Less Likely"
-         "Exploitation Unlikely"
-         "Not Applicable"
-       Returned as-is so the frontend can filter and display it verbatim.
+    MSRC encodes exploit status in Type=1 Threat entries.  The Description.Value
+    is a semicolon-separated string, e.g.:
+        "Publicly Disclosed:No;Exploited:Yes;Latest Software Release:Exploitation Detected"
+        "Publicly Disclosed:No;Exploited:No;Latest Software Release:Exploitation Less Likely"
+    We only look at Type=1 entries (ExploitStatus).  Other types (0=Severity,
+    3=Impact) share the same Threats array but never carry exploitation data.
+    Returns (exploited, disclosed, assessment):
+        exploited   bool   — "Exploited:Yes" found in any Type=1 entry
+        disclosed   bool   — "Publicly Disclosed:Yes" found in any Type=1 entry
+        assessment  str    — highest-priority exploitability index label, or None
     """
     exploited = False
     disclosed = False
@@ -208,25 +206,24 @@ def extract_exploited(vuln):
     assessment = None
 
     for threat in vuln.get("Threats", []) or []:
-        # MSRC uses Type=1 for Exploit Status threats in CVRF (confirmed via API).
-        # We still process any Type rather than hard-filtering, since the strings
-        # below are specific enough not to false-match other threat types.
+        if threat.get("Type") != 1:
+            continue  # only ExploitStatus threats carry exploitation data
         desc = (threat.get("Description") or {}).get("Value", "")
         if not isinstance(desc, str):
             continue
         low = desc.lower()
 
-        # Exploited flag — "Exploitation Detected" means confirmed in-the-wild.
-        if "exploitation detected" in low:
+        # Explicit "Exploited:Yes/No" field — authoritative for the exploited boolean.
+        if "exploited:yes" in low:
             exploited = True
+        # Don't bother checking "exploited:no" — it's the default.
 
-        # Publicly Disclosed — MSRC encodes this as "Publicly Disclosed:Yes" or
-        # "Publicly Disclosed:No" within the same Threats array (Type=1 entries).
+        # Explicit "Publicly Disclosed:Yes/No" field.
         if "publicly disclosed:yes" in low:
             disclosed = True
 
-        # Exploitability Assessment — keep the highest-priority match across all
-        # threat entries for this CVE (a CVE can have multiple per-product entries).
+        # Exploitability Assessment index — keep highest-priority match seen.
+        # MSRC may emit per-product entries, so iterate all and keep the worst.
         for rank, key in enumerate(_ASSESS_PRIORITY):
             if key in low and rank < assessment_rank:
                 assessment_rank = rank
