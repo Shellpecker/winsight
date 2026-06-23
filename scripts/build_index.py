@@ -174,25 +174,62 @@ def extract_score(vuln):
 
 def extract_exploited(vuln):
     """
-    MSRC encodes exploitation/disclosure status in the Threats array under
-    a ThreatType for "Exploit Status", with free-text Description values
-    like "Exploitation Detected" / "Exploitation More Likely" / "Public-
-    ation:Disclosed" etc. We classify conservatively: only count it as
-    "exploited" if the text explicitly says detected/observed, not just
-    "more likely" (which is a forward-looking assessment, not a fact).
+    MSRC encodes three distinct exploitability fields in the Threats array:
+
+    1. Exploited (Yes/No) — explicit "Exploitation Detected" signals confirmed
+       in-the-wild use.  We do NOT count "Exploitation More Likely" here.
+    2. Publicly Disclosed (Yes/No) — "Publicly Disclosed:Yes" or equivalent.
+    3. Exploitability Assessment — MSRC's Exploitability Index, one of:
+         "Exploitation Detected"
+         "Exploitation More Likely"
+         "Exploitation Less Likely"
+         "Exploitation Unlikely"
+         "Not Applicable"
+       Returned as-is so the frontend can filter and display it verbatim.
     """
     exploited = False
     disclosed = False
+    # Priority order for assessment: Detected > More Likely > Less Likely > Unlikely > N/A
+    _ASSESS_PRIORITY = [
+        "exploitation detected",
+        "exploitation more likely",
+        "exploitation less likely",
+        "exploitation unlikely",
+        "not applicable",
+    ]
+    _ASSESS_LABEL = {
+        "exploitation detected":    "Exploitation Detected",
+        "exploitation more likely": "Exploitation More Likely",
+        "exploitation less likely": "Exploitation Less Likely",
+        "exploitation unlikely":    "Exploitation Unlikely",
+        "not applicable":           "Not Applicable",
+    }
+    assessment_rank = len(_ASSESS_PRIORITY)  # sentinel = none found
+    assessment = None
+
     for threat in vuln.get("Threats", []) or []:
         desc = (threat.get("Description") or {}).get("Value", "")
         if not isinstance(desc, str):
             continue
         low = desc.lower()
-        if "exploitation detected" in low or "exploited" in low and "detected" in low:
+
+        # Exploited flag (confirmed in-the-wild only)
+        if "exploitation detected" in low:
             exploited = True
-        if "publicly disclosed" in low or "public disclosure" in low:
+
+        # Publicly Disclosed flag
+        if "publicly disclosed:yes" in low or \
+           ("publicly disclosed" in low and ":no" not in low and "not" not in low):
             disclosed = True
-    return exploited, disclosed
+
+        # Exploitability Assessment — keep the highest-priority match
+        for rank, key in enumerate(_ASSESS_PRIORITY):
+            if key in low and rank < assessment_rank:
+                assessment_rank = rank
+                assessment = _ASSESS_LABEL[key]
+                break
+
+    return exploited, disclosed, assessment
 
 
 def classify_impact(title, vuln):
@@ -212,6 +249,28 @@ def classify_impact(title, vuln):
     if "tampering" in text:
         return "tamper"
     return "other"
+
+
+def is_windows_cve(versions, full_products):
+    """
+    Return True only if the CVE affects a Windows OS product.
+    We check the normalized version labels (e.g. "Windows 10 22H2",
+    "Windows Server 2022") rather than raw product strings, because
+    normalize_version_label already strips the arch/edition noise.
+    Products like Office, Azure, Exchange, .NET, SQL Server, Edge, or
+    Visual Studio are excluded — they appear in the same monthly CVRF
+    documents but are out of scope for winsight.
+    """
+    WINDOWS_OS_PREFIXES = (
+        "Windows 10",
+        "Windows 11",
+        "Windows Server",
+        "Windows RT",
+    )
+    return any(
+        v.startswith(WINDOWS_OS_PREFIXES)
+        for v in versions
+    )
 
 
 def parse_cvrf(doc, month_id):
@@ -238,7 +297,11 @@ def parse_cvrf(doc, month_id):
         })
         full_products = sorted({product_labels[pid] for pid in pids if pid in product_labels})
 
-        exploited, disclosed = extract_exploited(vuln)
+        # Skip CVEs that don't affect a Windows OS product
+        if not is_windows_cve(versions, full_products):
+            continue
+
+        exploited, disclosed, exploitability = extract_exploited(vuln)
 
         out.append({
             "id": cve,
@@ -248,6 +311,7 @@ def parse_cvrf(doc, month_id):
             "cvss": extract_score(vuln),
             "exploited": exploited,
             "disclosed": disclosed,
+            "exploitability": exploitability,
             "impact": classify_impact(title, vuln),
             "kbs": sorted(kbs),
             "versions": versions,
