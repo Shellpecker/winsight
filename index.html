@@ -32,9 +32,8 @@
   --low-bg:  rgba(56,160,102,.10);
   --expl:    #D94F45;
   --expl-bg: rgba(217,79,69,.15);
-  --nav-h:      44px;
-  --toolbar-h:  38px;
-  --sb-w:       200px;
+  --nav-h:  44px;
+  --sb-w:   200px;
 }
 
 /* ── tokens: light ── */
@@ -276,6 +275,7 @@ table.cvt thead th {
 }
 table.cvt thead th:hover { color: var(--fg2); }
 table.cvt thead th.sorted { color: var(--acc-fg); }
+table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 .th-bar  { width: 3px; padding: 0 !important; cursor: default !important; }
 .th-cve  { width: 300px; }
 .th-sev  { width: 72px; }
@@ -318,16 +318,6 @@ table.cvt thead th.sorted { color: var(--acc-fg); }
   text-transform: uppercase; letter-spacing: .03em; display: inline-block;
 }
 
-.vc { display: flex; flex-wrap: wrap; gap: 3px; }
-.vch {
-  font-size: 10px; color: var(--fg3); background: var(--s3);
-  border: 1px solid var(--b1); padding: 1px 4px; border-radius: 2px; white-space: nowrap;
-}
-.vm { font-size: 10px; color: var(--fg3); padding: 1px 2px; }
-
-.kbv { font-size: 11px; color: var(--fg2); }
-.kbm { font-size: 10px; color: var(--fg3); }
-
 .fl-ex {
   display: inline-flex; align-items: center; gap: 4px;
   font-size: 10px; font-weight: 700; letter-spacing: .05em;
@@ -346,6 +336,10 @@ table.cvt thead th.sorted { color: var(--acc-fg); }
   text-transform: uppercase; letter-spacing: .05em; font-weight: 700;
   display: inline-block; margin-top: 3px;
 }
+.fl-assess {
+  font-size: 9.5px; color: var(--fg3); margin-top: 3px;
+  text-transform: uppercase; letter-spacing: .04em;
+}
 .fl-none { color: var(--fg3); font-size: 11px; }
 
 .cs { font-size: 13px; font-weight: 600; text-align: right; display: block; }
@@ -355,9 +349,14 @@ table.cvt thead th.sorted { color: var(--acc-fg); }
 
 /* ── detail row ── */
 .tr-det { display: none; }
-.tr-det.open { display: table-row; }
+.tr-det.open { display: table-row; animation: detFadeIn .12s ease; }
+@keyframes detFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 .tr-det td { padding: 0; background: var(--s2); border-bottom: 1px solid var(--b1); }
 .det { padding: 16px 18px 20px; border-left: 3px solid var(--b2); }
+.det.det-c { border-left-color: var(--crit); }
+.det.det-h { border-left-color: var(--high); }
+.det.det-m { border-left-color: var(--med); }
+.det.det-l { border-left-color: var(--low); }
 
 .det-hd {
   display: flex; align-items: flex-start;
@@ -409,6 +408,7 @@ table.cvt thead th.sorted { color: var(--acc-fg); }
 .loading-msg { padding: 40px 20px; text-align: center; color: var(--fg3); font-size: 12px; }
 
 footer {
+  flex-shrink: 0;
   border-top: 1px solid var(--b1); padding: 12px 18px;
   color: var(--fg3); font-size: 10.5px; background: var(--s1);
 }
@@ -564,6 +564,12 @@ footer a:hover { color: var(--fg2); }
 </div>
 
 <script>
+// ── helpers ───────────────────────────────────────────────────
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // ── constants ──────────────────────────────────────────────────
 const IMPACT_LABEL = {
   rce:'RCE', eop:'EoP', dos:'DoS', info:'Info Disclosure',
@@ -630,6 +636,15 @@ function cvssToSev(v) {
 const SEV_LABEL = { c:'Critical', h:'High', m:'Medium', l:'Low', n:'—' };
 const SEV_CLS   = { c:'sc', h:'sh', m:'sm', l:'sl', n:'sn' };
 
+// Short labels for the Exploitability Assessment column.
+// "Exploitation Detected" is already covered by the Exploited badge.
+const ASSESS_SHORT = {
+  'Exploitation More Likely': 'More Likely',
+  'Exploitation Less Likely': 'Less Likely',
+  'Exploitation Unlikely':    'Unlikely',
+  'Not Applicable':           'N/A',
+};
+
 // ── state ──────────────────────────────────────────────────────
 let DATA = [], FILTERED = [];
 const openRows = new Set();
@@ -647,10 +662,6 @@ async function loadData() {
     if (!json.cves?.length) throw new Error('empty');
     DATA = json.cves;
     populateVersions(json.filters?.versions || []);
-    const exploited = DATA.filter(c => c.exploited).length;
-    document.getElementById('tb-stats').innerHTML =
-      `<strong>${json.count}</strong> advisories &middot; ${json.months_with_data?.length || 0} months &middot; ` +
-      `<span class="ec">${exploited} exploited</span> &middot; generated ${json.generated_at}`;
   } catch (e) {
     DATA = [];
     warn.className = 'warn on';
@@ -753,14 +764,16 @@ function render() {
     let flagHtml = '';
     if (c.exploited) flagHtml += `<div class="fl-ex">Exploited</div>`;
     if (c.disclosed) flagHtml += `<div class="fl-disc"${c.exploited ? ' style="margin-top:3px"' : ''}>Disclosed</div>`;
-    if (!c.exploited && !c.disclosed) flagHtml = `<span class="fl-none">—</span>`;
+    const assessShort = !c.exploited && c.exploitability ? ASSESS_SHORT[c.exploitability] : null;
+    if (assessShort) flagHtml += `<div class="fl-assess">${assessShort}</div>`;
+    if (!flagHtml) flagHtml = `<span class="fl-none">—</span>`;
 
     tr.innerHTML = `
       <td class="td-bar"></td>
-      <td><div class="cid">${c.id}</div><div class="cdt">${c.date || 'unknown'}</div><div class="ctitle">${c.title || ''}</div></td>
+      <td><div class="cid">${esc(c.id)}</div><div class="cdt">${esc(c.date || 'unknown')}</div><div class="ctitle">${esc(c.title)}</div></td>
       <td><span class="sv ${sev}">${SEV_LABEL[sev]}</span></td>
-      <td class="td-comp"><div class="cn">${comp.name}</div>${comp.bin ? `<div class="cb">${comp.bin}</div>` : ''}</td>
-      <td><span class="ty">${IMPACT_LABEL[c.impact] || c.impact}</span></td>
+      <td class="td-comp"><div class="cn">${esc(comp.name)}</div>${comp.bin ? `<div class="cb">${esc(comp.bin)}</div>` : ''}</td>
+      <td><span class="ty">${IMPACT_LABEL[c.impact] || esc(c.impact)}</span></td>
       <td>${flagHtml}</td>
       <td><span class="cs ${sev}">${c.cvss != null ? c.cvss.toFixed(1) : '—'}</span></td>`;
 
@@ -800,16 +813,16 @@ function buildDetail(c, comp, sev) {
   const kbs = c.kbs || [];
 
   const affRowsHtml = (c.versions || []).slice(0, 20).map(v =>
-    `<tr><td class="av">${v}</td><td class="ak">${kbs[0] || '<span style="color:var(--fg3)">—</span>'}</td><td class="ab">—</td><td class="as">Fixed</td></tr>`
+    `<tr><td class="av">${esc(v)}</td><td class="ak">${kbs[0] ? esc(kbs[0]) : '<span style="color:var(--fg3)">—</span>'}</td><td class="ab">—</td><td class="as">Fixed</td></tr>`
   ).join('') || `<tr><td colspan="4" style="color:var(--fg3)">No version data available</td></tr>`;
 
-  const prods = (c.products || []).map(p => `<span class="pc">${p}</span>`).join('');
-  const kbChips = kbs.map(k => `<span class="kbc">${k}</span>`).join('') || '<span style="color:var(--fg3)">No KB listed</span>';
+  const prods = (c.products || []).map(p => `<span class="pc">${esc(p)}</span>`).join('');
+  const kbChips = kbs.map(k => `<span class="kbc">${esc(k)}</span>`).join('') || '<span style="color:var(--fg3)">No KB listed</span>';
 
-  return `<div class="det">
+  return `<div class="det det-${sev}">
     <div class="det-hd">
       <div>
-        <div class="det-title">${c.title}</div>
+        <div class="det-title">${esc(c.title)}</div>
         <div class="det-badges">${badges}</div>
       </div>
       <div class="det-links">${links}</div>
@@ -828,14 +841,15 @@ function buildDetail(c, comp, sev) {
 
     <div class="sec-lbl">Record</div>
     <div class="meta-kv">
-      <div><div class="mk">CVE</div><div class="mv">${c.id}</div></div>
-      <div><div class="mk">Published</div><div class="mv">${c.date || 'unknown'}</div></div>
+      <div><div class="mk">CVE</div><div class="mv">${esc(c.id)}</div></div>
+      <div><div class="mk">Published</div><div class="mv">${esc(c.date || 'unknown')}</div></div>
       <div><div class="mk">CVSS base</div><div class="mv">${c.cvss != null ? c.cvss.toFixed(1) : 'not scored'}</div></div>
       <div><div class="mk">Severity</div><div class="mv">${SEV_LABEL[sev]}</div></div>
-      <div><div class="mk">Type</div><div class="mv">${IMPACT_LABEL[c.impact] || c.impact}</div></div>
-      <div><div class="mk">Component</div><div class="mv">${comp.name}${comp.bin ? ' · ' + comp.bin : ''}</div></div>
+      <div><div class="mk">Type</div><div class="mv">${IMPACT_LABEL[c.impact] || esc(c.impact)}</div></div>
+      <div><div class="mk">Component</div><div class="mv">${esc(comp.name)}${comp.bin ? ' · ' + esc(comp.bin) : ''}</div></div>
       <div><div class="mk">Exploited</div><div class="mv" style="color:${c.exploited ? 'var(--crit)' : 'var(--fg3)'}">${c.exploited ? 'Yes' : 'No'}</div></div>
       <div><div class="mk">Disclosed</div><div class="mv" style="color:${c.disclosed ? 'var(--high)' : 'var(--fg3)'}">${c.disclosed ? 'Yes' : 'No'}</div></div>
+      ${c.exploitability ? `<div><div class="mk">Assessment</div><div class="mv">${esc(c.exploitability)}</div></div>` : ''}
     </div>
   </div>`;
 }

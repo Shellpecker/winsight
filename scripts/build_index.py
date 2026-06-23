@@ -248,7 +248,7 @@ def classify_impact(title, vuln):
         return "spoofing"
     if "information disclosure" in text:
         return "info"
-    if "security feature bypass" in text or "bypass" in text:
+    if "security feature bypass" in text:
         return "bypass"
     if "tampering" in text:
         return "tamper"
