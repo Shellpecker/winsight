@@ -2237,7 +2237,7 @@
       "exploited": false,
       "disclosed": false,
       "exploitability": "Exploitation Less Likely",
-      "impact": "bypass",
+      "impact": "other",
       "kbs": [],
       "versions": [
         "Windows 11 24H2",
@@ -12160,7 +12160,7 @@
       "exploited": false,
       "disclosed": false,
       "exploitability": "Exploitation Less Likely",
-      "impact": "bypass",
+      "impact": "other",
       "kbs": [],
       "versions": [
         "Windows 10",
@@ -34412,7 +34412,7 @@
       "exploited": true,
       "disclosed": false,
       "exploitability": "Exploitation Detected",
-      "impact": "bypass",
+      "impact": "other",
       "kbs": [],
       "versions": [
         "Windows 10",
@@ -60013,7 +60013,7 @@
       "exploited": false,
       "disclosed": false,
       "exploitability": "Exploitation Less Likely",
-      "impact": "bypass",
+      "impact": "other",
       "kbs": [],
       "versions": [
         "Windows 10",
@@ -75746,7 +75746,7 @@
       "exploited": false,
       "disclosed": false,
       "exploitability": "Exploitation Less Likely",
-      "impact": "bypass",
+      "impact": "other",
       "kbs": [],
       "versions": [
         "Azure Linux 3.0 ARM",
@@ -76493,7 +76493,7 @@
       "exploited": false,
       "disclosed": false,
       "exploitability": "Exploitation Less Likely",
-      "impact": "bypass",
+      "impact": "other",
       "kbs": [],
       "versions": [
         "Windows 10",
