@@ -208,21 +208,25 @@ def extract_exploited(vuln):
     assessment = None
 
     for threat in vuln.get("Threats", []) or []:
+        # MSRC uses Type=1 for Exploit Status threats in CVRF (confirmed via API).
+        # We still process any Type rather than hard-filtering, since the strings
+        # below are specific enough not to false-match other threat types.
         desc = (threat.get("Description") or {}).get("Value", "")
         if not isinstance(desc, str):
             continue
         low = desc.lower()
 
-        # Exploited flag (confirmed in-the-wild only)
+        # Exploited flag — "Exploitation Detected" means confirmed in-the-wild.
         if "exploitation detected" in low:
             exploited = True
 
-        # Publicly Disclosed flag
-        if "publicly disclosed:yes" in low or \
-           ("publicly disclosed" in low and ":no" not in low and "not" not in low):
+        # Publicly Disclosed — MSRC encodes this as "Publicly Disclosed:Yes" or
+        # "Publicly Disclosed:No" within the same Threats array (Type=1 entries).
+        if "publicly disclosed:yes" in low:
             disclosed = True
 
-        # Exploitability Assessment — keep the highest-priority match
+        # Exploitability Assessment — keep the highest-priority match across all
+        # threat entries for this CVE (a CVE can have multiple per-product entries).
         for rank, key in enumerate(_ASSESS_PRIORITY):
             if key in low and rank < assessment_rank:
                 assessment_rank = rank
