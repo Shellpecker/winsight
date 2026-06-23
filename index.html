@@ -805,10 +805,6 @@ function buildDetail(c, comp, sev) {
     c.exploited ? `<a class="det-link" href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA KEV ↗</a>` : '',
   ].filter(Boolean).join('');
 
-  const affRows = (c.versions || []).slice(0, 20).map(v => {
-    const kb = kbs[0] || '';
-    return `<tr><td class="av">${v}</td><td class="ak">${kb || '<span style="color:var(--fg3)">—</span>'}</td><td class="ab">—</td><td class="as">FIXED</td></tr>`;
-  });
   const kbs = c.kbs || [];
 
   const affRowsHtml = (c.versions || []).slice(0, 20).map(v =>
