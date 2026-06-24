@@ -697,7 +697,7 @@ function populateCwes(cwes) {
   cwes.forEach(({id, name}) => {
     const o = document.createElement('option');
     o.value = id;
-    o.textContent = name ? `${id} — ${name}` : id;
+    o.textContent = name ? `${id}: ${name}` : id;
     sel.appendChild(o);
   });
 }
@@ -796,7 +796,7 @@ function render() {
 
     tr.innerHTML = `
       <td class="td-bar"></td>
-      <td><div class="cid">${esc(c.id)}<a class="cid-link" href="https://msrc.microsoft.com/update-guide/vulnerability/${esc(c.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open on MSRC">MSRC ↗</a></div><div class="cdt">${esc(c.date || 'unknown')}</div><div class="ctitle">${esc(c.title)}</div>${c.cwe ? `<div class="ccwe">${esc(c.cwe.id)}${c.cwe.name ? ' · ' + esc(c.cwe.name) : ''}</div>` : ''}</td>
+      <td><div class="cid">${esc(c.id)}<a class="cid-link" href="https://msrc.microsoft.com/update-guide/vulnerability/${esc(c.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open on MSRC">MSRC ↗</a></div><div class="cdt">${esc(c.date || 'unknown')}</div><div class="ctitle">${esc(c.title)}</div>${c.cwe ? `<div class="ccwe">${esc(c.cwe.id)}${c.cwe.name ? ': ' + esc(c.cwe.name) : ''}</div>` : ''}</td>
       <td><span class="sv ${sev}">${SEV_LABEL[sev]}</span></td>
       <td class="td-comp"><div class="cn">${esc(comp.name)}</div>${comp.bin ? `<div class="cb">${esc(comp.bin)}</div>` : ''}</td>
       <td><span class="ty">${IMPACT_LABEL[c.impact] || esc(c.impact)}</span></td>
@@ -862,7 +862,7 @@ function buildDetail(c, comp, sev) {
       <div><div class="mk">Severity</div><div class="mv">${SEV_LABEL[sev]}</div></div>
       <div><div class="mk">Type</div><div class="mv">${IMPACT_LABEL[c.impact] || esc(c.impact)}</div></div>
       <div><div class="mk">Component</div><div class="mv">${esc(comp.name)}${comp.bin ? ' · ' + esc(comp.bin) : ''}</div></div>
-      ${c.cwe ? `<div><div class="mk">CWE</div><div class="mv">${esc(c.cwe.id)}${c.cwe.name ? ' — ' + esc(c.cwe.name) : ''}</div></div>` : ''}
+      ${c.cwe ? `<div><div class="mk">CWE</div><div class="mv">${esc(c.cwe.id)}${c.cwe.name ? ': ' + esc(c.cwe.name) : ''}</div></div>` : ''}
       <div><div class="mk">Exploited</div><div class="mv" style="color:${c.exploited ? 'var(--crit)' : 'var(--fg3)'}">${c.exploited ? 'Yes' : 'No'}</div></div>
       <div><div class="mk">Disclosed</div><div class="mv" style="color:${c.disclosed ? 'var(--high)' : 'var(--fg3)'}">${c.disclosed ? 'Yes' : 'No'}</div></div>
       ${c.exploitability ? `<div><div class="mk">Assessment</div><div class="mv">${esc(c.exploitability)}</div></div>` : ''}
