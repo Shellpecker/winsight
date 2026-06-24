@@ -672,14 +672,13 @@ async function loadData() {
     if (!json.cves?.length) throw new Error('empty');
     DATA = json.cves;
     populateVersions(json.filters?.versions || []);
-    const cwes = [...new Map(DATA.filter(c => c.cwe).map(c => [c.cwe.id, c.cwe])).values()]
-      .sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
-    populateCwes(cwes);
   } catch (e) {
     DATA = [];
     warn.className = 'warn on';
     warn.textContent = 'No data — run the "Refresh index" GitHub Action to populate data/index.json, then reload.';
   }
+  // Populate CWE dropdown outside try-catch so an error here never wipes DATA
+  populateCwes();
   applyFilters();
 }
 
@@ -692,14 +691,25 @@ function populateVersions(vers) {
   });
 }
 
-function populateCwes(cwes) {
+function populateCwes() {
   const sel = document.getElementById('f-cwe');
-  cwes.forEach(({id, name}) => {
+  if (!sel) return;
+  const seen = new Map();
+  for (const c of DATA) {
+    if (c.cwe && !seen.has(c.cwe.id)) seen.set(c.cwe.id, c.cwe);
+  }
+  // Sort by numeric CWE id (CWE-79 before CWE-122)
+  const sorted = [...seen.values()].sort((a, b) => {
+    const na = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
+    const nb = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+    return na - nb;
+  });
+  for (const {id, name} of sorted) {
     const o = document.createElement('option');
     o.value = id;
     o.textContent = name ? `${id}: ${name}` : id;
     sel.appendChild(o);
-  });
+  }
 }
 
 // ── filter ────────────────────────────────────────────────────
