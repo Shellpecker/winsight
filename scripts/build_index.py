@@ -139,15 +139,33 @@ def normalize_version_label(label):
 # ---------------------------------------------------------------------------
 
 def kb_ids_from_remediations(vuln):
+    """
+    CVRF v3 dropped the KBArticle element present in v2.  The KB number is now
+    encoded in two places within each remediation:
+      - Description.Value: a bare 7–8 digit number, e.g. "5060531"
+      - URL: catalog.update.microsoft.com link with ?q=KB5060531
+
+    We extract from both and deduplicate.
+    """
     kbs = set()
     for rem in vuln.get("Remediations", []) or []:
-        kb = rem.get("KBArticle") or {}
-        kb_id = kb.get("ID") if isinstance(kb, dict) else None
-        if kb_id and re.match(r"^\d{6,7}$", str(kb_id)):
-            kb_id = f"KB{kb_id}"
-        if kb_id:
-            kbs.add(str(kb_id))
+        desc_val = ((rem.get("Description") or {}).get("Value") or "").strip()
+        if re.match(r"^\d{6,8}$", desc_val):
+            kbs.add(f"KB{desc_val}")
+        url = rem.get("URL") or ""
+        m = re.search(r"[?&]q=KB(\d+)", url, re.I)
+        if m:
+            kbs.add(f"KB{m.group(1)}")
     return kbs
+
+
+def extract_cwe(vuln):
+    cwe = vuln.get("CWE") or {}
+    cwe_id = cwe.get("ID", "").strip()
+    cwe_name = cwe.get("Value", "").strip()
+    if cwe_id:
+        return {"id": cwe_id, "name": cwe_name}
+    return None
 
 
 def product_ids_from_vuln(vuln):
@@ -319,6 +337,7 @@ def parse_cvrf(doc, month_id):
             "disclosed": disclosed,
             "exploitability": exploitability,
             "impact": classify_impact(title, vuln),
+            "cwe": extract_cwe(vuln),
             "kbs": sorted(kbs),
             "versions": versions,
             "products": full_products,

@@ -284,6 +284,7 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 .th-flag { width: 90px; }
 .th-cvss { width: 52px; text-align: right !important; }
 .ctitle  { font-size: 11px; color: var(--fg2); margin-top: 2px; line-height: 1.4; }
+.ccwe    { font-size: 9.5px; color: var(--fg3); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 .tr { border-bottom: 1px solid var(--b1); cursor: pointer; }
 .tr:hover td, .tr.open td { background: var(--s2); }
@@ -385,19 +386,6 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 }
 .sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--b1); }
 
-.aff-tbl { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 12px; }
-.aff-tbl th {
-  text-align: left; color: var(--fg3); font-size: 9.5px;
-  letter-spacing: .07em; text-transform: uppercase;
-  padding: 5px 8px; border-bottom: 1px solid var(--b1); font-weight: 600;
-}
-.aff-tbl td { padding: 5px 8px; border-bottom: 1px solid var(--b1); color: var(--fg2); }
-.aff-tbl tr:last-child td { border-bottom: none; }
-.aff-tbl tr:hover td { color: var(--fg); }
-.aff-tbl .av { color: var(--fg); }
-.aff-tbl .ak { color: var(--acc-fg); }
-.aff-tbl .ab { color: var(--fg3); }
-.aff-tbl .as { color: var(--low); font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 
 .p-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .pc { font-size: 10.5px; color: var(--fg2); background: var(--s3); border: 1px solid var(--b1); padding: 2px 6px; border-radius: 2px; }
@@ -515,6 +503,10 @@ footer a:hover { color: var(--fg2); }
       </select>
     </div>
     <div class="sf">
+      <div class="sf-lbl">CWE</div>
+      <select id="f-cwe"><option value="">All</option></select>
+    </div>
+    <div class="sf">
       <div class="sf-lbl">Windows version</div>
       <select id="f-ver"><option value="">All versions</option></select>
     </div>
@@ -531,6 +523,7 @@ footer a:hover { color: var(--fg2); }
           <option value="date_asc">Oldest first</option>
           <option value="cvss_desc">CVSS high → low</option>
           <option value="cvss_asc">CVSS low → high</option>
+          <option value="assess">Exploitability severity</option>
         </select>
         <button class="tb-btn" id="exp-json">JSON</button>
         <button class="tb-btn" id="exp-csv">CSV</button>
@@ -556,7 +549,7 @@ footer a:hover { color: var(--fg2); }
             <th class="th-sev" data-sort="cvss_desc">Severity</th>
             <th class="th-comp">Component</th>
             <th class="th-type">Type</th>
-            <th class="th-flag">Exploitability</th>
+            <th class="th-flag" data-sort="assess">Exploitability</th>
             <th class="th-cvss" data-sort="cvss_desc">CVSS</th>
           </tr>
         </thead>
@@ -652,6 +645,16 @@ const ASSESS_SHORT = {
   'Not Applicable':           'N/A',
 };
 
+// Numeric rank for sorting by exploitability severity (lower = more severe).
+const ASSESS_ORDER = {
+  'Exploitation Detected':    0,
+  'Exploitation More Likely': 1,
+  'Exploitation Less Likely': 2,
+  'Exploitation Unlikely':    3,
+  'Not Applicable':           4,
+};
+function assessRank(c) { return ASSESS_ORDER[c.exploitability] ?? 5; }
+
 // ── state ──────────────────────────────────────────────────────
 let DATA = [], FILTERED = [];
 const openRows = new Set();
@@ -669,6 +672,9 @@ async function loadData() {
     if (!json.cves?.length) throw new Error('empty');
     DATA = json.cves;
     populateVersions(json.filters?.versions || []);
+    const cwes = [...new Map(DATA.filter(c => c.cwe).map(c => [c.cwe.id, c.cwe])).values()]
+      .sort((a, b) => a.id.localeCompare(b.id, undefined, {numeric: true}));
+    populateCwes(cwes);
   } catch (e) {
     DATA = [];
     warn.className = 'warn on';
@@ -686,12 +692,23 @@ function populateVersions(vers) {
   });
 }
 
+function populateCwes(cwes) {
+  const sel = document.getElementById('f-cwe');
+  cwes.forEach(({id, name}) => {
+    const o = document.createElement('option');
+    o.value = id;
+    o.textContent = name ? `${id} — ${name}` : id;
+    sel.appendChild(o);
+  });
+}
+
 // ── filter ────────────────────────────────────────────────────
 function applyFilters() {
   const q      = document.getElementById('q').value.trim().toLowerCase();
   const sev    = document.getElementById('f-sev').value;
   const type   = document.getElementById('f-type').value;
   const assess = document.getElementById('f-assess').value;
+  const cwe    = document.getElementById('f-cwe').value;
   const ver    = document.getElementById('f-ver').value;
   const sortBy = document.getElementById('sortby').value;
 
@@ -701,6 +718,7 @@ function applyFilters() {
     if (activeToggles.has('exploited') && !c.exploited) return false;
     if (activeToggles.has('disclosed') && !c.disclosed) return false;
     if (assess && c.exploitability !== assess) return false;
+    if (cwe && (!c.cwe || c.cwe.id !== cwe)) return false;
     if (ver && !(c.versions || []).includes(ver)) return false;
     if (q) {
       const hay = (c.id + ' ' + c.title + ' ' + (c.kbs || []).join(' ') + ' ' + (c.versions || []).join(' ')).toLowerCase();
@@ -713,6 +731,7 @@ function applyFilters() {
     if (sortBy === 'date_asc')  return (a.date || '').localeCompare(b.date || '');
     if (sortBy === 'cvss_desc') return (b.cvss ?? -1) - (a.cvss ?? -1);
     if (sortBy === 'cvss_asc')  return (a.cvss ?? 99) - (b.cvss ?? 99);
+    if (sortBy === 'assess')    return assessRank(a) - assessRank(b);
     return (b.date || '').localeCompare(a.date || '');
   });
 
@@ -740,7 +759,7 @@ function render() {
   const sortBy = document.getElementById('sortby').value;
   stats.innerHTML = `<strong>${total}</strong> of ${DATA.length}` +
     (expl ? ` &middot; <span class="ec">${expl} exploited</span>` : '') +
-    ` &middot; ${{ date_desc:'newest first', date_asc:'oldest first', cvss_desc:'CVSS ↓', cvss_asc:'CVSS ↑' }[sortBy]}`;
+    ` &middot; ${{ date_desc:'newest first', date_asc:'oldest first', cvss_desc:'CVSS ↓', cvss_asc:'CVSS ↑', assess:'by exploitability' }[sortBy] || ''}`;
 
   if (!total) {
     tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><strong>No results</strong>Try a different search or reset the filters.</div></td></tr>`;
@@ -777,7 +796,7 @@ function render() {
 
     tr.innerHTML = `
       <td class="td-bar"></td>
-      <td><div class="cid">${esc(c.id)}<a class="cid-link" href="https://msrc.microsoft.com/update-guide/vulnerability/${esc(c.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open on MSRC">MSRC ↗</a></div><div class="cdt">${esc(c.date || 'unknown')}</div><div class="ctitle">${esc(c.title)}</div></td>
+      <td><div class="cid">${esc(c.id)}<a class="cid-link" href="https://msrc.microsoft.com/update-guide/vulnerability/${esc(c.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open on MSRC">MSRC ↗</a></div><div class="cdt">${esc(c.date || 'unknown')}</div><div class="ctitle">${esc(c.title)}</div>${c.cwe ? `<div class="ccwe">${esc(c.cwe.id)}${c.cwe.name ? ' · ' + esc(c.cwe.name) : ''}</div>` : ''}</td>
       <td><span class="sv ${sev}">${SEV_LABEL[sev]}</span></td>
       <td class="td-comp"><div class="cn">${esc(comp.name)}</div>${comp.bin ? `<div class="cb">${esc(comp.bin)}</div>` : ''}</td>
       <td><span class="ty">${IMPACT_LABEL[c.impact] || esc(c.impact)}</span></td>
@@ -818,11 +837,6 @@ function buildDetail(c, comp, sev) {
   ].filter(Boolean).join('');
 
   const kbs = c.kbs || [];
-
-  const affRowsHtml = (c.versions || []).slice(0, 20).map(v =>
-    `<tr><td class="av">${esc(v)}</td><td class="ak">${kbs[0] ? esc(kbs[0]) : '<span style="color:var(--fg3)">—</span>'}</td><td class="ab">—</td><td class="as">Fixed</td></tr>`
-  ).join('') || `<tr><td colspan="4" style="color:var(--fg3)">No version data available</td></tr>`;
-
   const prods = (c.products || []).map(p => `<span class="pc">${esc(p)}</span>`).join('');
   const kbChips = kbs.map(k => `<span class="kbc">${esc(k)}</span>`).join('') || '<span style="color:var(--fg3)">No KB listed</span>';
 
@@ -835,13 +849,7 @@ function buildDetail(c, comp, sev) {
       <div class="det-links">${links}</div>
     </div>
 
-    <div class="sec-lbl">Affected versions</div>
-    <table class="aff-tbl">
-      <thead><tr><th>Windows version</th><th>Patched KB</th><th>Fixed build</th><th>Status</th></tr></thead>
-      <tbody>${affRowsHtml}</tbody>
-    </table>
-
-    ${prods ? `<div class="sec-lbl">Products</div><div class="p-chips" style="margin-bottom:12px">${prods}</div>` : ''}
+    ${prods ? `<div class="sec-lbl">Affected products</div><div class="p-chips" style="margin-bottom:12px">${prods}</div>` : ''}
 
     <div class="sec-lbl">KB / Patches</div>
     <div class="kb-chips" style="margin-bottom:14px">${kbChips}</div>
@@ -854,6 +862,7 @@ function buildDetail(c, comp, sev) {
       <div><div class="mk">Severity</div><div class="mv">${SEV_LABEL[sev]}</div></div>
       <div><div class="mk">Type</div><div class="mv">${IMPACT_LABEL[c.impact] || esc(c.impact)}</div></div>
       <div><div class="mk">Component</div><div class="mv">${esc(comp.name)}${comp.bin ? ' · ' + esc(comp.bin) : ''}</div></div>
+      ${c.cwe ? `<div><div class="mk">CWE</div><div class="mv">${esc(c.cwe.id)}${c.cwe.name ? ' — ' + esc(c.cwe.name) : ''}</div></div>` : ''}
       <div><div class="mk">Exploited</div><div class="mv" style="color:${c.exploited ? 'var(--crit)' : 'var(--fg3)'}">${c.exploited ? 'Yes' : 'No'}</div></div>
       <div><div class="mk">Disclosed</div><div class="mv" style="color:${c.disclosed ? 'var(--high)' : 'var(--fg3)'}">${c.disclosed ? 'Yes' : 'No'}</div></div>
       ${c.exploitability ? `<div><div class="mk">Assessment</div><div class="mv">${esc(c.exploitability)}</div></div>` : ''}
@@ -889,7 +898,7 @@ document.querySelectorAll('.eq').forEach(btn => {
   });
 });
 
-['f-sev','f-type','f-assess','f-ver','sortby'].forEach(id => {
+['f-sev','f-type','f-assess','f-cwe','f-ver','sortby'].forEach(id => {
   document.getElementById(id).addEventListener('change', applyFilters);
 });
 document.getElementById('q').addEventListener('input', applyFilters);
@@ -915,7 +924,7 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
 
 document.getElementById('rst').addEventListener('click', () => {
   document.getElementById('q').value = '';
-  ['f-sev','f-type','f-assess','f-ver'].forEach(id => { document.getElementById(id).value = ''; });
+  ['f-sev','f-type','f-assess','f-cwe','f-ver'].forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('sortby').value = 'date_desc';
   activeToggles.clear();
   document.querySelectorAll('.tog').forEach(b => b.classList.remove('on'));
