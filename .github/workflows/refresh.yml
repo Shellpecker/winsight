@@ -9,6 +9,7 @@ on:
     paths:
       - "scripts/build_index.py"
       - ".github/workflows/refresh.yml"
+      - "index.html"
 
 permissions:
   contents: write
