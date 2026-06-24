@@ -161,6 +161,9 @@ def kb_ids_from_remediations(vuln):
 
 def extract_cwe(vuln):
     cwe = vuln.get("CWE") or {}
+    # CVRF v3 may return a list when multiple CWEs are assigned; take the first.
+    if isinstance(cwe, list):
+        cwe = cwe[0] if cwe else {}
     cwe_id = cwe.get("ID", "").strip()
     cwe_name = cwe.get("Value", "").strip()
     if cwe_id:
