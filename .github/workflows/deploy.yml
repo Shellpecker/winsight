@@ -1,0 +1,44 @@
+name: Deploy site
+
+# Fast path: deploy the static site without rebuilding the data set. Triggered by
+# frontend or data changes pushed by a human. Note that commits made by the
+# refresh workflow's bot (via GITHUB_TOKEN) do NOT trigger this workflow — that's
+# GitHub's built-in loop protection — so refresh.yml deploys itself at the end.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "data/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

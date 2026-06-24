@@ -7,9 +7,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "scripts/build_index.py"
+      - "scripts/**"
       - ".github/workflows/refresh.yml"
-      - "index.html"
 
 permissions:
   contents: write
@@ -41,15 +40,29 @@ jobs:
         run: |
           python scripts/build_index.py
 
+      # Resolve affected binaries + patch-diff download links from Winbindex.
+      # Non-fatal: a failure here must never block the data refresh or deploy.
+      - name: Run build_modules.py
+        continue-on-error: true
+        env:
+          WINSIGHT_OUTPUT: "data/index.json"
+          WINSIGHT_MODULES_OUTPUT: "data/cve_modules.json"
+        run: |
+          python scripts/build_modules.py
+
       - name: Show summary
         run: |
           python -c "
-          import json
+          import json, os
           d = json.load(open('data/index.json'))
           print(f\"Generated: {d['generated_at']}\")
           print(f\"Total CVEs: {d['count']}\")
           print(f\"Months with data: {len(d['months_with_data'])} / {len(d['months_requested'])} requested\")
           print(f\"Distinct versions seen: {len(d['filters']['versions'])}\")
+          if os.path.exists('data/cve_modules.json'):
+              m = json.load(open('data/cve_modules.json'))
+              print(f\"CVEs with affected modules: {m.get('count_with_modules', 0)}\")
+              print(f\"Downloadable patch-diff builds: {m.get('count_downloadable_builds', 0)}\")
           " >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit refreshed data
@@ -57,6 +70,7 @@ jobs:
           git config user.name "winsight-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/index.json
+          [ -f data/cve_modules.json ] && git add data/cve_modules.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else

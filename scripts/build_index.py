@@ -171,6 +171,75 @@ def extract_cwe(vuln):
     return None
 
 
+def parse_product_target(full_label):
+    """
+    Turn a raw MSRC product label into the (winbindex_winver, arch) pair the
+    module/patch-diff pipeline needs, e.g.:
+      "Windows 11 Version 23H2 for x64-based Systems" -> ("11-23H2", "x64")
+      "Windows 10 Version 22H2 for ARM64-based Systems" -> ("22H2", "arm64")
+    Winbindex keys client builds as "11-<token>" for Windows 11 and bare
+    "<token>" for Windows 10. Windows Server has no clean winbindex key here
+    (its build numbers don't map to these tokens), so Server -> winver None and
+    is intentionally skipped by the downstream confirmation step.
+    """
+    if re.search(r"ARM64", full_label, re.I):
+        arch = "arm64"
+    elif re.search(r"x64|64-bit", full_label, re.I):
+        arch = "x64"
+    elif re.search(r"32-bit|\bx86\b", full_label, re.I):
+        arch = "x86"
+    else:
+        arch = None
+
+    m = re.search(r"\b(\d{2}H[12]|\d{4})\b", full_label)
+    tok = m.group(1) if m else None
+    winver = None
+    if tok:
+        if full_label.startswith("Windows 11"):
+            winver = f"11-{tok}"
+        elif full_label.startswith("Windows 10"):
+            winver = tok
+    return winver, arch
+
+
+def extract_fixes(vuln, product_labels):
+    """
+    Per-CVE map of which KB fixes which exact (Windows version, architecture).
+    MSRC encodes this in Type=2 ("Vendor Fix") Remediations: each carries a KB
+    number in Description.Value and a ProductID list. We resolve each ProductID
+    to a (winver, arch) so build_modules.py can later look up the precise patched
+    binary build in Winbindex. Only client Windows 10/11 targets are kept
+    (winver != None); Server/unknown products are dropped.
+    """
+    seen = set()
+    fixes = []
+    for rem in vuln.get("Remediations", []) or []:
+        if rem.get("Type") != 2:
+            continue  # only Vendor Fix remediations carry the fixing KB
+        desc_val = ((rem.get("Description") or {}).get("Value") or "").strip()
+        if not re.match(r"^\d{6,8}$", desc_val):
+            continue
+        kb = f"KB{desc_val}"
+        for pid in rem.get("ProductID", []) or []:
+            label = product_labels.get(pid)
+            if not label:
+                continue
+            winver, arch = parse_product_target(label)
+            if not winver:
+                continue  # Server / unmappable -> no winbindex confirmation
+            key = (kb, winver, arch)
+            if key in seen:
+                continue
+            seen.add(key)
+            fixes.append({
+                "kb": kb,
+                "version": normalize_version_label(label),
+                "winver": winver,
+                "arch": arch,
+            })
+    return fixes
+
+
 def product_ids_from_vuln(vuln):
     pids = set()
     for rem in vuln.get("Remediations", []) or []:
@@ -344,6 +413,7 @@ def parse_cvrf(doc, month_id):
             "kbs": sorted(kbs),
             "versions": versions,
             "products": full_products,
+            "fixes": extract_fixes(vuln, product_labels),
         })
     return out
 

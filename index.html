@@ -393,6 +393,30 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 .kb-chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .kbc { font-size: 12px; color: var(--acc-fg); background: var(--acc-bg); border: 1px solid rgba(91,114,192,.2); padding: 2px 8px; border-radius: 2px; }
 
+/* ── patch-diff panel ── */
+.pd-hint { font-size: 8.5px; color: var(--fg3); background: var(--s3); border: 1px solid var(--b1); padding: 1px 5px; border-radius: 2px; letter-spacing: .04em; text-transform: none; }
+.pd-files { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 8px; }
+.pd-file { font-size: 11px; font-weight: 600; color: var(--fg); background: var(--s3); border: 1px solid var(--b2); padding: 2px 8px; border-radius: 2px; font-variant-numeric: tabular-nums; }
+.pd-wb { font-size: 10px; color: var(--fg3); border: 1px solid var(--b1); padding: 2px 7px; border-radius: 2px; margin-left: 2px; }
+.pd-wb:hover { color: var(--acc-fg); border-color: var(--acc); text-decoration: none; }
+.pd-note { font-size: 10.5px; color: var(--fg3); margin-bottom: 10px; }
+.pd-note strong { color: var(--fg2); font-weight: 600; }
+.pd-empty { font-size: 11px; color: var(--fg3); margin-bottom: 14px; font-style: italic; }
+.pd-binhd { font-size: 11px; font-weight: 600; color: var(--fg2); margin: 10px 0 4px; font-variant-numeric: tabular-nums; }
+.pd-tbl { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+.pd-tbl td { padding: 5px 8px 5px 0; border-bottom: 1px solid var(--b1); vertical-align: middle; font-size: 11px; }
+.pd-tbl tr:last-child td { border-bottom: none; }
+.pd-ver { color: var(--fg); white-space: nowrap; }
+.pd-arch { font-size: 8.5px; color: var(--fg3); border: 1px solid var(--b1); padding: 0 4px; border-radius: 2px; margin-left: 4px; text-transform: uppercase; }
+.pd-kb { color: var(--fg3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pd-dl { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 2px; white-space: nowrap; }
+.pd-dl:hover { text-decoration: none; filter: brightness(1.08); }
+.pd-unpatched { color: var(--high); background: var(--high-bg, rgba(196,141,0,.12)); border: 1px solid rgba(196,141,0,.3); }
+.pd-patched { color: var(--ok, #2e7d4f); background: rgba(46,125,79,.12); border: 1px solid rgba(46,125,79,.3); }
+.pd-sha { font-size: 9.5px; color: var(--fg3); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.pd-noid { font-size: 10px; color: var(--fg3); font-style: italic; }
+.pd-na { font-size: 10.5px; color: var(--fg3); }
+
 .meta-kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 12px; }
 .mk { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg3); margin-bottom: 2px; }
 .mv { font-size: 12px; color: var(--fg); }
@@ -664,6 +688,7 @@ function cveRank(c) {
 
 // ── state ──────────────────────────────────────────────────────
 let DATA = [], FILTERED = [];
+let MODULES = {}; // CVE id -> { component, files, targets } from data/cve_modules.json
 const openRows = new Set();
 const activeToggles = new Set(); // 'exploited' | 'disclosed'
 let currentPage = 1;
@@ -687,6 +712,21 @@ async function loadData() {
   // Populate CWE dropdown outside try-catch so an error here never wipes DATA
   populateCwes();
   applyFilters();
+  // Affected-module / patch-diff data is optional: load it lazily and never let
+  // its absence or failure affect the main listing.
+  loadModules();
+}
+
+async function loadModules() {
+  try {
+    const res = await fetch('data/cve_modules.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const json = await res.json();
+    MODULES = json.modules || {};
+    // Re-render so detail panels pick up the patch-diff section (open rows are
+    // preserved via the openRows set + CSS classes).
+    if (DATA.length) render();
+  } catch (e) { /* optional data — ignore */ }
 }
 
 function populateVersions(vers) {
@@ -873,6 +913,8 @@ function buildDetail(c, comp, sev) {
     <div class="sec-lbl">KB / Patches</div>
     <div class="kb-chips" style="margin-bottom:14px">${kbChips}</div>
 
+    ${buildPatchDiff(c)}
+
     <div class="sec-lbl">Record</div>
     <div class="meta-kv">
       <div><div class="mk">CVE</div><div class="mv">${esc(c.id)}</div></div>
@@ -887,6 +929,61 @@ function buildDetail(c, comp, sev) {
       ${c.exploitability ? `<div><div class="mk">Assessment</div><div class="mv">${esc(c.exploitability)}</div></div>` : ''}
     </div>
   </div>`;
+}
+
+// ── patch-diff panel ──────────────────────────────────────────
+// Renders the affected-module set and, per Windows version, direct download
+// links for the unpatched + patched build of each binary (from MODULES, built
+// offline by scripts/build_modules.py against Winbindex). When a specific build
+// can't be uniquely addressed on the symbol server, the link is suppressed and
+// only the version + sha256 is shown, with a Winbindex fallback.
+function dlSide(d, label) {
+  if (!d) return `<span class="pd-na" title="No preceding build indexed">${label}: —</span>`;
+  const short = (d.sha256 || '').slice(0, 12);
+  const meta = `<span class="pd-sha" title="${esc(d.sha256 || '')}">${esc(d.build)}</span>`;
+  if (d.downloadable && d.url) {
+    return `<a class="pd-dl ${label === 'Patched' ? 'pd-patched' : 'pd-unpatched'}" href="${esc(d.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Download ${esc(d.build)} (sha256 ${esc(short)})">⭳ ${label}</a>${meta}`;
+  }
+  return `<span class="pd-noid" title="This build shares a symbol-server id with others and can't be fetched individually">${label} (no direct link)</span>${meta}`;
+}
+
+function buildPatchDiff(c) {
+  const m = MODULES[c.id];
+  if (!m || !m.files || !m.files.length) return '';
+
+  const fileChips = m.files.map(f => `<span class="pd-file">${esc(f)}</span>`).join('');
+  const head =
+    `<div class="sec-lbl">Patch-diff <span class="pd-hint">${m.source === 'manual' ? 'curated' : 'suggested'} affected module${m.files.length > 1 ? 's' : ''}</span></div>` +
+    `<div class="pd-files">${fileChips}` +
+      `<a class="pd-wb" href="https://winbindex.m417z.com/?file=${encodeURIComponent(m.files[0])}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Browse all builds on Winbindex">Winbindex ↗</a>` +
+    `</div>`;
+
+  const targets = m.targets || [];
+  if (!targets.length) {
+    return head + `<div class="pd-empty">No indexed Windows 10/11 x64 builds matched this CVE's KBs. Use the Winbindex link above to locate builds manually.</div>`;
+  }
+
+  // Group rows by binary file for readability.
+  const byFile = {};
+  for (const t of targets) (byFile[t.file] ||= []).push(t);
+
+  const blocks = Object.entries(byFile).map(([file, rows]) => {
+    const trs = rows.map(t =>
+      `<tr>
+        <td class="pd-ver">${esc(t.version)} <span class="pd-arch">${esc(t.arch)}</span></td>
+        <td class="pd-kb">${esc(t.kb)}</td>
+        <td>${dlSide(t.unpatched, 'Unpatched')}</td>
+        <td>${dlSide(t.patched, 'Patched')}</td>
+      </tr>`
+    ).join('');
+    return `<div class="pd-binhd">${esc(file)}</div>
+      <table class="pd-tbl"><tbody>${trs}</tbody></table>`;
+  }).join('');
+
+  return head +
+    `<div class="pd-note">Files are pulled straight from Microsoft's symbol server. Diff <strong>Unpatched</strong> vs <strong>Patched</strong> in your tool of choice.</div>` +
+    blocks +
+    `<div style="margin-bottom:14px"></div>`;
 }
 
 // ── export ────────────────────────────────────────────────────
