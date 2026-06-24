@@ -519,11 +519,12 @@ footer a:hover { color: var(--fg2); }
       <div class="tb-stats" id="tb-stats">Loading…</div>
       <div class="tb-r">
         <select id="sortby" class="tb-sel">
-          <option value="date_desc">Newest first</option>
-          <option value="date_asc">Oldest first</option>
+          <option value="cve_desc">Newest CVE first</option>
+          <option value="cve_asc">Oldest CVE first</option>
           <option value="cvss_desc">CVSS high → low</option>
           <option value="cvss_asc">CVSS low → high</option>
           <option value="assess">Exploitability severity</option>
+          <option value="date_desc">Recently updated</option>
         </select>
         <button class="tb-btn" id="exp-json">JSON</button>
         <button class="tb-btn" id="exp-csv">CSV</button>
@@ -655,6 +656,12 @@ const ASSESS_ORDER = {
 };
 function assessRank(c) { return ASSESS_ORDER[c.exploitability] ?? 5; }
 
+// Parse CVE-YYYY-NNNNN into [year, number] for stable numeric sort.
+function cveRank(c) {
+  const m = (c.id || '').match(/CVE-(\d+)-(\d+)/i);
+  return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : [0, 0];
+}
+
 // ── state ──────────────────────────────────────────────────────
 let DATA = [], FILTERED = [];
 const openRows = new Set();
@@ -738,11 +745,13 @@ function applyFilters() {
   });
 
   FILTERED.sort((a, b) => {
-    if (sortBy === 'date_asc')  return (a.date || '').localeCompare(b.date || '');
+    if (sortBy === 'cve_asc')   { const [ay,an]=cveRank(a),[by,bn]=cveRank(b); return ay-by||an-bn; }
     if (sortBy === 'cvss_desc') return (b.cvss ?? -1) - (a.cvss ?? -1);
     if (sortBy === 'cvss_asc')  return (a.cvss ?? 99) - (b.cvss ?? 99);
     if (sortBy === 'assess')    return assessRank(a) - assessRank(b);
-    return (b.date || '').localeCompare(a.date || '');
+    if (sortBy === 'date_desc') return (b.date || '').localeCompare(a.date || '');
+    // default: cve_desc — sort by CVE year then sequence number, both descending
+    const [ay,an]=cveRank(a),[by,bn]=cveRank(b); return by-ay||bn-an;
   });
 
   currentPage = 1;
@@ -769,7 +778,7 @@ function render() {
   const sortBy = document.getElementById('sortby').value;
   stats.innerHTML = `<strong>${total}</strong> of ${DATA.length}` +
     (expl ? ` &middot; <span class="ec">${expl} exploited</span>` : '') +
-    ` &middot; ${{ date_desc:'newest first', date_asc:'oldest first', cvss_desc:'CVSS ↓', cvss_asc:'CVSS ↑', assess:'by exploitability' }[sortBy] || ''}`;
+    ` &middot; ${{ cve_desc:'newest CVE first', cve_asc:'oldest CVE first', cvss_desc:'CVSS ↓', cvss_asc:'CVSS ↑', assess:'by exploitability', date_desc:'recently updated' }[sortBy] || ''}`;
 
   if (!total) {
     tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><strong>No results</strong>Try a different search or reset the filters.</div></td></tr>`;
@@ -935,7 +944,7 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
 document.getElementById('rst').addEventListener('click', () => {
   document.getElementById('q').value = '';
   ['f-sev','f-type','f-assess','f-cwe','f-ver'].forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('sortby').value = 'date_desc';
+  document.getElementById('sortby').value = 'cve_desc';
   activeToggles.clear();
   document.querySelectorAll('.tog').forEach(b => b.classList.remove('on'));
   applyFilters();
