@@ -472,12 +472,7 @@ footer a:hover { color: var(--fg2); }
   </div>
   <div class="eq-row">
     <span class="eq-lbl">Try:</span>
-    <button class="eq" data-q="CVE-2024-30051">CVE-2024-30051</button>
-    <button class="eq" data-q="win32k">win32k</button>
-    <button class="eq" data-q="KB5036893">KB5036893</button>
-    <button class="eq" data-q="Windows 11 23H2">Windows 11 23H2</button>
-    <button class="eq" data-q="clfs">clfs.sys</button>
-    <button class="eq" data-q="print spooler">Print Spooler</button>
+    <span id="eq-list"></span>
   </div>
 </div>
 
@@ -717,6 +712,7 @@ async function loadData() {
   }
   // Populate CWE dropdown outside try-catch so an error here never wipes DATA
   populateCwes();
+  populateExamples();
   applyFilters();
   // Affected-module / patch-diff data is optional: load it lazily and never let
   // its absence or failure affect the main listing.
@@ -729,9 +725,10 @@ async function loadModules() {
     if (!res.ok) return;
     const json = await res.json();
     MODULES = json.modules || {};
-    // Re-filter + re-render so the patch-diff panel appears and binary-name
-    // search / "downloadable builds" filter pick up the newly-loaded data.
-    // (Open rows are preserved via the openRows set + CSS classes.)
+    // Refresh example chips (binary suggestions need MODULES) and re-filter so
+    // the patch-diff panel appears and binary-name search / "downloadable builds"
+    // filter pick up the newly-loaded data. (Open rows preserved via openRows.)
+    populateExamples();
     if (DATA.length) applyFilters();
   } catch (e) { /* optional data — ignore */ }
 }
@@ -1003,6 +1000,60 @@ function buildPatchDiff(c) {
     `<div style="margin-bottom:14px"></div>`;
 }
 
+// ── example queries ───────────────────────────────────────────
+// Built from live data so they never go stale as the 24-month window rolls.
+function queryHasMatch(q) {
+  const qq = q.toLowerCase();
+  return DATA.some(c => {
+    const files = (MODULES[c.id]?.files || []).join(' ');
+    const hay = (c.id + ' ' + c.title + ' ' + (c.kbs || []).join(' ') + ' ' +
+                 (c.versions || []).join(' ') + ' ' + files).toLowerCase();
+    return hay.includes(qq);
+  });
+}
+
+function populateExamples() {
+  const list = document.getElementById('eq-list');
+  if (!list || !DATA.length) return;
+
+  const rank = c => { const [y, n] = cveRank(c); return y * 1e6 + n; };
+  const newest = DATA.reduce((a, b) => (rank(b) > rank(a) ? b : a), DATA[0]);
+  const newestKb = (DATA.find(c => rank(c) >= rank(newest) - 50 && (c.kbs || []).length)?.kbs || [])[0];
+
+  // A binary that actually has a downloadable build (needs MODULES loaded).
+  let binary = null;
+  const prefer = ['clfs.sys', 'win32kfull.sys', 'afd.sys', 'tcpip.sys'];
+  for (const p of prefer) { if (queryHasMatch(p)) { binary = p; break; } }
+  if (!binary) {
+    for (const id in MODULES) {
+      const t = (MODULES[id].targets || []).find(t => t.patched?.downloadable || t.unpatched?.downloadable);
+      if (t) { binary = t.file; break; }
+    }
+  }
+
+  const candidates = [
+    newest?.id, newestKb, binary,
+    'win32k', 'Windows 11 24H2', 'Windows 11 23H2',
+    'Print Spooler', 'Hyper-V', 'Kerberos', 'Remote Desktop',
+  ];
+
+  const seen = new Set();
+  const chosen = [];
+  for (const q of candidates) {
+    if (!q) continue;
+    const key = q.toLowerCase();
+    if (seen.has(key)) continue;
+    if (!queryHasMatch(q)) continue;
+    seen.add(key);
+    chosen.push(q);
+    if (chosen.length >= 6) break;
+  }
+
+  list.innerHTML = chosen
+    .map(q => `<button class="eq" data-q="${esc(q)}">${esc(q)}</button>`)
+    .join('');
+}
+
 // ── export ────────────────────────────────────────────────────
 function dlBlob(content, filename, type) {
   const a = document.createElement('a');
@@ -1024,11 +1075,12 @@ document.getElementById('exp-csv').addEventListener('click', () => {
 });
 
 // ── interactions ──────────────────────────────────────────────
-document.querySelectorAll('.eq').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.getElementById('q').value = btn.dataset.q;
-    applyFilters();
-  });
+// Delegation: example chips are generated dynamically from data.
+document.getElementById('eq-list').addEventListener('click', e => {
+  const btn = e.target.closest('.eq');
+  if (!btn) return;
+  document.getElementById('q').value = btn.dataset.q;
+  applyFilters();
 });
 
 ['f-sev','f-type','f-assess','f-cwe','f-ver','sortby'].forEach(id => {

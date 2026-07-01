@@ -58,6 +58,14 @@ USER_AGENT = "winsight/1.0 (+https://github.com/) build_modules.py"
 WINBINDEX_URL = "https://winbindex.m417z.com/data/by_filename_compressed/{}.json.gz"
 SYMBOL_BASE = "https://msdl.microsoft.com/download/symbols"
 
+# Optional on-disk cache for Winbindex responses, keyed by filename. Enabled in CI
+# (via actions/cache) by setting WINSIGHT_WINBINDEX_CACHE. Files older than the TTL
+# are re-downloaded so weekly refreshes still pick up newly-shipped builds; the
+# cache mainly spares repeated same-week runs (reruns, workflow_dispatch) from
+# re-fetching ~40 files.
+WINBINDEX_CACHE_DIR = os.environ.get("WINSIGHT_WINBINDEX_CACHE", "")
+CACHE_TTL_SECONDS = int(os.environ.get("WINSIGHT_WINBINDEX_TTL_DAYS", "6")) * 86400
+
 # Only x64 is resolved for v1: it's the build essentially every researcher diffs,
 # and it keeps cve_modules.json lean. arm64/x86 fixes are ignored for now.
 ARCHS = ("x64",)
@@ -165,24 +173,51 @@ def guess_module(title):
 _wb_cache = {}  # filename -> indexed dict or None (negative cache)
 
 
+def _disk_cache_path(name):
+    if not WINBINDEX_CACHE_DIR:
+        return None
+    return os.path.join(WINBINDEX_CACHE_DIR, f"{name}.json.gz")
+
+
 def fetch_winbindex(name):
     if name in _wb_cache:
         return _wb_cache[name]
-    url = WINBINDEX_URL.format(name)
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    data = None
-    for attempt in range(1, 4):
+
+    raw = None  # decompressed JSON bytes
+    cpath = _disk_cache_path(name)
+
+    # 1. Fresh on-disk cache hit?
+    if cpath and os.path.exists(cpath) and (time.time() - os.path.getmtime(cpath)) < CACHE_TTL_SECONDS:
         try:
-            with urllib.request.urlopen(req, timeout=90) as resp:
-                data = json.loads(gzip.decompress(resp.read()))
-            break
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                break  # file simply isn't tracked by Winbindex
-            print(f"  ! winbindex {name}: HTTP {e.code}", file=sys.stderr)
-        except Exception as e:  # noqa: BLE001
-            print(f"  ! winbindex {name} (attempt {attempt}): {e}", file=sys.stderr)
-        time.sleep(0.5 * attempt)
+            with open(cpath, "rb") as f:
+                raw = gzip.decompress(f.read())
+        except Exception as e:  # noqa: BLE001 — corrupt cache entry, fall back to network
+            print(f"  ! winbindex cache read {name}: {e}", file=sys.stderr)
+            raw = None
+
+    # 2. Otherwise download (and refresh the cache).
+    if raw is None:
+        url = WINBINDEX_URL.format(name)
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        for attempt in range(1, 4):
+            try:
+                with urllib.request.urlopen(req, timeout=90) as resp:
+                    compressed = resp.read()
+                raw = gzip.decompress(compressed)
+                if cpath:
+                    os.makedirs(WINBINDEX_CACHE_DIR, exist_ok=True)
+                    with open(cpath, "wb") as f:
+                        f.write(compressed)
+                break
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    break  # file simply isn't tracked by Winbindex
+                print(f"  ! winbindex {name}: HTTP {e.code}", file=sys.stderr)
+            except Exception as e:  # noqa: BLE001
+                print(f"  ! winbindex {name} (attempt {attempt}): {e}", file=sys.stderr)
+            time.sleep(0.5 * attempt)
+
+    data = json.loads(raw) if raw else None
     indexed = _index_winbindex(data) if data else None
     _wb_cache[name] = indexed
     return indexed
@@ -344,7 +379,6 @@ def main():
         if entry.get("source") == "manual":
             modules[cve_id] = entry
 
-    n_modules = n_targets = n_downloads = 0
     for cve in cves:
         cve_id = cve.get("id")
         if not cve_id or cve_id in modules:  # manual entry already kept
@@ -357,18 +391,31 @@ def main():
         if not entry:
             continue
         modules[cve_id] = entry
-        n_modules += 1
-        n_targets += len(entry["targets"])
-        for t in entry["targets"]:
+
+    # Metrics computed over the FINAL set (heuristic + preserved manual entries).
+    # count_with_modules counts every CVE we could name a binary for; many of those
+    # have no downloadable build (Server-only, unmapped winver, symbol-id collision),
+    # so count_downloadable_cves is the honest "can actually start diffing" number.
+    n_modules = len(modules)
+    n_targets = n_downloads = n_downloadable_cves = 0
+    for entry in modules.values():
+        targets = entry.get("targets") or []
+        n_targets += len(targets)
+        cve_has_download = False
+        for t in targets:
             for side in ("patched", "unpatched"):
                 if (t.get(side) or {}).get("downloadable"):
                     n_downloads += 1
+                    cve_has_download = True
+        if cve_has_download:
+            n_downloadable_cves += 1
 
     out = {
         "generated_at": date.today().isoformat(),
         "symbol_server": SYMBOL_BASE,
         "winbindex": "https://winbindex.m417z.com/",
         "count_with_modules": n_modules,
+        "count_downloadable_cves": n_downloadable_cves,
         "count_targets": n_targets,
         "count_downloadable_builds": n_downloads,
         "modules": modules,
@@ -378,7 +425,8 @@ def main():
         json.dump(out, f, indent=2, ensure_ascii=False)
 
     print(
-        f"Wrote {MODULES_PATH}: {n_modules} CVEs with modules, "
+        f"Wrote {MODULES_PATH}: {n_modules} CVEs with modules "
+        f"({n_downloadable_cves} with a downloadable build), "
         f"{n_targets} version targets, {n_downloads} downloadable builds, "
         f"{len(_wb_cache)} winbindex files fetched"
     )

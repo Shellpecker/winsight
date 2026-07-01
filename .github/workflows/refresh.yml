@@ -33,6 +33,18 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Cache Winbindex by-filename responses (~40 files). Lives under runner.temp
+      # so it is NOT swept into the Pages artifact (which uploads the repo dir).
+      # Unique key per run + a shared restore prefix = save every run, restore the
+      # latest previous; build_modules re-downloads entries older than its TTL.
+      - name: Cache Winbindex data
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/winbindex-cache
+          key: winbindex-${{ github.run_id }}
+          restore-keys: |
+            winbindex-
+
       - name: Run build_index.py
         env:
           WINSIGHT_BACKFILL_MONTHS: "24"
@@ -47,6 +59,7 @@ jobs:
         env:
           WINSIGHT_OUTPUT: "data/index.json"
           WINSIGHT_MODULES_OUTPUT: "data/cve_modules.json"
+          WINSIGHT_WINBINDEX_CACHE: ${{ runner.temp }}/winbindex-cache
         run: |
           python scripts/build_modules.py
 
@@ -62,6 +75,7 @@ jobs:
           if os.path.exists('data/cve_modules.json'):
               m = json.load(open('data/cve_modules.json'))
               print(f\"CVEs with affected modules: {m.get('count_with_modules', 0)}\")
+              print(f\"CVEs with a downloadable build: {m.get('count_downloadable_cves', 0)}\")
               print(f\"Downloadable patch-diff builds: {m.get('count_downloadable_builds', 0)}\")
           " >> "$GITHUB_STEP_SUMMARY"
 
