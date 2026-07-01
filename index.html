@@ -4,6 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>winsight — Windows CVE Intelligence</title>
+<meta name="description" content="Browse Microsoft Windows CVEs for patch-diffing: affected modules plus one-click downloads of the patched and unpatched binaries. Refreshed weekly from the MSRC security update guide.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="winsight — recent Windows CVEs" href="data/feed.xml">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="winsight">
+<meta property="og:title" content="winsight — Windows CVE Intelligence">
+<meta property="og:description" content="Windows CVE intelligence for patch-diffing: affected modules plus one-click patched & unpatched binaries. Refreshed weekly from MSRC.">
+<meta property="og:url" content="https://shellpecker.github.io/winsight/">
+<meta property="og:image" content="https://shellpecker.github.io/winsight/og.svg">
+<meta property="og:image:type" content="image/svg+xml">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="winsight — Windows CVE Intelligence">
+<meta name="twitter:description" content="Windows CVE intelligence for patch-diffing: affected modules plus one-click patched & unpatched binaries.">
+<meta name="twitter:image" content="https://shellpecker.github.io/winsight/og.svg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -540,6 +559,12 @@ footer a:hover { color: var(--fg2); }
       </div>
     </div>
     <div class="sf">
+      <div class="sf-lbl">Timeframe</div>
+      <div class="toggle-row">
+        <button class="tog" id="tog-latest" data-f="latest">Latest patch cycle</button>
+      </div>
+    </div>
+    <div class="sf">
       <div class="sf-lbl">Exploitability Assessment</div>
       <select id="f-assess">
         <option value="">All</option>
@@ -607,7 +632,7 @@ footer a:hover { color: var(--fg2); }
     </div>
 
     <footer>
-      winsight &middot; <a href="https://msrc.microsoft.com/update-guide" target="_blank" rel="noopener">MSRC Security Update Guide</a> &middot; refreshed via GitHub Actions &middot; not affiliated with Microsoft
+      winsight &middot; <a href="https://msrc.microsoft.com/update-guide" target="_blank" rel="noopener">MSRC Security Update Guide</a> &middot; refreshed via GitHub Actions &middot; <a href="data/feed.xml" target="_blank" rel="noopener">RSS feed</a> &middot; not affiliated with Microsoft
     </footer>
   </div>
 </div>
@@ -713,6 +738,8 @@ function cveRank(c) {
 // ── state ──────────────────────────────────────────────────────
 let DATA = [], FILTERED = [];
 let MODULES = {}; // CVE id -> { component, files, targets } from data/cve_modules.json
+let LATEST_YM = ''; // 'YYYY-MM' of the most recent patch cycle in the data
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const openRows = new Set();
 const activeToggles = new Set(); // 'exploited' | 'disclosed'
 let currentPage = 1;
@@ -728,6 +755,13 @@ async function loadData() {
     if (!json.cves?.length) throw new Error('empty');
     DATA = json.cves;
     populateVersions(json.filters?.versions || []);
+    // Newest patch cycle = latest YYYY-MM among release dates; label the toggle.
+    LATEST_YM = DATA.reduce((m, c) => (c.date || '') > m ? (c.date || '') : m, '').slice(0, 7);
+    const latestBtn = document.getElementById('tog-latest');
+    if (latestBtn && LATEST_YM) {
+      const [y, mo] = LATEST_YM.split('-');
+      latestBtn.textContent = `Latest cycle · ${MONTH_ABBR[+mo - 1]} ${y}`;
+    }
   } catch (e) {
     DATA = [];
     warn.className = 'warn on';
@@ -735,8 +769,10 @@ async function loadData() {
   }
   // Populate CWE dropdown outside try-catch so an error here never wipes DATA
   populateCwes();
+  restoreFromUrl();      // apply any shared filters/search/sort/open-CVE from the hash
   populateExamples();
   applyFilters();
+  focusDeepLink();       // page to & scroll the deep-linked CVE, if any
   // Affected-module / patch-diff data is optional: load it lazily and never let
   // its absence or failure affect the main listing.
   loadModules();
@@ -752,7 +788,7 @@ async function loadModules() {
     // the patch-diff panel appears and binary-name search / "downloadable builds"
     // filter pick up the newly-loaded data. (Open rows preserved via openRows.)
     populateExamples();
-    if (DATA.length) applyFilters();
+    if (DATA.length) { applyFilters(true); focusDeepLink(); }  // preserve page across module load
   } catch (e) { /* optional data — ignore */ }
 }
 
@@ -786,8 +822,66 @@ function populateCwes() {
   }
 }
 
+// ── shareable URL state ───────────────────────────────────────
+// Filters, search, sort, toggles and open CVEs live in location.hash so any view
+// can be linked or shared. replaceState keeps it out of the back-button history.
+const URL_SELECTS = { sev: 'f-sev', type: 'f-type', assess: 'f-assess', cwe: 'f-cwe', ver: 'f-ver' };
+let deepLinkPending = null; // first open CVE from the URL, focused once after load
+
+function syncUrl() {
+  const p = new URLSearchParams();
+  const q = document.getElementById('q').value.trim();
+  if (q) p.set('q', q);
+  for (const [key, id] of Object.entries(URL_SELECTS)) {
+    const v = document.getElementById(id).value;
+    if (v) p.set(key, v);
+  }
+  const sort = document.getElementById('sortby').value;
+  if (sort && sort !== 'cve_desc') p.set('sort', sort);
+  if (activeToggles.size) p.set('tog', [...activeToggles].join(','));
+  if (openRows.size) p.set('cve', [...openRows].join(','));
+  const s = p.toString();
+  history.replaceState(null, '', location.pathname + location.search + (s ? '#' + s : ''));
+}
+
+function restoreFromUrl() {
+  const raw = location.hash.replace(/^#/, '');
+  if (!raw) return;
+  const p = new URLSearchParams(raw);
+  if (p.has('q')) document.getElementById('q').value = p.get('q');
+  for (const [key, id] of Object.entries(URL_SELECTS)) {
+    if (p.has(key)) { const el = document.getElementById(id); if (el) el.value = p.get(key); }
+  }
+  if (p.has('sort')) document.getElementById('sortby').value = p.get('sort');
+  activeToggles.clear();
+  if (p.has('tog')) for (const t of p.get('tog').split(',')) {
+    if (!t) continue;
+    activeToggles.add(t);
+    const b = document.querySelector(`.tog[data-f="${t}"]`);
+    if (b) b.classList.add('on');
+  }
+  openRows.clear();
+  if (p.has('cve')) {
+    const ids = p.get('cve').split(',').filter(Boolean);
+    ids.forEach(id => openRows.add(id));
+    deepLinkPending = ids[0] || null;
+  }
+}
+
+// After a render, page to the deep-linked CVE and scroll it into view (once).
+function focusDeepLink() {
+  if (!deepLinkPending) return;
+  const idx = FILTERED.findIndex(c => c.id === deepLinkPending);
+  if (idx < 0) { deepLinkPending = null; return; }
+  const page = Math.floor(idx / pageSize) + 1;
+  if (page !== currentPage) { currentPage = page; render(); }
+  const row = [...document.querySelectorAll('tr.tr')].find(r => r.textContent.includes(deepLinkPending));
+  if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  deepLinkPending = null;
+}
+
 // ── filter ────────────────────────────────────────────────────
-function applyFilters() {
+function applyFilters(preservePage = false) {
   const q      = document.getElementById('q').value.trim().toLowerCase();
   const sev    = document.getElementById('f-sev').value;
   const type   = document.getElementById('f-type').value;
@@ -802,6 +896,7 @@ function applyFilters() {
     if (activeToggles.has('exploited') && !c.exploited) return false;
     if (activeToggles.has('disclosed') && !c.disclosed) return false;
     if (activeToggles.has('patchdiff') && !hasDownloadable(c)) return false;
+    if (activeToggles.has('latest') && !(c.date || '').startsWith(LATEST_YM)) return false;
     if (assess && c.exploitability !== assess) return false;
     if (cwe && (!c.cwe || c.cwe.id !== cwe)) return false;
     if (ver && !(c.versions || []).includes(ver)) return false;
@@ -823,8 +918,9 @@ function applyFilters() {
     const [ay,an]=cveRank(a),[by,bn]=cveRank(b); return by-ay||bn-an;
   });
 
-  currentPage = 1;
+  if (!preservePage) currentPage = 1;
   render();
+  syncUrl();
 }
 
 // ── render ────────────────────────────────────────────────────
@@ -899,6 +995,7 @@ function render() {
       const was = tr.classList.contains('open');
       if (was) { openRows.delete(c.id); tr.classList.remove('open'); dtr.classList.remove('open'); }
       else     { openRows.add(c.id);    tr.classList.add('open');    dtr.classList.add('open'); }
+      syncUrl();
     });
 
     frag.appendChild(tr);
@@ -1018,7 +1115,7 @@ function buildPatchDiff(c) {
   }).join('');
 
   return head +
-    `<div class="pd-note">Files are pulled straight from Microsoft's symbol server. Diff <strong>Unpatched</strong> vs <strong>Patched</strong> in your tool of choice.</div>` +
+    `<div class="pd-note">Downloaded straight from Microsoft's symbol server. Diff <strong>Unpatched</strong> vs <strong>Patched</strong> — IDA, Ghidra &amp; BinDiff auto-resolve symbols (PDBs) for these builds from the same server.</div>` +
     blocks +
     `<div style="margin-bottom:14px"></div>`;
 }

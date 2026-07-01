@@ -35,15 +35,24 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import date
+from datetime import date, datetime, timezone
+from xml.sax.saxutils import escape as xml_escape
 
 MSRC_BASE = "https://api.msrc.microsoft.com/cvrf/v3.0"
 USER_AGENT = "winsight/1.0 (+https://github.com/) build_index.py"
+SITE_URL = os.environ.get("WINSIGHT_SITE_URL", "https://shellpecker.github.io/winsight/")
+MSRC_VULN_URL = "https://msrc.microsoft.com/update-guide/vulnerability/"
 
 BACKFILL_MONTHS = int(os.environ.get("WINSIGHT_BACKFILL_MONTHS", "24"))
 OUTPUT_PATH = os.environ.get("WINSIGHT_OUTPUT", "data/index.json")
+FEED_PATH = os.environ.get("WINSIGHT_FEED_OUTPUT", "")  # set to emit data/feed.xml
+FEED_MAX_ITEMS = 60
 REQUEST_DELAY_SEC = 0.3
 MAX_RETRIES = 3
+
+_MONTHS_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+_DOW_ABBR = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
 def http_get_json(url):
@@ -428,6 +437,72 @@ def parse_cvrf(doc, month_id):
 
 
 # ---------------------------------------------------------------------------
+# RSS feed
+# ---------------------------------------------------------------------------
+
+def _rfc822(d):
+    """'2026-07-01' -> 'Tue, 01 Jul 2026 00:00:00 GMT' (locale-independent)."""
+    try:
+        dt = datetime.strptime(d, "%Y-%m-%d")
+    except (ValueError, TypeError):
+        dt = datetime.now(timezone.utc)
+    return (f"{_DOW_ABBR[dt.weekday()]}, {dt.day:02d} {_MONTHS_ABBR[dt.month - 1]} "
+            f"{dt.year} 00:00:00 GMT")
+
+
+def write_rss(cves, path):
+    """Emit an RSS 2.0 feed of the most recent CVEs (input is date-desc sorted)."""
+    items = []
+    for c in cves[:FEED_MAX_ITEMS]:
+        cid = c.get("id", "")
+        bits = []
+        if c.get("cvss") is not None:
+            bits.append(f"CVSS {c['cvss']}")
+        if c.get("impact"):
+            bits.append(c["impact"].upper())
+        if c.get("exploited"):
+            bits.append("Exploited")
+        if c.get("disclosed"):
+            bits.append("Publicly disclosed")
+        desc_lines = [" · ".join(bits)]
+        vers = ", ".join((c.get("versions") or [])[:6])
+        if vers:
+            desc_lines.append("Affected: " + vers)
+        if c.get("kbs"):
+            desc_lines.append("KB: " + ", ".join(c["kbs"]))
+        items.append(
+            "    <item>\n"
+            f"      <title>{xml_escape(cid + ' — ' + c.get('title', ''))}</title>\n"
+            f"      <link>{xml_escape(MSRC_VULN_URL + cid)}</link>\n"
+            f'      <guid isPermaLink="false">{xml_escape(cid)}</guid>\n'
+            f"      <pubDate>{_rfc822(c.get('date', ''))}</pubDate>\n"
+            f"      <description>{xml_escape(chr(10).join(desc_lines))}</description>\n"
+            "    </item>"
+        )
+    n = datetime.now(timezone.utc)
+    now = (f"{_DOW_ABBR[n.weekday()]}, {n.day:02d} {_MONTHS_ABBR[n.month - 1]} "
+           f"{n.year} {n.hour:02d}:{n.minute:02d}:{n.second:02d} GMT")
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<rss version="2.0">\n'
+        "  <channel>\n"
+        "    <title>winsight — recent Windows CVEs</title>\n"
+        f"    <link>{xml_escape(SITE_URL)}</link>\n"
+        "    <description>Recent Microsoft Windows CVEs with affected modules and "
+        "patch-diff binaries, refreshed weekly from MSRC.</description>\n"
+        "    <language>en</language>\n"
+        f"    <lastBuildDate>{now}</lastBuildDate>\n"
+        + "\n".join(items) + "\n"
+        "  </channel>\n"
+        "</rss>\n"
+    )
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(xml)
+    print(f"Wrote {path}: {min(len(cves), FEED_MAX_ITEMS)} feed items")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -474,6 +549,12 @@ def main():
         json.dump(out, f, indent=2, ensure_ascii=False)
 
     print(f"Wrote {OUTPUT_PATH}: {len(all_cves)} CVEs across {len(months_with_data)} months")
+
+    if FEED_PATH:
+        try:
+            write_rss(all_cves, FEED_PATH)
+        except Exception as e:  # noqa: BLE001 — a feed error must not fail the refresh
+            print(f"  ! RSS feed generation failed: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":
