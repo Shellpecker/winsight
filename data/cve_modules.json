@@ -3,6 +3,7 @@
   "symbol_server": "https://msdl.microsoft.com/download/symbols",
   "winbindex": "https://winbindex.m417z.com/",
   "count_with_modules": 851,
+  "count_downloadable_cves": 718,
   "count_targets": 4716,
   "count_downloadable_builds": 8708,
   "modules": {
@@ -2195,129 +2196,6 @@
             "sha256": "cec84ec4cd5c477559fdd1a731e096eb1fd2078d6079903815a7b845d4795380",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/win32k.sys/11E7ECCAc7000/win32k.sys"
-          }
-        }
-      ]
-    },
-    "CVE-2026-45638": {
-      "source": "heuristic",
-      "component": "Ancillary Function Driver for WinSock",
-      "files": [
-        "afd.sys"
-      ],
-      "targets": [
-        {
-          "file": "afd.sys",
-          "version": "Windows 10 1607",
-          "winver": "1607",
-          "arch": "x64",
-          "kb": "KB5094122",
-          "patched": {
-            "build": "10.0.14393.9234",
-            "sha256": "3f2e63d9c84fa8e40a833a0336b3fb874103f2ea2cc7889969dfd840922bcc12",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/6A23A7A995000/afd.sys"
-          },
-          "unpatched": {
-            "build": "10.0.14393.9140",
-            "sha256": "8c7b379224f976b62d8ff1b9c83f5210b46fee683d778671eb9c242987faf519",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/69FB57FC96000/afd.sys"
-          }
-        },
-        {
-          "file": "afd.sys",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5094123",
-          "patched": {
-            "build": "10.0.17763.8880",
-            "sha256": "e94b0410b7215f67d2d109c10cf4b71bd003ddf427e912f3c91bcd486400c71a",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/6BB42E9Ba7000/afd.sys"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8755",
-            "sha256": "9e3ea1804e3c397b96078ccb8d44c5ba1c46d6fed13ce0b9f19243c32b48cd57",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F8D71721a8000/afd.sys"
-          }
-        },
-        {
-          "file": "afd.sys",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5094127",
-          "patched": {
-            "build": "10.0.19041.7417",
-            "sha256": "320591c66e9cfd93501be7bb6f067584776dbd91876343b70f5e0d5426b8ac69",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/1B2A80A0aa000/afd.sys"
-          },
-          "unpatched": {
-            "build": "10.0.19041.7291",
-            "sha256": "411285e8b2570347beb1072756a40c9b23a522f81ad559ab1717122ad95cf9da",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/7BA975D0aa000/afd.sys"
-          }
-        },
-        {
-          "file": "afd.sys",
-          "version": "Windows 11 23H2",
-          "winver": "11-23H2",
-          "arch": "x64",
-          "kb": "KB5093998",
-          "patched": {
-            "build": "10.0.22621.7219",
-            "sha256": "94756a591f10b616c795f2f5c0f1a8feb1cc6fff7ca7971a9fe9c36c51122a6e",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/14FF8806aa000/afd.sys"
-          },
-          "unpatched": {
-            "build": "10.0.22621.7079",
-            "sha256": "2b7811db4c9fb2912cbbd5723c500f6e556b7eef28b811b1cd5d919ac54ea8d0",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F510530Caa000/afd.sys"
-          }
-        },
-        {
-          "file": "afd.sys",
-          "version": "Windows 11 24H2",
-          "winver": "11-24H2",
-          "arch": "x64",
-          "kb": "KB5094126",
-          "patched": {
-            "build": "10.0.26100.8655",
-            "sha256": "d087cc6d40354cbcfbe8f80e0aa42da3d30dcfa7bd3f814f74e0fe4e8aa703ce",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/4A6172D1b2000/afd.sys"
-          },
-          "unpatched": {
-            "build": "10.0.26100.8521",
-            "sha256": "3ac8b41ec1b9624c8b72a4b9b9f1ee661e47052852afb0c1288c6bb7839b2dbf",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F13C5A79b1000/afd.sys"
-          }
-        },
-        {
-          "file": "afd.sys",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5095051",
-          "patched": {
-            "build": "10.0.28000.2269",
-            "sha256": "83a6b7d7a8e55a24e01318344a8322a7f74aad6b1187fd6b1c1c59eb2384db8c",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F1AE108Eb2000/afd.sys"
-          },
-          "unpatched": {
-            "build": "10.0.28000.1896",
-            "sha256": "4699387e5258a0aa5d25de1b5d289a816e44f5edac376baa94416b582fda89d7",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/107EA095b1000/afd.sys"
           }
         }
       ]
@@ -5568,6 +5446,129 @@
             "sha256": "a28d3f0fb0cd054aaabefc3d0d3395eeaf238c0f211f26d4849b20c3791ba600",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/udwm.dll/D3188B49145000/udwm.dll"
+          }
+        }
+      ]
+    },
+    "CVE-2026-45638": {
+      "source": "heuristic",
+      "component": "Ancillary Function Driver for WinSock",
+      "files": [
+        "afd.sys"
+      ],
+      "targets": [
+        {
+          "file": "afd.sys",
+          "version": "Windows 10 1607",
+          "winver": "1607",
+          "arch": "x64",
+          "kb": "KB5094122",
+          "patched": {
+            "build": "10.0.14393.9234",
+            "sha256": "3f2e63d9c84fa8e40a833a0336b3fb874103f2ea2cc7889969dfd840922bcc12",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/6A23A7A995000/afd.sys"
+          },
+          "unpatched": {
+            "build": "10.0.14393.9140",
+            "sha256": "8c7b379224f976b62d8ff1b9c83f5210b46fee683d778671eb9c242987faf519",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/69FB57FC96000/afd.sys"
+          }
+        },
+        {
+          "file": "afd.sys",
+          "version": "Windows 10 1809",
+          "winver": "1809",
+          "arch": "x64",
+          "kb": "KB5094123",
+          "patched": {
+            "build": "10.0.17763.8880",
+            "sha256": "e94b0410b7215f67d2d109c10cf4b71bd003ddf427e912f3c91bcd486400c71a",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/6BB42E9Ba7000/afd.sys"
+          },
+          "unpatched": {
+            "build": "10.0.17763.8755",
+            "sha256": "9e3ea1804e3c397b96078ccb8d44c5ba1c46d6fed13ce0b9f19243c32b48cd57",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F8D71721a8000/afd.sys"
+          }
+        },
+        {
+          "file": "afd.sys",
+          "version": "Windows 10 21H2",
+          "winver": "21H2",
+          "arch": "x64",
+          "kb": "KB5094127",
+          "patched": {
+            "build": "10.0.19041.7417",
+            "sha256": "320591c66e9cfd93501be7bb6f067584776dbd91876343b70f5e0d5426b8ac69",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/1B2A80A0aa000/afd.sys"
+          },
+          "unpatched": {
+            "build": "10.0.19041.7291",
+            "sha256": "411285e8b2570347beb1072756a40c9b23a522f81ad559ab1717122ad95cf9da",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/7BA975D0aa000/afd.sys"
+          }
+        },
+        {
+          "file": "afd.sys",
+          "version": "Windows 11 23H2",
+          "winver": "11-23H2",
+          "arch": "x64",
+          "kb": "KB5093998",
+          "patched": {
+            "build": "10.0.22621.7219",
+            "sha256": "94756a591f10b616c795f2f5c0f1a8feb1cc6fff7ca7971a9fe9c36c51122a6e",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/14FF8806aa000/afd.sys"
+          },
+          "unpatched": {
+            "build": "10.0.22621.7079",
+            "sha256": "2b7811db4c9fb2912cbbd5723c500f6e556b7eef28b811b1cd5d919ac54ea8d0",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F510530Caa000/afd.sys"
+          }
+        },
+        {
+          "file": "afd.sys",
+          "version": "Windows 11 24H2",
+          "winver": "11-24H2",
+          "arch": "x64",
+          "kb": "KB5094126",
+          "patched": {
+            "build": "10.0.26100.8655",
+            "sha256": "d087cc6d40354cbcfbe8f80e0aa42da3d30dcfa7bd3f814f74e0fe4e8aa703ce",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/4A6172D1b2000/afd.sys"
+          },
+          "unpatched": {
+            "build": "10.0.26100.8521",
+            "sha256": "3ac8b41ec1b9624c8b72a4b9b9f1ee661e47052852afb0c1288c6bb7839b2dbf",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F13C5A79b1000/afd.sys"
+          }
+        },
+        {
+          "file": "afd.sys",
+          "version": "Windows 11 version 26H1",
+          "winver": "11-26H1",
+          "arch": "x64",
+          "kb": "KB5095051",
+          "patched": {
+            "build": "10.0.28000.2269",
+            "sha256": "83a6b7d7a8e55a24e01318344a8322a7f74aad6b1187fd6b1c1c59eb2384db8c",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/F1AE108Eb2000/afd.sys"
+          },
+          "unpatched": {
+            "build": "10.0.28000.1896",
+            "sha256": "4699387e5258a0aa5d25de1b5d289a816e44f5edac376baa94416b582fda89d7",
+            "downloadable": true,
+            "url": "https://msdl.microsoft.com/download/symbols/afd.sys/107EA095b1000/afd.sys"
           }
         }
       ]
