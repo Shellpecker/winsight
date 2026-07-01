@@ -199,6 +199,15 @@ def parse_product_target(full_label):
             winver = f"11-{tok}"
         elif full_label.startswith("Windows 10"):
             winver = tok
+    # Windows Server 2016/2019 share build numbers — and therefore Winbindex
+    # keys — with client 1607/1809, so their binaries are reachable. Server
+    # 2022/2025/2012 have no key in the Winbindex by-filename dataset and stay
+    # unmapped. Server labels rarely name an arch; default to x64.
+    if winver is None:
+        if "Server 2016" in full_label:
+            winver, arch = "1607", (arch or "x64")
+        elif "Server 2019" in full_label:
+            winver, arch = "1809", (arch or "x64")
     return winver, arch
 
 
