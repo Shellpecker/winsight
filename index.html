@@ -516,6 +516,12 @@ footer a:hover { color: var(--fg2); }
       </div>
     </div>
     <div class="sf">
+      <div class="sf-lbl">Patch-diff</div>
+      <div class="toggle-row">
+        <button class="tog" id="tog-patchdiff" data-f="patchdiff">Downloadable builds</button>
+      </div>
+    </div>
+    <div class="sf">
       <div class="sf-lbl">Exploitability Assessment</div>
       <select id="f-assess">
         <option value="">All</option>
@@ -723,9 +729,10 @@ async function loadModules() {
     if (!res.ok) return;
     const json = await res.json();
     MODULES = json.modules || {};
-    // Re-render so detail panels pick up the patch-diff section (open rows are
-    // preserved via the openRows set + CSS classes).
-    if (DATA.length) render();
+    // Re-filter + re-render so the patch-diff panel appears and binary-name
+    // search / "downloadable builds" filter pick up the newly-loaded data.
+    // (Open rows are preserved via the openRows set + CSS classes.)
+    if (DATA.length) applyFilters();
   } catch (e) { /* optional data — ignore */ }
 }
 
@@ -774,11 +781,13 @@ function applyFilters() {
     if (type && c.impact !== type) return false;
     if (activeToggles.has('exploited') && !c.exploited) return false;
     if (activeToggles.has('disclosed') && !c.disclosed) return false;
+    if (activeToggles.has('patchdiff') && !hasDownloadable(c)) return false;
     if (assess && c.exploitability !== assess) return false;
     if (cwe && (!c.cwe || c.cwe.id !== cwe)) return false;
     if (ver && !(c.versions || []).includes(ver)) return false;
     if (q) {
-      const hay = (c.id + ' ' + c.title + ' ' + (c.kbs || []).join(' ') + ' ' + (c.versions || []).join(' ')).toLowerCase();
+      const files = (MODULES[c.id]?.files || []).join(' ');
+      const hay = (c.id + ' ' + c.title + ' ' + (c.kbs || []).join(' ') + ' ' + (c.versions || []).join(' ') + ' ' + files).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -945,6 +954,14 @@ function dlSide(d, label) {
     return `<a class="pd-dl ${label === 'Patched' ? 'pd-patched' : 'pd-unpatched'}" href="${esc(d.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Download ${esc(d.build)} (sha256 ${esc(short)})">⭳ ${label}</a>${meta}`;
   }
   return `<span class="pd-noid" title="This build shares a symbol-server id with others and can't be fetched individually">${label} (no direct link)</span>${meta}`;
+}
+
+// True if this CVE has at least one build a researcher can download and diff.
+function hasDownloadable(c) {
+  const m = MODULES[c.id];
+  if (!m || !m.targets) return false;
+  return m.targets.some(t =>
+    (t.patched && t.patched.downloadable) || (t.unpatched && t.unpatched.downloadable));
 }
 
 function buildPatchDiff(c) {
