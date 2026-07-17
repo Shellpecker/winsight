@@ -1,0 +1,1890 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>winsight — Windows CVE Intelligence</title>
+<meta name="description" content="Browse Microsoft Windows CVEs for patch-diffing: affected modules plus one-click downloads of the patched and unpatched binaries. Refreshed weekly from the MSRC security update guide.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="winsight — recent Windows CVEs" href="data/feed.xml">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="winsight">
+<meta property="og:title" content="winsight — Windows CVE Intelligence">
+<meta property="og:description" content="Windows CVE intelligence for patch-diffing: affected modules plus one-click patched & unpatched binaries. Refreshed weekly from MSRC.">
+<meta property="og:url" content="https://shellpecker.github.io/winsight/">
+<meta property="og:image" content="https://shellpecker.github.io/winsight/og.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="winsight — Windows CVE Intelligence">
+<meta name="twitter:description" content="Windows CVE intelligence for patch-diffing: affected modules plus one-click patched & unpatched binaries.">
+<meta name="twitter:image" content="https://shellpecker.github.io/winsight/og.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cascadia+Code:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── tokens: dark (default) — Windows 11 dark theme (Mica app bg #202020) ── */
+:root {
+  --bg:   #202020;
+  --s1:   #2C2C2C;
+  --s2:   #323232;
+  --s3:   #3A3A3A;
+  --b1:   #3B3B3B;
+  --b2:   #505050;
+  --fg:   #F3F3F3;
+  --fg2:  #B0B0B0;
+  --fg3:  #7A7A7A;
+  --acc:     #0078D4;
+  --acc-fg:  #60CDFF;
+  --acc-bg:  rgba(96,205,255,.14);
+  --crit:    #FF6A5E;
+  --crit-bg: rgba(255,90,75,.16);
+  --high:    #FF8A3D;
+  --high-bg: rgba(255,138,61,.15);
+  --med:     #F5D033;
+  --med-bg:  rgba(245,208,51,.13);
+  --low:     #6CCB5F;
+  --low-bg:  rgba(108,203,95,.13);
+  --expl:    #FF6A5E;
+  --expl-bg: rgba(255,90,75,.18);
+  --ok:      #6CCB5F;
+  /* Fluent "Reveal" — a faint top-edge highlight on hover, as if light is
+     catching the control's edge. */
+  --reveal:  rgba(255,255,255,.05);
+  --nav-h:  44px;
+  --sb-w:   210px;
+  /* Fluent 2 corner radius scale: ControlCornerRadius / OverlayCornerRadius. */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  /* Segoe UI Variable ships with Windows 11/10 — real users see the genuine
+     system font; everyone else falls back gracefully. Cascadia Code (the
+     Windows Terminal / VS Code default) carries identifiers and data. */
+  --ui:   'Segoe UI Variable Text', 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --mono: 'Cascadia Code', 'Cascadia Mono', ui-monospace, Consolas, monospace;
+}
+
+/* ── tokens: light — Windows 11 light theme, toned down from pure white ── */
+[data-theme="light"] {
+  --bg:   #EBEBEA;
+  --s1:   #F7F7F6;
+  --s2:   #EFEFEE;
+  --s3:   #E6E6E5;
+  --b1:   #DBDBDA;
+  --b2:   #C4C4C3;
+  --fg:   #1A1A1A;
+  --fg2:  #5C5C5C;
+  --fg3:  #8B8B8B;
+  --acc:     #005FB8;
+  --acc-fg:  #005A9E;
+  --acc-bg:  rgba(0,95,184,.08);
+  --crit:    #C42B1C;
+  --crit-bg: rgba(196,43,28,.08);
+  --high:    #B54708;
+  --high-bg: rgba(181,71,8,.09);
+  --med:     #8A7100;
+  --med-bg:  rgba(138,113,0,.08);
+  --low:     #0F7B0F;
+  --low-bg:  rgba(15,123,15,.07);
+  --expl:    #C42B1C;
+  --expl-bg: rgba(196,43,28,.10);
+  --ok:      #0F7B0F;
+  --reveal:  rgba(0,0,0,.035);
+}
+
+/* ── reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  font-family: var(--ui);
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  /* App-shell layout: body is a flex column, nothing scrolls at body level */
+  display: flex; flex-direction: column;
+  height: 100%; overflow: hidden;
+}
+::selection { background: var(--acc-bg); }
+a { color: var(--acc-fg); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+input, select { font-family: inherit; }
+
+/* ── nav ── */
+.nav {
+  /* In-flow flex item — body is the flex column so nav is always on top */
+  flex-shrink: 0;
+  height: var(--nav-h);
+  background: var(--s1);
+  border-bottom: 1px solid var(--b1);
+  z-index: 200;
+  display: flex; align-items: center; padding: 0 16px; gap: 0;
+}
+.brand {
+  display: flex; align-items: center; gap: 9px;
+  margin-right: 24px; white-space: nowrap; flex-shrink: 0;
+}
+.brand-mark { width: 29px; height: 29px; color: var(--acc-fg); flex-shrink: 0; display: block; }
+.brand-mark .eye, .brand-mark .iris { transition: stroke .2s; }
+.brand-mark .pane { fill: var(--acc-fg); transition: fill .2s; }
+.brand-mark .pane-hot { fill: var(--crit); }
+.brand-mark .lash { stroke: var(--acc-fg); opacity: .55; }
+.brand:hover .brand-mark .pane { fill: var(--acc); }
+.brand-txt {
+  font-size: 16.5px; font-weight: 700; color: var(--fg);
+  letter-spacing: -.03em;
+}
+.brand-txt span { color: var(--acc-fg); }
+.nav-links { display: flex; gap: 1px; flex: 1; }
+.nav-links a {
+  font-size: 12px; color: var(--fg2);
+  padding: 5px 9px; border-radius: var(--r-xs); white-space: nowrap;
+}
+.nav-links a:hover { color: var(--fg); background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); text-decoration: none; }
+.nav-btn {
+  font-size: 12px; color: var(--fg2); background: none;
+  padding: 5px 9px; border-radius: var(--r-xs); white-space: nowrap;
+}
+.nav-btn:hover { color: var(--fg); background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); }
+.nav-r { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.nav-r a {
+  font-size: 11.5px; color: var(--fg3);
+  display: flex; align-items: center; gap: 4px; padding: 4px 7px;
+  border-radius: var(--r-xs);
+}
+.nav-r a:hover { color: var(--fg2); background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); text-decoration: none; }
+.nav-sep { width: 1px; height: 18px; background: var(--b1); margin: 0 4px; }
+.theme-btn {
+  font-size: 11.5px; color: var(--fg3);
+  padding: 4px 8px; border: 1px solid transparent; border-radius: var(--r-xs);
+  background: none; line-height: 1;
+}
+.theme-btn:hover { color: var(--fg2); border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
+
+/* ── search panel ── */
+.search-panel {
+  flex-shrink: 0;
+  background: var(--s1);
+  border-bottom: 1px solid var(--b1);
+  padding: 18px 20px;
+}
+.search-row { display: flex; gap: 8px; max-width: 820px; }
+.si-wrap { flex: 1; position: relative; }
+.si-wrap svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--fg3); pointer-events: none;
+}
+#q {
+  width: 100%; height: 36px;
+  background: var(--s2); border: 1px solid var(--b1);
+  color: var(--fg); font-family: inherit; font-size: 12.5px;
+  padding: 0 10px 0 32px; outline: none; border-radius: var(--r-xs);
+}
+#q::placeholder { color: var(--fg3); }
+#q:focus { border-color: var(--acc); outline: 2px solid var(--acc-bg); outline-offset: 0; }
+.search-go {
+  height: 36px; padding: 0 14px;
+  background: var(--s3); border: 1px solid var(--b1);
+  color: var(--fg2); font-size: 12px; border-radius: var(--r-xs); white-space: nowrap;
+}
+.search-go:hover { color: var(--fg); border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
+/* Hidden on desktop — the sidebar is always visible there. Shown at the same
+   <=900px breakpoint where the sidebar switches to an off-canvas drawer. */
+.filter-toggle-btn {
+  display: none; height: 36px; padding: 0 14px;
+  background: var(--s3); border: 1px solid var(--b1);
+  color: var(--fg2); font-size: 12px; border-radius: var(--r-xs); white-space: nowrap;
+  align-items: center; gap: 6px;
+}
+.filter-toggle-btn:hover { color: var(--fg); border-color: var(--b2); }
+.eq-row {
+  margin-top: 10px; display: flex; flex-wrap: wrap; gap: 7px;
+  align-items: center; max-width: 820px;
+}
+.eq-lbl { font-size: 11px; color: var(--fg3); margin-right: 4px; }
+/* Give each example a visible pill boundary by default — previously the
+   border only appeared on hover, so a run of adjacent chips read as one
+   blurry strip of text instead of distinct clickable tags. */
+.eq {
+  font-size: 11px; color: var(--fg2); background: var(--s2);
+  border: 1px solid var(--b1); padding: 3px 10px; border-radius: var(--r-xs); cursor: pointer;
+}
+.eq:hover { border-color: var(--acc); color: var(--acc-fg); background: var(--s3); box-shadow: inset 0 1px 0 var(--reveal); }
+
+/* ── app layout ── */
+.app { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+/* ── sidebar ── */
+.sidebar {
+  width: var(--sb-w); flex-shrink: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--b1);
+  background: var(--s1);
+  padding: 12px 12px 16px;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--b2); }
+/* Only meaningful once the <=900px rule turns the sidebar into a drawer. */
+.sidebar-mobile-hd {
+  display: none; align-items: center; justify-content: space-between;
+  padding: 4px 4px 14px; margin-bottom: 10px; border-bottom: 1px solid var(--b1);
+  font-size: 13px; font-weight: 600; color: var(--fg);
+}
+.sidebar-mobile-hd button {
+  color: var(--fg3); font-size: 15px; padding: 2px 6px; border-radius: var(--r-xs);
+}
+.sidebar-mobile-hd button:hover { color: var(--fg); background: var(--s2); }
+.sidebar-scrim {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 350;
+}
+.sidebar-scrim.on { display: none; } /* only takes effect inside the <=900px rule below */
+
+/* Fluent "Settings" style: each filter group is its own grouped card, not a
+   hairline-divided section. */
+.sf {
+  background: var(--s2); border: 1px solid var(--b1);
+  border-radius: var(--r-sm); padding: 11px 12px 12px; margin-bottom: 8px;
+}
+.sf-lbl {
+  font-size: 11px; font-weight: 600;
+  color: var(--fg2); margin-bottom: 7px;
+}
+.sf select {
+  width: 100%; background: var(--s3); border: 1px solid transparent;
+  color: var(--fg); font-family: inherit; font-size: 11.5px;
+  padding: 6px 7px; outline: none; border-radius: var(--r-xs);
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A8DAA'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
+.sf select:hover { border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
+.sf select:focus { border-color: var(--acc); }
+.sf select option { background: var(--s2); }
+[data-theme="light"] .sf select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238D90A3'/%3E%3C/svg%3E");
+}
+
+/* toggle rows — real Windows-style toggle switches, Settings-app idiom */
+.toggle-row { display: flex; flex-direction: column; gap: 3px; }
+.tog {
+  width: 100%; text-align: left;
+  font-family: inherit; font-size: 11.5px;
+  color: var(--fg2); background: none;
+  border: none; padding: 7px 4px;
+  border-radius: var(--r-xs); cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.tog:hover { color: var(--fg); box-shadow: inset 0 1px 0 var(--reveal); background: var(--s3); }
+.tog.on { color: var(--fg); }
+.tog-txt { flex: 1; }
+.tog-sw {
+  position: relative; flex-shrink: 0; width: 32px; height: 18px;
+  border-radius: 9px; background: none; border: 1.5px solid var(--fg3);
+  transition: background-color .15s, border-color .15s;
+}
+.tog-sw::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--fg3);
+  transition: transform .15s ease, background-color .15s;
+}
+.tog.on .tog-sw { background: var(--acc); border-color: var(--acc); }
+.tog.on .tog-sw::after { background: #fff; transform: translateX(14px); }
+#tog-exploited.on .tog-sw, #tog-kev.on .tog-sw { background: var(--crit); border-color: var(--crit); }
+#tog-disclosed.on .tog-sw { background: var(--high); border-color: var(--high); }
+
+.rst-btn {
+  display: block; width: 100%; margin: 4px 0 0;
+  padding: 6px 0; background: none; border: 1px solid var(--b1);
+  color: var(--fg3); font-size: 11px; border-radius: var(--r-xs); text-align: center;
+  font-family: inherit;
+}
+.rst-btn:hover { border-color: var(--b2); color: var(--fg2); box-shadow: inset 0 1px 0 var(--reveal); }
+
+/* ── main ── */
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── warn ── */
+.warn {
+  background: var(--high-bg);
+  border-bottom: 1px solid var(--high);
+  color: var(--high); font-size: 11.5px;
+  padding: 8px 16px; display: none;
+}
+.warn.on { display: block; }
+
+/* ── toolbar ── */
+.toolbar {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  padding: 9px 16px; border-bottom: 1px solid var(--b1); background: var(--s1);
+}
+.tb-stats { font-size: 11px; color: var(--fg3); flex: 1; }
+.tb-stats strong { color: var(--fg); }
+.tb-stats .ec { color: var(--crit); }
+.tb-r { display: flex; align-items: center; gap: 6px; }
+.tb-sel {
+  background: var(--s2); border: 1px solid transparent; color: var(--fg2);
+  font-family: inherit; font-size: 11px; padding: 4px 22px 4px 8px;
+  border-radius: var(--r-xs); outline: none;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238A8DAA'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 7px center;
+}
+.tb-sel:hover { border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
+.tb-sel:focus { border-color: var(--acc); }
+.tb-sel option { background: var(--s2); }
+[data-theme="light"] .tb-sel {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238D90A3'/%3E%3C/svg%3E");
+}
+.tb-btn {
+  background: none; border: 1px solid var(--b1); color: var(--fg3);
+  font-size: 11px; font-family: inherit; padding: 4px 9px; border-radius: var(--r-xs);
+}
+.tb-btn:hover { border-color: var(--b2); color: var(--fg2); box-shadow: inset 0 1px 0 var(--reveal); }
+
+/* ── table ── */
+.tbl-wrap { flex: 1; overflow: auto; min-height: 0; }
+table.cvt { width: 100%; border-collapse: collapse; table-layout: fixed; }
+
+table.cvt thead th {
+  text-align: left; font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--fg3); padding: 9px 10px;
+  border-bottom: 1px solid var(--b1); background: var(--s1);
+  position: sticky; top: 0; white-space: nowrap;
+  cursor: pointer; user-select: none; z-index: 10;
+}
+table.cvt thead th:hover { color: var(--fg2); }
+table.cvt thead th.sorted { color: var(--acc-fg); }
+table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
+.th-bar  { width: 3px; padding: 0 !important; cursor: default !important; }
+.th-cve  { width: 300px; }
+.th-sev  { width: 72px; }
+.th-comp { width: 150px; }
+.th-type { width: 110px; }
+.th-flag { width: 90px; }
+.th-cvss { width: 52px; text-align: right !important; }
+.ctitle  { font-size: 11px; color: var(--fg2); margin-top: 2px; line-height: 1.4; }
+.ccwe    { font-size: 9.5px; color: var(--fg3); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.tr { border-bottom: 1px solid var(--b1); cursor: pointer; }
+.tr:hover td, .tr.open td { background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); }
+.tr td { padding: 9px 10px; vertical-align: top; background: var(--s1); }
+.tr td.td-bar { padding: 0; width: 3px; position: relative; }
+/* A short centered capsule rather than an edge-to-edge bar — the Windows 11
+   list-selection-indicator idiom (File Explorer / Settings / Mail). */
+.tr td.td-bar::after {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; border-radius: 0 3px 3px 0;
+}
+.tr.sc .td-bar::after { background: var(--crit); }
+.tr.sh .td-bar::after { background: var(--high); }
+.tr.sm .td-bar::after { background: var(--med);  }
+.tr.sl .td-bar::after { background: var(--low);  }
+.tr.sn .td-bar::after { background: var(--fg3);  }
+
+.cid { font-size: 12px; font-weight: 600; color: var(--fg); letter-spacing: -.01em; display: flex; align-items: center; gap: 6px; }
+.cid-link {
+  font-size: 9.5px; color: var(--fg3); opacity: 0; transition: opacity .12s;
+  padding: 1px 4px; border: 1px solid var(--b1); border-radius: var(--r-xs);
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+}
+.tr:hover .cid-link { opacity: 1; }
+.cid-link:hover { color: var(--acc-fg); border-color: var(--acc); text-decoration: none; }
+.cdt { font-size: 10px; color: var(--fg3); margin-top: 1px; }
+
+/* Pill-shaped, not rounded-rect — Fluent's InfoBadge/status convention. */
+.sv {
+  font-size: 10px; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 8px; border-radius: 999px; text-transform: uppercase;
+  display: inline-block; white-space: nowrap;
+}
+.sv.c { background: var(--crit-bg); color: var(--crit); }
+.sv.h { background: var(--high-bg); color: var(--high); }
+.sv.m { background: var(--med-bg);  color: var(--med);  }
+.sv.l { background: var(--low-bg);  color: var(--low);  }
+.sv.n { background: rgba(128,128,128,.1); color: var(--fg3); }
+
+.cn { font-size: 12px; color: var(--fg); line-height: 1.3; }
+.cb { font-size: 10px; color: var(--fg3); margin-top: 1px; }
+
+/* Plain text, not a boxed pill — the severity pill already carries the row's
+   status signal, so Type doesn't need a second badge competing for attention. */
+.ty {
+  font-size: 11.5px; color: var(--fg2); font-family: var(--ui);
+}
+
+.fl-ex {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  color: var(--expl); background: var(--expl-bg);
+  padding: 2px 7px; border-radius: 999px; text-transform: uppercase;
+}
+.fl-ex::before {
+  content: ''; display: block; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--expl); flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.fl-disc {
+  font-size: 10px; color: var(--high); background: var(--high-bg);
+  padding: 2px 7px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: .05em; font-weight: 700;
+  display: inline-block; margin-top: 3px;
+}
+.fl-assess {
+  font-size: 9.5px; color: var(--fg3); margin-top: 3px;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.fl-none { color: var(--fg3); font-size: 11px; }
+.fl-kev {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  color: #fff; background: var(--crit); padding: 2px 8px; border-radius: 999px;
+  text-transform: uppercase; margin-bottom: 3px;
+}
+.fl-epss {
+  font-size: 9.5px; color: var(--fg3); margin-top: 3px;
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+
+.cs { font-size: 13px; font-weight: 600; text-align: right; display: block; }
+.cs.c { color: var(--crit); } .cs.h { color: var(--high); }
+.cs.m { color: var(--med);  } .cs.l { color: var(--low);  }
+.cs.n { color: var(--fg3);  }
+
+/* ── detail row ── */
+.tr-det { display: none; }
+.tr-det.open { display: table-row; animation: detFadeIn .12s ease; }
+@keyframes detFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.tr-det td { padding: 0; background: var(--s2); border-bottom: 1px solid var(--b1); }
+.det { padding: 16px 18px 20px; border-left: 3px solid var(--b2); }
+.det.det-c { border-left-color: var(--crit); }
+.det.det-h { border-left-color: var(--high); }
+.det.det-m { border-left-color: var(--med); }
+.det.det-l { border-left-color: var(--low); }
+
+.det-hd {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 16px; margin-bottom: 10px;
+}
+.det-title { font-size: 13.5px; font-weight: 600; color: var(--fg); line-height: 1.45; max-width: 72ch; }
+.det-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; align-items: center; }
+.det-links { display: flex; gap: 5px; flex-shrink: 0; margin-top: 2px; }
+.det-link {
+  font-size: 11px; color: var(--fg3); padding: 3px 9px;
+  border: 1px solid var(--b1); border-radius: var(--r-xs);
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.det-link:hover { color: var(--acc-fg); border-color: var(--acc); text-decoration: none; }
+
+.sec-lbl {
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg3);
+  margin: 16px 0 9px; display: flex; align-items: center; gap: 8px;
+}
+.sec-lbl::after { content: ''; flex: 1; height: 1px; background: var(--b1); }
+
+
+.p-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.pc { font-size: 10.5px; color: var(--fg2); background: var(--s3); border: 1px solid var(--b1); padding: 2px 7px; border-radius: var(--r-xs); }
+
+.kb-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.kbc { font-size: 12px; color: var(--acc-fg); background: var(--acc-bg); border: 1px solid rgba(79,107,255,.2); padding: 2px 8px; border-radius: var(--r-xs); }
+
+/* ── patch-diff panel ── */
+.pd-hint { font-size: 8.5px; color: var(--fg3); background: var(--s3); border: 1px solid var(--b1); padding: 1px 5px; border-radius: var(--r-xs); letter-spacing: .04em; text-transform: none; }
+.pd-files { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 8px; }
+.pd-file { font-size: 11px; font-weight: 600; color: var(--fg); background: var(--s3); border: 1px solid var(--b2); padding: 2px 8px; border-radius: var(--r-xs); font-variant-numeric: tabular-nums; }
+.pd-wb { font-size: 10px; color: var(--fg3); border: 1px solid var(--b1); padding: 2px 7px; border-radius: var(--r-xs); margin-left: 2px; }
+.pd-wb:hover { color: var(--acc-fg); border-color: var(--acc); text-decoration: none; }
+.pd-note { font-size: 10.5px; color: var(--fg3); margin-bottom: 10px; }
+.pd-note strong { color: var(--fg2); font-weight: 600; }
+.pd-empty { font-size: 11px; color: var(--fg3); margin-bottom: 14px; font-style: italic; }
+.pd-binhd { font-size: 11px; font-weight: 600; color: var(--fg2); margin: 10px 0 4px; font-variant-numeric: tabular-nums; }
+/* table-layout:fixed + shared percentage widths so every binary's table
+   (each is a separate <table>, sized independently by default) lines up
+   in the same columns instead of drifting based on its own content. */
+.pd-tbl { width: 100%; border-collapse: collapse; margin-bottom: 6px; table-layout: fixed; }
+.pd-tbl td { padding: 6px 8px 6px 0; border-bottom: 1px solid var(--b1); vertical-align: middle; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+.pd-tbl tr:last-child td { border-bottom: none; }
+.pd-tbl td:nth-child(1) { width: 18%; }
+.pd-tbl td:nth-child(2) { width: 12%; }
+.pd-tbl td:nth-child(3) { width: 30%; }
+.pd-tbl td:nth-child(4) { width: 30%; }
+.pd-tbl td:nth-child(5) { width: 10%; text-align: right; }
+.pd-ver { color: var(--fg); white-space: nowrap; }
+.pd-arch { font-size: 8.5px; color: var(--fg3); border: 1px solid var(--b1); padding: 0 4px; border-radius: var(--r-xs); margin-left: 4px; text-transform: uppercase; }
+.pd-kb { color: var(--fg3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pd-dl { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: var(--r-xs); white-space: nowrap; }
+.pd-dl:hover { text-decoration: none; filter: brightness(1.08); }
+.pd-unpatched { color: var(--high); background: var(--high-bg); border: 1px solid var(--high); }
+.pd-patched { color: var(--ok); background: var(--low-bg); border: 1px solid var(--ok); }
+.pd-sha { font-size: 9.5px; color: var(--fg3); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.pd-noid { font-size: 10px; color: var(--fg3); font-style: italic; }
+.pd-na { font-size: 10.5px; color: var(--fg3); }
+.pd-copy {
+  font-size: 10px; line-height: 1; color: var(--fg3); background: none;
+  border: 1px solid var(--b1); border-radius: var(--r-xs); padding: 3px 7px;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+}
+.pd-copy:hover { color: var(--acc-fg); border-color: var(--acc); }
+.pd-copy.ok { color: var(--ok); border-color: var(--ok); }
+
+.meta-kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 14px; }
+.mk { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg3); margin-bottom: 2px; }
+.mv { font-size: 12px; color: var(--fg); }
+.mv a { color: var(--acc-fg); }
+
+.empty { padding: 60px 20px; text-align: center; color: var(--fg3); font-size: 12px; }
+.empty strong { display: block; font-size: 14px; color: var(--fg2); margin-bottom: 7px; }
+.loading-msg { padding: 40px 20px; text-align: center; color: var(--fg3); font-size: 12px; }
+
+footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--b1); padding: 12px 18px;
+  color: var(--fg3); font-size: 10.5px; background: var(--s1);
+}
+footer a { color: var(--fg3); }
+footer a:hover { color: var(--fg2); }
+
+/* ── overview modal ── */
+/* Acrylic-style scrim: blurring what's behind the dialog rather than a flat
+   dim, like a Fluent flyout. The dialog itself stays a solid Mica surface for
+   legibility (real Windows dialogs are solid; acrylic is for flyouts/menus). */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+  display: none; align-items: flex-start; justify-content: center;
+  z-index: 500; padding: 40px 20px; overflow: auto;
+}
+.modal-overlay.on { display: flex; }
+.modal {
+  background: var(--s1); border: 1px solid var(--b1); border-radius: var(--r-sm);
+  width: min(880px, 100%);
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.25);
+}
+.modal-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--b1);
+}
+.modal-title { font-size: 13px; font-weight: 700; color: var(--fg); }
+.modal-x { color: var(--fg3); font-size: 15px; padding: 2px 6px; background: none; }
+.modal-x:hover { color: var(--fg); }
+.modal-body { padding: 16px 18px 22px; }
+.st-nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(108px,1fr)); gap: 10px; margin-bottom: 18px; }
+.st-num { background: var(--s3); border: 1px solid var(--b1); border-radius: var(--r-xs); padding: 10px 12px; }
+.st-num-v { font-size: 20px; font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+.st-num-l { font-size: 9px; color: var(--fg3); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+.st-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.st-card { background: var(--s2); border: 1px solid var(--b1); border-radius: var(--r-xs); padding: 12px 14px; }
+.st-h { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--fg3); margin-bottom: 10px; }
+.st-row { display: grid; grid-template-columns: 92px 1fr 32px; align-items: center; gap: 8px; margin-bottom: 5px; }
+.st-lbl { font-size: 10.5px; color: var(--fg2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-bar-wrap { background: var(--s3); border-radius: 2px; height: 8px; overflow: hidden; }
+.st-bar { height: 100%; background: var(--acc); border-radius: 2px; min-width: 2px; }
+.st-val { font-size: 10.5px; color: var(--fg3); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ── binary biography ── */
+.modal-lg { width: min(940px, 100%); }
+.bin-sub { font-size: 10.5px; font-weight: 400; color: var(--fg3); margin-left: 8px; }
+.bin-compare {
+  position: sticky; top: 0; z-index: 1; background: var(--s2); border: 1px solid var(--b1);
+  border-radius: var(--r-xs); padding: 9px 12px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.bc-hint { font-size: 10.5px; color: var(--fg3); }
+.bc-pair { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--fg); }
+.bc-old { color: var(--high); } .bc-new { color: var(--ok); }
+.bt-sec { margin-bottom: 16px; }
+.bt-hd { font-size: 11px; font-weight: 600; color: var(--fg2); margin-bottom: 6px; }
+.bt-count { font-size: 9.5px; font-weight: 400; color: var(--fg3); margin-left: 6px; }
+/* Same fix as .pd-tbl: each Windows-version group is a separate <table> that
+   would otherwise size its own columns independently, drifting out of
+   alignment with its siblings whenever the CVE-chip count differs. */
+.bt-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.bt-tbl td { padding: 6px 8px 6px 0; border-bottom: 1px solid var(--b1); font-size: 11px; vertical-align: middle; }
+.bt-tbl tr:last-child td { border-bottom: none; }
+.bt-tbl td:nth-child(1) { width: 112px; }
+.bt-tbl td:nth-child(2) { width: 92px; }
+.bt-tbl td:nth-child(4) { width: 74px; }
+.bt-row.sel td { background: var(--acc-bg); }
+.bt-ver { color: var(--fg); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bt-sha { color: var(--fg3); font-variant-numeric: tabular-nums; font-size: 9.5px; }
+.bt-fixes { display: flex; flex-wrap: wrap; gap: 3px; overflow: hidden; }
+.bt-cve { font-size: 9.5px; color: var(--acc-fg); background: var(--acc-bg); border: 1px solid rgba(79,107,255,.25); padding: 0 5px; border-radius: var(--r-xs); cursor: pointer; font-variant-numeric: tabular-nums; }
+.bt-cve:hover { border-color: var(--acc); }
+.bt-nofix { color: var(--fg3); }
+.bt-dl { text-align: right; white-space: nowrap; }
+.bt-pick { font-size: 12px; line-height: 1; color: var(--fg3); border: 1px solid var(--b1); border-radius: var(--r-xs); padding: 2px 6px; margin-left: 4px; background: none; }
+.bt-pick:hover { color: var(--acc-fg); border-color: var(--acc); }
+.bt-row.sel .bt-pick { color: var(--acc-fg); border-color: var(--acc); background: var(--s3); }
+.pd-file.clickable, .pd-binhd.clickable { cursor: pointer; }
+.pd-file.clickable:hover { border-color: var(--acc); color: var(--acc-fg); }
+.pd-binhd.clickable:hover { color: var(--acc-fg); text-decoration: underline; }
+
+/* ── help & FAQ ── */
+.help-sec { margin-bottom: 20px; }
+.help-sec:last-child { margin-bottom: 0; }
+.help-p { font-size: 12px; color: var(--fg2); line-height: 1.6; }
+.help-p strong { color: var(--fg); font-weight: 600; }
+.help-list { font-size: 12px; color: var(--fg2); line-height: 1.6; padding-left: 19px; }
+.help-list li { margin-bottom: 6px; }
+.help-list strong { color: var(--fg); font-weight: 600; }
+.help-dl { font-size: 12px; }
+.help-dl dt { color: var(--fg); font-weight: 600; margin-top: 11px; }
+.help-dl dt:first-child { margin-top: 0; }
+.help-dl dd { color: var(--fg2); margin: 3px 0 0; line-height: 1.6; }
+code, kbd {
+  font-family: var(--mono); font-size: 10.5px; background: var(--s3);
+  border: 1px solid var(--b1); border-radius: var(--r-xs); padding: 1px 5px;
+}
+
+@media (max-width: 900px) {
+  .th-comp, .td-comp { display: none; }
+  /* The sidebar becomes an off-canvas drawer instead of vanishing outright —
+     losing every structured filter except free-text search was a real
+     functionality regression on mobile, not just a layout squeeze. */
+  .filter-toggle-btn { display: inline-flex; }
+  .sidebar-mobile-hd { display: flex; }
+  .sidebar {
+    position: fixed; top: var(--nav-h); bottom: 0; left: 0;
+    width: min(300px, 82vw); z-index: 400;
+    transform: translateX(-100%);
+    transition: transform .18s ease;
+    box-shadow: 10px 0 28px rgba(0,0,0,.35);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-scrim.on { display: block; }
+}
+@media (max-width: 640px) { .st-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  /* Nav and toolbar pack in a lot of controls; on a phone-width viewport they
+     overflow their bar rather than wrap gracefully, so: icon-only nav labels
+     (title="" still gives the full name on hover/long-press), and let the
+     toolbar wrap onto a second line instead of clipping controls off-screen. */
+  .brand { margin-right: 10px; }
+  .nav-btn-lbl { display: none; }
+  .nav-r a .nav-btn-lbl { display: none; }
+  .nav-btn { padding: 5px 7px; }
+  .toolbar { flex-wrap: wrap; row-gap: 8px; }
+  .tb-stats { flex-basis: 100%; }
+  .tb-r { flex-wrap: wrap; row-gap: 6px; }
+}
+@media (max-width: 680px) {
+  /* Turn each CVE row from a rigid 7-column table row into a stacked card:
+     title full-width, then severity/type/CVSS on one line, flags below.
+     nth-child targets the fixed column order from render() in the script
+     below (1=accent bar, 2=CVE/title, 3=severity, 4=component[already
+     hidden], 5=type, 6=exploitability flags, 7=CVSS) — no JS/HTML change
+     needed since the column order never varies. */
+  table.cvt thead { display: none; }
+  table.cvt, table.cvt tbody { display: block; width: 100%; }
+  .tr {
+    display: flex; flex-wrap: wrap; align-items: center;
+    column-gap: 10px; row-gap: 5px;
+    padding: 10px 14px 10px 16px; position: relative;
+  }
+  .tr:hover, .tr.open { background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); }
+  .tr > td { display: block; padding: 0 !important; background: none !important; }
+  .tr > td.td-comp { display: none; } /* higher specificity than .td-comp alone would otherwise re-show it */
+  .tr > td:nth-child(1) { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .tr > td.td-bar::after { top: 0; height: 100%; transform: none; border-radius: 0; }
+  .tr > td:nth-child(2) { order: 1; flex: 1 1 100%; }
+  .tr > td:nth-child(3) { order: 2; }
+  .tr > td:nth-child(5) { order: 3; }
+  .tr > td:nth-child(7) { order: 4; margin-left: auto; }
+  .tr > td:nth-child(6) { order: 5; flex: 1 1 100%; }
+  .cs { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* ── typography split: monospace only for identifiers & tabular data ── */
+.cid, .cdt, .ccwe, .cb, .cs, .kbc, .fl-epss, .fl-assess, .eq, #q, #pg-label,
+.pd-file, .pd-binhd, .pd-ver, .pd-arch, .pd-kb, .pd-sha, .pd-dl, .pd-copy,
+.bt-ver, .bt-sha, .bt-cve, .bt-count, .bt-pick, .bc-pair,
+.st-num-v, .st-val, .cvss-in, .mv-mono {
+  font-family: var(--mono);
+}
+
+/* Drop the uppercase micro-label habit — the biggest structural "AI" tell.
+   Section/field/column labels read as normal-case sans instead. */
+.sf-lbl, .sec-lbl, .mk, .st-h, .st-num-l {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg2);
+}
+.sec-lbl { font-size: 10.5px; }
+table.cvt thead th {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  font-size: 11px;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand" title="winsight — Windows CVE intelligence">
+    <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <!-- eye = the "sight"; iris is a 4-pane Windows window = "win"; the lit
+           red pane is a vulnerability in view -->
+      <path class="eye" d="M2 16 C 9 8.6, 23 8.6, 30 16 C 23 23.4, 9 23.4, 2 16 Z"
+            stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <circle class="iris" cx="16" cy="16" r="7.3" stroke="currentColor" stroke-width="1.2" opacity=".28"/>
+      <rect class="pane" x="12.1"  y="12.1"  width="3.4" height="3.4" rx=".6"/>
+      <rect class="pane" x="16.5"  y="12.1"  width="3.4" height="3.4" rx=".6"/>
+      <rect class="pane" x="12.1"  y="16.5"  width="3.4" height="3.4" rx=".6"/>
+      <rect class="pane pane-hot" x="16.5" y="16.5" width="3.4" height="3.4" rx=".6"/>
+    </svg>
+    <span class="brand-txt">win<span>sight</span></span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn" id="stats-btn" title="Overview & stats for the current view">▤ <span class="nav-btn-lbl">Overview</span></button>
+    <button class="nav-btn" id="help-btn" title="How to use winsight">❔ <span class="nav-btn-lbl">Help</span></button>
+  </div>
+  <div class="nav-r">
+    <button class="theme-btn" id="theme-toggle" title="Toggle light/dark">☀</button>
+    <div class="nav-sep"></div>
+    <a href="https://github.com/Shellpecker/winsight" target="_blank" rel="noopener" title="GitHub">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      <span class="nav-btn-lbl">GitHub</span>
+    </a>
+  </div>
+</nav>
+
+<div class="search-panel">
+  <div class="search-row">
+    <div class="si-wrap">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="6.5" cy="6.5" r="5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/>
+      </svg>
+      <input id="q" type="text" placeholder="CVE ID, component, KB number, binary, Windows version…" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="search-go" onclick="applyFilters()">Search</button>
+    <button class="filter-toggle-btn" id="filter-toggle" title="Show filters">☰ Filters</button>
+  </div>
+  <div class="eq-row">
+    <span class="eq-lbl">Try:</span>
+    <span id="eq-list"></span>
+  </div>
+</div>
+
+<div class="app">
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <aside class="sidebar">
+    <div class="sidebar-mobile-hd">
+      <span>Filters</span>
+      <button id="sidebar-close" aria-label="Close filters">✕</button>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Severity</div>
+      <select id="f-sev">
+        <option value="">All severities</option>
+        <option value="c">Critical (≥ 9.0)</option>
+        <option value="h">High (7.0 – 8.9)</option>
+        <option value="m">Medium (4.0 – 6.9)</option>
+        <option value="l">Low (&lt; 4.0)</option>
+        <option value="n">Unscored</option>
+      </select>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Vulnerability type</div>
+      <select id="f-type">
+        <option value="">All types</option>
+        <option value="rce">Remote Code Execution</option>
+        <option value="eop">Elevation of Privilege</option>
+        <option value="dos">Denial of Service</option>
+        <option value="info">Information Disclosure</option>
+        <option value="bypass">Security Feature Bypass</option>
+        <option value="spoofing">Spoofing</option>
+        <option value="tamper">Tampering</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Exploitability</div>
+      <div class="toggle-row">
+        <button class="tog" id="tog-exploited" data-f="exploited"><span class="tog-txt">Exploited</span><span class="tog-sw"></span></button>
+        <button class="tog" id="tog-disclosed" data-f="disclosed"><span class="tog-txt">Publicly Disclosed</span><span class="tog-sw"></span></button>
+        <button class="tog" id="tog-kev" data-f="kev"><span class="tog-txt">In CISA KEV</span><span class="tog-sw"></span></button>
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Patch-diff</div>
+      <div class="toggle-row">
+        <button class="tog" id="tog-patchdiff" data-f="patchdiff"><span class="tog-txt">Downloadable builds</span><span class="tog-sw"></span></button>
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Timeframe</div>
+      <div class="toggle-row">
+        <button class="tog" id="tog-latest" data-f="latest"><span class="tog-txt">Last Patch Tuesday</span><span class="tog-sw"></span></button>
+      </div>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Exploitability Assessment</div>
+      <select id="f-assess">
+        <option value="">All</option>
+        <option value="Exploitation Detected">Exploitation Detected</option>
+        <option value="Exploitation More Likely">Exploitation More Likely</option>
+        <option value="Exploitation Less Likely">Exploitation Less Likely</option>
+        <option value="Exploitation Unlikely">Exploitation Unlikely</option>
+        <option value="Not Applicable">Not Applicable</option>
+      </select>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">CWE</div>
+      <select id="f-cwe"><option value="">All</option></select>
+    </div>
+    <div class="sf">
+      <div class="sf-lbl">Windows version</div>
+      <select id="f-ver"><option value="">All versions</option></select>
+    </div>
+    <button class="rst-btn" id="rst">Reset filters</button>
+  </aside>
+
+  <div class="main">
+    <div class="warn" id="warn"></div>
+    <div class="toolbar">
+      <div class="tb-stats" id="tb-stats">Loading…</div>
+      <div class="tb-r">
+        <select id="sortby" class="tb-sel">
+          <option value="cve_desc">Newest CVE first</option>
+          <option value="cve_asc">Oldest CVE first</option>
+          <option value="cvss_desc">CVSS high → low</option>
+          <option value="cvss_asc">CVSS low → high</option>
+          <option value="assess">Exploitability severity</option>
+          <option value="epss_desc">EPSS high → low</option>
+          <option value="date_desc">Recently updated</option>
+        </select>
+        <button class="tb-btn" id="exp-json">JSON</button>
+        <button class="tb-btn" id="exp-csv">CSV</button>
+        <div class="nav-sep"></div>
+        <select id="page-size" class="tb-sel" title="Rows per page">
+          <option value="25">25 / page</option>
+          <option value="50" selected>50 / page</option>
+          <option value="100">100 / page</option>
+          <option value="250">250 / page</option>
+        </select>
+        <button class="tb-btn" id="pg-prev" disabled>←</button>
+        <span id="pg-label" style="font-size:11px;color:var(--fg3);white-space:nowrap">—</span>
+        <button class="tb-btn" id="pg-next" disabled>→</button>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="cvt">
+        <thead>
+          <tr>
+            <th class="th-bar"></th>
+            <th class="th-cve" data-sort="date_desc">CVE / Title</th>
+            <th class="th-sev" data-sort="cvss_desc">Severity</th>
+            <th class="th-comp">Component</th>
+            <th class="th-type">Type</th>
+            <th class="th-flag" data-sort="assess">Exploitability</th>
+            <th class="th-cvss" data-sort="cvss_desc">CVSS</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <footer>
+      winsight &middot; <a href="https://msrc.microsoft.com/update-guide" target="_blank" rel="noopener">MSRC Security Update Guide</a> &middot; refreshed via GitHub Actions &middot; <a href="data/feed.xml" target="_blank" rel="noopener">RSS feed</a> &middot; not affiliated with Microsoft
+    </footer>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stats-overlay">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="stats-title">Overview</div>
+      <button class="modal-x" id="stats-close" title="Close">✕</button>
+    </div>
+    <div class="modal-body" id="stats-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="bin-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-hd">
+      <div class="modal-title" id="bin-title">Binary</div>
+      <button class="modal-x" id="bin-close" title="Close">✕</button>
+    </div>
+    <div class="modal-body" id="bin-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="help-overlay">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Help &amp; FAQ</div>
+      <button class="modal-x" id="help-close" title="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="help-sec">
+        <div class="sec-lbl">What this is</div>
+        <p class="help-p">winsight indexes Microsoft's monthly Security Update Guide (MSRC CVRF) for every Windows CVE, resolves the binary each one actually patched, and gives you a direct download of the <strong>unpatched</strong> and <strong>patched</strong> build — so you can start diffing in two clicks instead of an afternoon of digging.</p>
+      </div>
+      <div class="help-sec">
+        <div class="sec-lbl">Quick start</div>
+        <ol class="help-list">
+          <li>Search or filter down to a CVE — try a binary name like <code>clfs.sys</code>, a component, or a KB number.</li>
+          <li>Open the row and expand <strong>Patch-diff</strong>.</li>
+          <li>Download <strong>Unpatched</strong> and <strong>Patched</strong>, then diff them in IDA, Ghidra, or BinDiff — symbols resolve automatically from the same Microsoft symbol server.</li>
+          <li>Click a binary's name to open its full history: every CVE that ever touched it, and any two builds you want to compare — not just one CVE's pair.</li>
+        </ol>
+      </div>
+      <div class="help-sec">
+        <div class="sec-lbl">Glossary</div>
+        <dl class="help-dl">
+          <dt>CVSS</dt><dd>Severity score, 0–10, from the MSRC advisory.</dd>
+          <dt>EPSS</dt><dd>Estimated probability a CVE is exploited in the wild within 30 days. From FIRST.org, updated daily.</dd>
+          <dt>CISA KEV</dt><dd>CISA's Known Exploited Vulnerabilities catalog. If a CVE is listed, exploitation has been confirmed, not just predicted.</dd>
+          <dt>Exploitability Assessment</dt><dd>Microsoft's own likelihood label — Exploitation Detected, More/Less Likely, or Unlikely.</dd>
+          <dt>Unpatched / Patched</dt><dd>The build immediately before, and the build including, the fixing update — resolved from Winbindex's build index.</dd>
+          <dt>No direct link</dt><dd>A handful of builds (notably <code>win32k.sys</code>) share a symbol-server identifier with other builds of the same file, so Microsoft's server can only serve one of them. Use the Winbindex link instead.</dd>
+        </dl>
+      </div>
+      <div class="help-sec">
+        <div class="sec-lbl">FAQ</div>
+        <dl class="help-dl">
+          <dt>How often does this refresh?</dt><dd>Weekly, around Patch Tuesday, via a GitHub Action that re-pulls the MSRC feed.</dd>
+          <dt>Is this affiliated with Microsoft?</dt><dd>No — independent, unofficial, best-effort.</dd>
+          <dt>Where does the data come from?</dt><dd>MSRC's Security Update Guide (CVRF v3), Winbindex, FIRST's EPSS, and the CISA KEV catalog.</dd>
+        </dl>
+      </div>
+      <div class="help-sec">
+        <div class="sec-lbl">Shortcuts</div>
+        <p class="help-p"><kbd>/</kbd>&nbsp;focus search &middot; <kbd>Esc</kbd>&nbsp;close panel or dialog</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── helpers ───────────────────────────────────────────────────
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── constants ──────────────────────────────────────────────────
+const IMPACT_LABEL = {
+  rce:'RCE', eop:'EoP', dos:'DoS', info:'Info Disclosure',
+  spoofing:'Spoofing', bypass:'Sec Bypass', tamper:'Tampering', other:'Other'
+};
+
+const COMP_MAP = [
+  [/common log file system|clfs/i,        'CLFS',                   'clfs.sys'],
+  [/dwm core|desktop window manager/i,    'DWM Core',               'dwm.exe'],
+  [/print spooler/i,                      'Print Spooler',          'spoolsv.exe'],
+  [/win32k/i,                             'Win32k',                 'win32k.sys'],
+  [/hyper-v/i,                            'Hyper-V',                'vmwp.exe'],
+  [/task scheduler/i,                     'Task Scheduler',         'schedsvc.dll'],
+  [/netlogon/i,                           'Netlogon',               'netlogon.dll'],
+  [/kerberos/i,                           'Kerberos',               'kerberos.dll'],
+  [/remote desktop|rdp/i,                'Remote Desktop',         'rdpcorets.dll'],
+  [/smb server/i,                         'SMB Server',             'srv2.sys'],
+  [/dns server/i,                         'DNS Server',             'dns.exe'],
+  [/http\.sys/i,                          'HTTP.sys',               'http.sys'],
+  [/lsass|local security authority/i,     'LSASS',                  'lsass.exe'],
+  [/windows kernel/i,                     'Kernel',                 'ntoskrnl.exe'],
+  [/rpc runtime|rpc\/dcom/i,             'RPC Runtime',            'rpcrt4.dll'],
+  [/ntlm/i,                               'NTLM',                   'msv1_0.dll'],
+  [/bitlocker/i,                          'BitLocker',              'fveapi.dll'],
+  [/secure boot/i,                        'Secure Boot',            'bootmgr'],
+  [/cryptographic|cng/i,                  'CNG',                    'bcrypt.dll'],
+  [/wmi/i,                                'WMI',                    'winmgmt.exe'],
+  [/bluetooth/i,                          'Bluetooth',              'bthport.sys'],
+  [/wi-?fi|wlan/i,                        'Wi-Fi',                  'wificlass.sys'],
+  [/defender|antimalware/i,               'Windows Defender',       'MpEngine.dll'],
+  [/scripting engine|jscript|chakra/i,    'Scripting Engine',       'jscript9.dll'],
+  [/mshtml/i,                             'MSHTML',                 'mshtml.dll'],
+  [/mark of the web/i,                    'Mark of the Web',        ''],
+  [/smartscreen/i,                        'SmartScreen',            ''],
+  [/installer/i,                          'Windows Installer',      'msiexec.exe'],
+  [/error reporting/i,                    'WER',                    'werfault.exe'],
+  [/gdi\+|graphics device/i,             'GDI+',                   'gdi32.dll'],
+  [/storage spaces/i,                     'Storage Spaces',         ''],
+  [/kernel streaming/i,                   'Kernel Streaming',       'ks.sys'],
+  [/ole|com\+/i,                          'COM/OLE',                'ole32.dll'],
+  [/usb/i,                                'USB Hub',                'usbhub3.sys'],
+  [/network policy/i,                     'Network Policy Server',  'ias.dll'],
+  [/windows search/i,                     'Windows Search',         'SearchIndexer.exe'],
+  [/powershell/i,                         'PowerShell',             'pwsh.exe'],
+  [/iis|internet information/i,           'IIS',                    'w3wp.exe'],
+  [/exchange/i,                           'Exchange Server',        ''],
+  [/sharepoint/i,                         'SharePoint',             ''],
+];
+
+function extractComp(title) {
+  for (const [re, name, bin] of COMP_MAP) {
+    if (re.test(title)) return { name, bin };
+  }
+  return { name: '—', bin: '' };
+}
+
+function cvssToSev(v) {
+  if (v == null) return 'n';
+  if (v >= 9)   return 'c';
+  if (v >= 7)   return 'h';
+  if (v >= 4)   return 'm';
+  return 'l';
+}
+const SEV_LABEL = { c:'Critical', h:'High', m:'Medium', l:'Low', n:'—' };
+const SEV_CLS   = { c:'sc', h:'sh', m:'sm', l:'sl', n:'sn' };
+
+// Short labels for the Exploitability Assessment column.
+// "Exploitation Detected" is already covered by the Exploited badge.
+const ASSESS_SHORT = {
+  'Exploitation More Likely': 'More Likely',
+  'Exploitation Less Likely': 'Less Likely',
+  'Exploitation Unlikely':    'Unlikely',
+  'Not Applicable':           'N/A',
+};
+
+// Numeric rank for sorting by exploitability severity (lower = more severe).
+const ASSESS_ORDER = {
+  'Exploitation Detected':    0,
+  'Exploitation More Likely': 1,
+  'Exploitation Less Likely': 2,
+  'Exploitation Unlikely':    3,
+  'Not Applicable':           4,
+};
+function assessRank(c) { return ASSESS_ORDER[c.exploitability] ?? 5; }
+
+// Parse CVE-YYYY-NNNNN into [year, number] for stable numeric sort.
+function cveRank(c) {
+  const m = (c.id || '').match(/CVE-(\d+)-(\d+)/i);
+  return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : [0, 0];
+}
+
+// The component phrase from a CVE title (drops the trailing impact + "Vulnerability"
+// and a leading Windows/Microsoft), e.g. "Windows Common Log File System Driver
+// Elevation of Privilege Vulnerability" -> "Common Log File System Driver".
+function componentPhrase(title) {
+  const s = (title || '')
+    .replace(/\s+(Remote Code Execution|Elevation of Privilege|Denial of Service|Information Disclosure|Security Feature Bypass|Spoofing|Tampering)\s+Vulnerability.*$/i, '')
+    .replace(/\s+Vulnerability.*$/i, '')
+    .replace(/^(Windows|Microsoft)\s+/i, '')
+    .trim();
+  return s || '—';
+}
+
+// EPSS score (0–1) → compact percent: '94%', '5.3%', '0.2%'.
+function epssPct(score) {
+  const p = score * 100;
+  return (p >= 10 ? Math.round(p) : p.toFixed(1)) + '%';
+}
+
+// Copy a button's data-copy payload to the clipboard with brief feedback.
+function copyText(btn, ev) {
+  if (ev) ev.stopPropagation();
+  navigator.clipboard.writeText(btn.dataset.copy || '').then(() => {
+    const old = btn.textContent;
+    btn.textContent = '✓ copied';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1300);
+  }).catch(() => {});
+}
+
+// ── state ──────────────────────────────────────────────────────
+let DATA = [], FILTERED = [];
+let MODULES = {}; // CVE id -> { component, files, targets } from data/cve_modules.json
+let LATEST_MONTH = ''; // sortable 'YYYY-MM' of the most recent patch cycle
+const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_NUM = { Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12' };
+// CVRF document month ("2026-Jul") -> sortable "2026-07". This is the true patch
+// cycle; c.date (MSRC CurrentReleaseDate) is unreliable — it re-stamps on revision.
+function monthKey(m) {
+  const [y, mon] = (m || '').split('-');
+  return MONTH_NUM[mon] ? `${y}-${MONTH_NUM[mon]}` : '';
+}
+const openRows = new Set();
+const activeToggles = new Set(); // 'exploited' | 'disclosed'
+let currentPage = 1;
+let pageSize = 50;
+
+// ── data load ─────────────────────────────────────────────────
+async function loadData() {
+  const warn = document.getElementById('warn');
+  try {
+    const res = await fetch('data/index.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (!json.cves?.length) throw new Error('empty');
+    DATA = json.cves;
+    populateVersions(json.filters?.versions || []);
+    // Newest patch cycle from the CVRF month field (reliable, unlike c.date).
+    LATEST_MONTH = DATA.reduce((m, c) => { const k = monthKey(c.month); return k > m ? k : m; }, '');
+    const latestBtn = document.getElementById('tog-latest')?.querySelector('.tog-txt');
+    if (latestBtn && LATEST_MONTH) {
+      const [y, mo] = LATEST_MONTH.split('-');
+      latestBtn.textContent = `Last Patch Tuesday · ${MONTH_ABBR[+mo - 1]} ${y}`;
+    }
+  } catch (e) {
+    DATA = [];
+    warn.className = 'warn on';
+    warn.textContent = 'No data — run the "Refresh index" GitHub Action to populate data/index.json, then reload.';
+  }
+  // Populate CWE dropdown outside try-catch so an error here never wipes DATA
+  populateCwes();
+  restoreFromUrl();      // apply any shared filters/search/sort/open-CVE from the hash
+  populateExamples();
+  applyFilters();
+  focusDeepLink();       // page to & scroll the deep-linked CVE, if any
+  // Affected-module / patch-diff data is optional: load it lazily and never let
+  // its absence or failure affect the main listing.
+  loadModules();
+}
+
+async function loadModules() {
+  try {
+    const res = await fetch('data/cve_modules.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const json = await res.json();
+    MODULES = json.modules || {};
+    // Refresh example chips (binary suggestions need MODULES) and re-filter so
+    // the patch-diff panel appears and binary-name search / "downloadable builds"
+    // filter pick up the newly-loaded data. (Open rows preserved via openRows.)
+    populateExamples();
+    if (DATA.length) { applyFilters(true); focusDeepLink(); }  // preserve page across module load
+  } catch (e) { /* optional data — ignore */ }
+}
+
+function populateVersions(vers) {
+  const sel = document.getElementById('f-ver');
+  vers.forEach(v => {
+    const o = document.createElement('option');
+    o.value = o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+
+function populateCwes() {
+  const sel = document.getElementById('f-cwe');
+  if (!sel) return;
+  const seen = new Map();
+  for (const c of DATA) {
+    if (c.cwe && !seen.has(c.cwe.id)) seen.set(c.cwe.id, c.cwe);
+  }
+  // Sort by numeric CWE id (CWE-79 before CWE-122)
+  const sorted = [...seen.values()].sort((a, b) => {
+    const na = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
+    const nb = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
+    return na - nb;
+  });
+  for (const {id, name} of sorted) {
+    const o = document.createElement('option');
+    o.value = id;
+    o.textContent = name ? `${id}: ${name}` : id;
+    sel.appendChild(o);
+  }
+}
+
+// ── shareable URL state ───────────────────────────────────────
+// Filters, search, sort, toggles and open CVEs live in location.hash so any view
+// can be linked or shared. replaceState keeps it out of the back-button history.
+const URL_SELECTS = { sev: 'f-sev', type: 'f-type', assess: 'f-assess', cwe: 'f-cwe', ver: 'f-ver' };
+let deepLinkPending = null; // first open CVE from the URL, focused once after load
+
+function syncUrl() {
+  const p = new URLSearchParams();
+  const q = document.getElementById('q').value.trim();
+  if (q) p.set('q', q);
+  for (const [key, id] of Object.entries(URL_SELECTS)) {
+    const v = document.getElementById(id).value;
+    if (v) p.set(key, v);
+  }
+  const sort = document.getElementById('sortby').value;
+  if (sort && sort !== 'cve_desc') p.set('sort', sort);
+  if (activeToggles.size) p.set('tog', [...activeToggles].join(','));
+  if (openRows.size) p.set('cve', [...openRows].join(','));
+  const s = p.toString();
+  history.replaceState(null, '', location.pathname + location.search + (s ? '#' + s : ''));
+}
+
+function restoreFromUrl() {
+  const raw = location.hash.replace(/^#/, '');
+  if (!raw) return;
+  const p = new URLSearchParams(raw);
+  if (p.has('q')) document.getElementById('q').value = p.get('q');
+  for (const [key, id] of Object.entries(URL_SELECTS)) {
+    if (p.has(key)) { const el = document.getElementById(id); if (el) el.value = p.get(key); }
+  }
+  if (p.has('sort')) document.getElementById('sortby').value = p.get('sort');
+  activeToggles.clear();
+  if (p.has('tog')) for (const t of p.get('tog').split(',')) {
+    if (!t) continue;
+    activeToggles.add(t);
+    const b = document.querySelector(`.tog[data-f="${t}"]`);
+    if (b) b.classList.add('on');
+  }
+  openRows.clear();
+  if (p.has('cve')) {
+    const ids = p.get('cve').split(',').filter(Boolean);
+    ids.forEach(id => openRows.add(id));
+    deepLinkPending = ids[0] || null;
+  }
+}
+
+// After a render, page to the deep-linked CVE and scroll it into view (once).
+function focusDeepLink() {
+  if (!deepLinkPending) return;
+  const idx = FILTERED.findIndex(c => c.id === deepLinkPending);
+  if (idx < 0) { deepLinkPending = null; return; }
+  const page = Math.floor(idx / pageSize) + 1;
+  if (page !== currentPage) { currentPage = page; render(); }
+  const row = [...document.querySelectorAll('tr.tr')].find(r => r.textContent.includes(deepLinkPending));
+  if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  deepLinkPending = null;
+}
+
+// ── filter ────────────────────────────────────────────────────
+function applyFilters(preservePage = false) {
+  const q      = document.getElementById('q').value.trim().toLowerCase();
+  const sev    = document.getElementById('f-sev').value;
+  const type   = document.getElementById('f-type').value;
+  const assess = document.getElementById('f-assess').value;
+  const cwe    = document.getElementById('f-cwe').value;
+  const ver    = document.getElementById('f-ver').value;
+  const sortBy = document.getElementById('sortby').value;
+
+  FILTERED = DATA.filter(c => {
+    if (sev && cvssToSev(c.cvss) !== sev) return false;
+    if (type && c.impact !== type) return false;
+    if (activeToggles.has('exploited') && !c.exploited) return false;
+    if (activeToggles.has('disclosed') && !c.disclosed) return false;
+    if (activeToggles.has('patchdiff') && !hasDownloadable(c)) return false;
+    if (activeToggles.has('kev') && !c.kev) return false;
+    if (activeToggles.has('latest') && monthKey(c.month) !== LATEST_MONTH) return false;
+    if (assess && c.exploitability !== assess) return false;
+    if (cwe && (!c.cwe || c.cwe.id !== cwe)) return false;
+    if (ver && !(c.versions || []).includes(ver)) return false;
+    if (q) {
+      const files = (MODULES[c.id]?.files || []).join(' ');
+      const hay = (c.id + ' ' + c.title + ' ' + (c.kbs || []).join(' ') + ' ' + (c.versions || []).join(' ') + ' ' + files).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  FILTERED.sort((a, b) => {
+    if (sortBy === 'cve_asc')   { const [ay,an]=cveRank(a),[by,bn]=cveRank(b); return ay-by||an-bn; }
+    if (sortBy === 'cvss_desc') return (b.cvss ?? -1) - (a.cvss ?? -1);
+    if (sortBy === 'cvss_asc')  return (a.cvss ?? 99) - (b.cvss ?? 99);
+    if (sortBy === 'assess')    return assessRank(a) - assessRank(b);
+    if (sortBy === 'epss_desc') return (b.epss?.score ?? -1) - (a.epss?.score ?? -1);
+    if (sortBy === 'date_desc') return (b.date || '').localeCompare(a.date || '');
+    // default: cve_desc — sort by CVE year then sequence number, both descending
+    const [ay,an]=cveRank(a),[by,bn]=cveRank(b); return by-ay||bn-an;
+  });
+
+  if (!preservePage) currentPage = 1;
+  render();
+  syncUrl();
+}
+
+// ── render ────────────────────────────────────────────────────
+function render() {
+  const tbody   = document.getElementById('rows');
+  const stats   = document.getElementById('tb-stats');
+  const pgLabel = document.getElementById('pg-label');
+  const pgPrev  = document.getElementById('pg-prev');
+  const pgNext  = document.getElementById('pg-next');
+
+  if (!DATA.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="loading-msg">Loading data…</div></td></tr>`;
+    pgLabel.textContent = '—';
+    pgPrev.disabled = pgNext.disabled = true;
+    return;
+  }
+
+  const total  = FILTERED.length;
+  const expl   = FILTERED.filter(c => c.exploited).length;
+  const sortBy = document.getElementById('sortby').value;
+  stats.innerHTML = `<strong>${total}</strong> of ${DATA.length}` +
+    (expl ? ` &middot; <span class="ec">${expl} exploited</span>` : '') +
+    ` &middot; ${{ cve_desc:'newest CVE first', cve_asc:'oldest CVE first', cvss_desc:'CVSS ↓', cvss_asc:'CVSS ↑', assess:'by exploitability', epss_desc:'by EPSS', date_desc:'recently updated' }[sortBy] || ''}`;
+
+  if (!total) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><strong>No results</strong>Try a different search or reset the filters.</div></td></tr>`;
+    pgLabel.textContent = '—';
+    pgPrev.disabled = pgNext.disabled = true;
+    return;
+  }
+
+  const totalPages = Math.ceil(total / pageSize);
+  currentPage = Math.min(Math.max(1, currentPage), totalPages);
+  const start = (currentPage - 1) * pageSize;
+  const page  = FILTERED.slice(start, start + pageSize);
+
+  pgLabel.textContent = `${currentPage} / ${totalPages}`;
+  pgPrev.disabled = currentPage <= 1;
+  pgNext.disabled = currentPage >= totalPages;
+
+  const frag = document.createDocumentFragment();
+
+  page.forEach(c => {
+    const sev  = cvssToSev(c.cvss);
+    const comp = extractComp(c.title);
+    const isOpen = openRows.has(c.id);
+
+    const tr = document.createElement('tr');
+    tr.className = 'tr ' + SEV_CLS[sev] + (isOpen ? ' open' : '');
+
+    let flagHtml = '';
+    if (c.kev) flagHtml += `<div class="fl-kev" title="Listed in CISA's Known Exploited Vulnerabilities catalog (added ${esc(c.kev)})">CISA KEV</div>`;
+    if (c.exploited) flagHtml += `<div class="fl-ex">Exploited</div>`;
+    if (c.disclosed) flagHtml += `<div class="fl-disc"${(c.exploited && !c.kev) ? ' style="margin-top:3px"' : ''}>Disclosed</div>`;
+    const assessShort = !c.exploited && c.exploitability ? ASSESS_SHORT[c.exploitability] : null;
+    if (assessShort) flagHtml += `<div class="fl-assess">${assessShort}</div>`;
+    if (c.epss) flagHtml += `<div class="fl-epss" title="EPSS — estimated probability of exploitation in the next 30 days (percentile p${(c.epss.percentile*100).toFixed(0)})">EPSS ${epssPct(c.epss.score)}</div>`;
+    if (!flagHtml) flagHtml = `<span class="fl-none">—</span>`;
+
+    tr.innerHTML = `
+      <td class="td-bar"></td>
+      <td><div class="cid">${esc(c.id)}<a class="cid-link" href="https://msrc.microsoft.com/update-guide/vulnerability/${esc(c.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open on MSRC">MSRC ↗</a></div><div class="cdt">${esc(c.date || 'unknown')}</div><div class="ctitle">${esc(c.title)}</div>${c.cwe ? `<div class="ccwe">${esc(c.cwe.id)}${c.cwe.name ? ': ' + esc(c.cwe.name) : ''}</div>` : ''}</td>
+      <td><span class="sv ${sev}">${SEV_LABEL[sev]}</span></td>
+      <td class="td-comp"><div class="cn">${esc(comp.name)}</div>${comp.bin ? `<div class="cb">${esc(comp.bin)}</div>` : ''}</td>
+      <td><span class="ty">${IMPACT_LABEL[c.impact] || esc(c.impact)}</span></td>
+      <td>${flagHtml}</td>
+      <td><span class="cs ${sev}">${c.cvss != null ? c.cvss.toFixed(1) : '—'}</span></td>`;
+
+    const dtr = document.createElement('tr');
+    dtr.className = 'tr-det' + (isOpen ? ' open' : '');
+    dtr.innerHTML = `<td colspan="7">${buildDetail(c, comp, sev)}</td>`;
+
+    tr.addEventListener('click', () => {
+      const was = tr.classList.contains('open');
+      if (was) { openRows.delete(c.id); tr.classList.remove('open'); dtr.classList.remove('open'); }
+      else     { openRows.add(c.id);    tr.classList.add('open');    dtr.classList.add('open'); }
+      syncUrl();
+    });
+
+    frag.appendChild(tr);
+    frag.appendChild(dtr);
+  });
+
+  tbody.innerHTML = '';
+  tbody.appendChild(frag);
+}
+
+function buildDetail(c, comp, sev) {
+  const badges = [
+    `<span class="sv ${sev}">${SEV_LABEL[sev]}</span>`,
+    `<span class="ty">${IMPACT_LABEL[c.impact] || c.impact}</span>`,
+    c.cvss != null ? `<span style="font-size:11px;color:var(--fg2)">CVSS ${c.cvss.toFixed(1)}</span>` : '',
+    c.kev ? `<span class="fl-kev">CISA KEV</span>` : '',
+    c.exploited ? `<span class="fl-ex">Exploited</span>` : '',
+    c.disclosed ? `<span class="fl-disc">Publicly Disclosed</span>` : '',
+    c.epss ? `<span style="font-size:10.5px;color:var(--fg3)">EPSS ${epssPct(c.epss.score)}</span>` : '',
+  ].filter(Boolean).join('');
+
+  const links = [
+    `<a class="det-link" href="https://msrc.microsoft.com/update-guide/vulnerability/${c.id}" target="_blank" rel="noopener">MSRC ↗</a>`,
+    `<a class="det-link" href="https://nvd.nist.gov/vuln/detail/${c.id}" target="_blank" rel="noopener">NVD ↗</a>`,
+    `<a class="det-link" href="https://www.first.org/epss/" target="_blank" rel="noopener">EPSS ↗</a>`,
+    c.kev ? `<a class="det-link" href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noopener">CISA KEV ↗</a>` : '',
+  ].filter(Boolean).join('');
+
+  const kbs = c.kbs || [];
+  const prods = (c.products || []).map(p => `<span class="pc">${esc(p)}</span>`).join('');
+  const kbChips = kbs.map(k => `<span class="kbc">${esc(k)}</span>`).join('') || '<span style="color:var(--fg3)">No KB listed</span>';
+
+  return `<div class="det det-${sev}">
+    <div class="det-hd">
+      <div>
+        <div class="det-title">${esc(c.title)}</div>
+        <div class="det-badges">${badges}</div>
+      </div>
+      <div class="det-links">${links}</div>
+    </div>
+
+    ${prods ? `<div class="sec-lbl">Affected products</div><div class="p-chips" style="margin-bottom:12px">${prods}</div>` : ''}
+
+    <div class="sec-lbl">KB / Patches</div>
+    <div class="kb-chips" style="margin-bottom:14px">${kbChips}</div>
+
+    ${buildPatchDiff(c)}
+
+    <div class="sec-lbl">Record</div>
+    <div class="meta-kv">
+      <div><div class="mk">CVE</div><div class="mv">${esc(c.id)}</div></div>
+      <div><div class="mk">Released</div><div class="mv">${esc(c.date || 'unknown')}</div></div>
+      <div><div class="mk">CVSS base</div><div class="mv">${c.cvss != null ? c.cvss.toFixed(1) : 'not scored'}</div></div>
+      <div><div class="mk">Severity</div><div class="mv">${SEV_LABEL[sev]}</div></div>
+      <div><div class="mk">Type</div><div class="mv">${IMPACT_LABEL[c.impact] || esc(c.impact)}</div></div>
+      <div><div class="mk">Component</div><div class="mv">${esc(comp.name)}${comp.bin ? ' · ' + esc(comp.bin) : ''}</div></div>
+      ${c.cwe ? `<div><div class="mk">CWE</div><div class="mv">${esc(c.cwe.id)}${c.cwe.name ? ': ' + esc(c.cwe.name) : ''}</div></div>` : ''}
+      <div><div class="mk">Exploited</div><div class="mv" style="color:${c.exploited ? 'var(--crit)' : 'var(--fg3)'}">${c.exploited ? 'Yes' : 'No'}</div></div>
+      <div><div class="mk">Disclosed</div><div class="mv" style="color:${c.disclosed ? 'var(--high)' : 'var(--fg3)'}">${c.disclosed ? 'Yes' : 'No'}</div></div>
+      ${c.kev ? `<div><div class="mk">CISA KEV</div><div class="mv" style="color:var(--crit)">Added ${esc(c.kev)}</div></div>` : ''}
+      ${c.epss ? `<div><div class="mk">EPSS</div><div class="mv">${epssPct(c.epss.score)} · p${(c.epss.percentile*100).toFixed(0)}</div></div>` : ''}
+      ${c.exploitability ? `<div><div class="mk">Assessment</div><div class="mv">${esc(c.exploitability)}</div></div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── patch-diff panel ──────────────────────────────────────────
+// Renders the affected-module set and, per Windows version, direct download
+// links for the unpatched + patched build of each binary (from MODULES, built
+// offline by scripts/build_modules.py against Winbindex). When a specific build
+// can't be uniquely addressed on the symbol server, the link is suppressed and
+// only the version + sha256 is shown, with a Winbindex fallback.
+function dlSide(d, label) {
+  if (!d) return `<span class="pd-na" title="No preceding build indexed">${label}: —</span>`;
+  const short = (d.sha256 || '').slice(0, 12);
+  const meta = `<span class="pd-sha" title="${esc(d.sha256 || '')}">${esc(d.build)}</span>`;
+  if (d.downloadable && d.url) {
+    return `<a class="pd-dl ${label === 'Patched' ? 'pd-patched' : 'pd-unpatched'}" href="${esc(d.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Download ${esc(d.build)} (sha256 ${esc(short)})">⭳ ${label}</a>${meta}`;
+  }
+  return `<span class="pd-noid" title="This build shares a symbol-server id with others and can't be fetched individually">${label} (no direct link)</span>${meta}`;
+}
+
+// True if this CVE has at least one build a researcher can download and diff.
+function hasDownloadable(c) {
+  const m = MODULES[c.id];
+  if (!m || !m.targets) return false;
+  return m.targets.some(t =>
+    (t.patched && t.patched.downloadable) || (t.unpatched && t.unpatched.downloadable));
+}
+
+function buildPatchDiff(c) {
+  const m = MODULES[c.id];
+  if (!m || !m.files || !m.files.length) return '';
+
+  const fileChips = m.files.map(f => `<span class="pd-file clickable" onclick="openBinary('${f}',event)" title="View the ${esc(f)} timeline — every CVE + build">${esc(f)}</span>`).join('');
+  const head =
+    `<div class="sec-lbl">Patch-diff <span class="pd-hint">${m.source === 'manual' ? 'curated' : 'suggested'} affected module${m.files.length > 1 ? 's' : ''}</span></div>` +
+    `<div class="pd-files">${fileChips}` +
+      `<a class="pd-wb" href="https://winbindex.m417z.com/?file=${encodeURIComponent(m.files[0])}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Browse all builds on Winbindex">Winbindex ↗</a>` +
+    `</div>`;
+
+  const targets = m.targets || [];
+  if (!targets.length) {
+    return head + `<div class="pd-empty">No indexed Windows 10/11 x64 builds matched this CVE's KBs. Use the Winbindex link above to locate builds manually.</div>`;
+  }
+
+  // Group rows by binary file for readability.
+  const byFile = {};
+  for (const t of targets) (byFile[t.file] ||= []).push(t);
+
+  const blocks = Object.entries(byFile).map(([file, rows]) => {
+    const trs = rows.map(t => {
+      const cmds = [];
+      if (t.unpatched?.downloadable && t.unpatched.url) cmds.push(`curl -Lo "${t.unpatched.build}_unpatched_${t.file}" "${t.unpatched.url}"`);
+      if (t.patched?.downloadable && t.patched.url)     cmds.push(`curl -Lo "${t.patched.build}_patched_${t.file}" "${t.patched.url}"`);
+      const copyCell = cmds.length
+        ? `<td><button class="pd-copy" data-copy="${esc(cmds.join('\n'))}" onclick="copyText(this,event)" title="Copy curl commands to fetch both builds">⧉ curl</button></td>`
+        : `<td></td>`;
+      return `<tr>
+        <td class="pd-ver">${esc(t.version)} <span class="pd-arch">${esc(t.arch)}</span></td>
+        <td class="pd-kb">${esc(t.kb)}</td>
+        <td>${dlSide(t.unpatched, 'Unpatched')}</td>
+        <td>${dlSide(t.patched, 'Patched')}</td>
+        ${copyCell}
+      </tr>`;
+    }).join('');
+    return `<div class="pd-binhd clickable" onclick="openBinary('${file}',event)" title="View the ${esc(file)} timeline">${esc(file)}</div>
+      <table class="pd-tbl"><tbody>${trs}</tbody></table>`;
+  }).join('');
+
+  return head +
+    `<div class="pd-note">Downloaded straight from Microsoft's symbol server. Diff <strong>Unpatched</strong> vs <strong>Patched</strong> — IDA, Ghidra &amp; BinDiff auto-resolve symbols (PDBs) for these builds from the same server.</div>` +
+    blocks +
+    `<div style="margin-bottom:14px"></div>`;
+}
+
+// ── example queries ───────────────────────────────────────────
+// Built from live data so they never go stale as the 24-month window rolls.
+function queryHasMatch(q) {
+  const qq = q.toLowerCase();
+  return DATA.some(c => {
+    const files = (MODULES[c.id]?.files || []).join(' ');
+    const hay = (c.id + ' ' + c.title + ' ' + (c.kbs || []).join(' ') + ' ' +
+                 (c.versions || []).join(' ') + ' ' + files).toLowerCase();
+    return hay.includes(qq);
+  });
+}
+
+function populateExamples() {
+  const list = document.getElementById('eq-list');
+  if (!list || !DATA.length) return;
+
+  const rank = c => { const [y, n] = cveRank(c); return y * 1e6 + n; };
+  const newest = DATA.reduce((a, b) => (rank(b) > rank(a) ? b : a), DATA[0]);
+  const newestKb = (DATA.find(c => rank(c) >= rank(newest) - 50 && (c.kbs || []).length)?.kbs || [])[0];
+
+  // A binary that actually has a downloadable build (needs MODULES loaded).
+  let binary = null;
+  const prefer = ['clfs.sys', 'win32kfull.sys', 'afd.sys', 'tcpip.sys'];
+  for (const p of prefer) { if (queryHasMatch(p)) { binary = p; break; } }
+  if (!binary) {
+    for (const id in MODULES) {
+      const t = (MODULES[id].targets || []).find(t => t.patched?.downloadable || t.unpatched?.downloadable);
+      if (t) { binary = t.file; break; }
+    }
+  }
+
+  const candidates = [
+    newest?.id, newestKb, binary,
+    'win32k', 'Windows 11 24H2', 'Windows 11 23H2',
+    'Print Spooler', 'Hyper-V', 'Kerberos', 'Remote Desktop',
+  ];
+
+  const seen = new Set();
+  const chosen = [];
+  for (const q of candidates) {
+    if (!q) continue;
+    const key = q.toLowerCase();
+    if (seen.has(key)) continue;
+    if (!queryHasMatch(q)) continue;
+    seen.add(key);
+    chosen.push(q);
+    if (chosen.length >= 6) break;
+  }
+
+  list.innerHTML = chosen
+    .map(q => `<button class="eq" data-q="${esc(q)}">${esc(q)}</button>`)
+    .join('');
+}
+
+// ── overview / stats ──────────────────────────────────────────
+// Computed from the current filtered view, so it doubles as an analysis tool
+// (e.g. "stats for exploited win32k EoPs"). CSS bars, no chart dependency.
+function statNum(v, l, color) {
+  return `<div class="st-num"><div class="st-num-v"${color ? ` style="color:${color}"` : ''}>${v}</div><div class="st-num-l">${l}</div></div>`;
+}
+function statBars(obj, opts = {}) {
+  let entries = Object.entries(obj);
+  if (opts.order) entries = opts.order.map(k => [k, obj[k] || 0]);
+  else if (opts.sort) entries.sort((a, b) => b[1] - a[1]);
+  if (opts.top) entries = entries.slice(0, opts.top);
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  return entries.map(([k, v]) => {
+    const label = opts.label ? opts.label(k) : k;
+    return `<div class="st-row">
+      <div class="st-lbl" title="${esc(label)}">${esc(label)}</div>
+      <div class="st-bar-wrap"><div class="st-bar" style="width:${(v / max * 100).toFixed(1)}%"></div></div>
+      <div class="st-val">${v}</div>
+    </div>`;
+  }).join('');
+}
+function buildStats(list) {
+  if (!list.length) return '<div class="pd-empty">No results in the current view — adjust the filters and reopen.</div>';
+  const n = list.length;
+  const exploited = list.filter(c => c.exploited).length;
+  const kev = list.filter(c => c.kev).length;
+  const dl = list.filter(hasDownloadable).length;
+  const scored = list.filter(c => c.cvss != null);
+  const avgCvss = scored.length ? (scored.reduce((s, c) => s + c.cvss, 0) / scored.length).toFixed(1) : '—';
+  const highEpss = list.filter(c => c.epss && c.epss.score >= 0.1).length;
+
+  const bySev = { c: 0, h: 0, m: 0, l: 0 };
+  const byType = {}, byComp = {}, byMonth = {};
+  list.forEach(c => {
+    bySev[cvssToSev(c.cvss)]++;
+    const t = IMPACT_LABEL[c.impact] || c.impact; byType[t] = (byType[t] || 0) + 1;
+    const k = componentPhrase(c.title); byComp[k] = (byComp[k] || 0) + 1;
+    const mo = monthKey(c.month); if (mo) byMonth[mo] = (byMonth[mo] || 0) + 1;
+  });
+  const months = Object.keys(byMonth).sort().slice(-12);
+  const monthObj = {}; months.forEach(m => monthObj[m] = byMonth[m]);
+  const SEVNAME = { c: 'Critical', h: 'High', m: 'Medium', l: 'Low' };
+
+  return `
+    <div class="st-nums">
+      ${statNum(n, 'CVEs')}
+      ${statNum(exploited, 'Exploited', exploited ? 'var(--crit)' : '')}
+      ${statNum(kev, 'CISA KEV', kev ? 'var(--crit)' : '')}
+      ${statNum(dl, 'Diffable')}
+      ${statNum(avgCvss, 'Avg CVSS')}
+      ${statNum(highEpss, 'EPSS ≥ 10%')}
+    </div>
+    <div class="st-grid">
+      <div class="st-card"><div class="st-h">Severity</div>${statBars(bySev, { order: ['c', 'h', 'm', 'l'], label: k => SEVNAME[k] })}</div>
+      <div class="st-card"><div class="st-h">Vulnerability type</div>${statBars(byType, { sort: true })}</div>
+      <div class="st-card"><div class="st-h">Top components</div>${statBars(byComp, { sort: true, top: 10 })}</div>
+      <div class="st-card"><div class="st-h">By release month</div>${statBars(monthObj, {})}</div>
+    </div>`;
+}
+function openStats() {
+  const n = FILTERED.length;
+  const filtered = n !== DATA.length;
+  document.getElementById('stats-title').textContent = `Overview · ${n} ${filtered ? 'filtered ' : ''}CVE${n === 1 ? '' : 's'}`;
+  document.getElementById('stats-body').innerHTML = buildStats(FILTERED);
+  document.getElementById('stats-overlay').classList.add('on');
+}
+function closeStats() { document.getElementById('stats-overlay').classList.remove('on'); }
+
+// ── binary biography ──────────────────────────────────────────
+// A binary-centric lens: every CVE that touched a file, its build chain per
+// Windows version, and the ability to grab any two builds to diff. Derived
+// entirely from cve_modules (each CVE contributes its patched build + the
+// predecessor it replaced, which merge into the file's CVE-relevant timeline).
+let BINARIES = null;
+let binSel = []; // up to two picked builds for comparison
+
+function verCmp(a, b) {
+  const pa = String(a).split('.'), pb = String(b).split('.');
+  for (let i = 0; i < 4; i++) {
+    const d = (parseInt(pa[i], 10) || 0) - (parseInt(pb[i], 10) || 0);
+    if (d) return d;
+  }
+  return 0;
+}
+function prettyWinver(wv) {
+  return wv.startsWith('11-') ? 'Windows 11 ' + wv.slice(3) : 'Windows 10 / Server ' + wv;
+}
+
+function buildBinaryIndex() {
+  const map = {};
+  for (const cveId in MODULES) {
+    const m = MODULES[cveId];
+    for (const t of (m.targets || [])) {
+      const bin = (map[t.file] ||= { file: t.file, component: m.component, cveSet: new Set(), targets: {} });
+      bin.cveSet.add(cveId);
+      const grp = (bin.targets[t.winver + '|' + t.arch] ||= { winver: t.winver, arch: t.arch, builds: {} });
+      const add = (b, isFix) => {
+        if (!b) return;
+        const rec = (grp.builds[b.build] ||= { version: b.build, sha256: b.sha256, downloadable: false, url: null, fixCves: new Set() });
+        if (b.downloadable && b.url) { rec.downloadable = true; rec.url = b.url; }
+        if (isFix) rec.fixCves.add(cveId);
+      };
+      add(t.patched, true);
+      add(t.unpatched, false);
+    }
+  }
+  for (const f in map) {
+    const bin = map[f];
+    bin.cves = [...bin.cveSet];
+    for (const k in bin.targets) {
+      bin.targets[k].buildList = Object.values(bin.targets[k].builds).sort((a, b) => verCmp(a.version, b.version));
+    }
+  }
+  return map;
+}
+
+function binPick(file, winver, arch, version, ev) {
+  if (ev) ev.stopPropagation();
+  const grp = BINARIES[file]?.targets[winver + '|' + arch];
+  const b = grp?.buildList.find(x => x.version === version);
+  if (!b || !b.downloadable) return;
+  const same = s => s.file === file && s.winver === winver && s.arch === arch && s.version === version;
+  const idx = binSel.findIndex(same);
+  if (idx >= 0) binSel.splice(idx, 1);
+  else { binSel.push({ file, winver, arch, version, url: b.url }); if (binSel.length > 2) binSel.shift(); }
+  document.querySelectorAll('#bin-body .bt-row.sel').forEach(r => r.classList.remove('sel'));
+  binSel.forEach(s => {
+    const r = document.querySelector(`#bin-body .bt-row[data-t="${s.winver}|${s.arch}"][data-v="${s.version}"]`);
+    if (r) r.classList.add('sel');
+  });
+  renderBinCompareBar();
+}
+
+function renderBinCompareBar() {
+  const bar = document.getElementById('bin-compare');
+  if (!bar) return;
+  if (binSel.length < 2) {
+    bar.innerHTML = `<span class="bc-hint">Pick two builds (⇄) to compare — then copy commands to download both for diffing.</span>`;
+    return;
+  }
+  const [older, newer] = [...binSel].sort((a, b) => verCmp(a.version, b.version));
+  const cmds = [
+    `curl -Lo "${older.version}_${older.file}" "${older.url}"`,
+    `curl -Lo "${newer.version}_${newer.file}" "${newer.url}"`,
+  ].join('\n');
+  bar.innerHTML = `<div class="bc-pair"><span class="bc-old">${esc(older.version)}</span> ↔ <span class="bc-new">${esc(newer.version)}</span></div>
+    <button class="pd-copy" data-copy="${esc(cmds)}" onclick="copyText(this,event)">⧉ curl both</button>`;
+}
+
+function binBuildRow(file, grp, b) {
+  const fixes = [...b.fixCves].sort().map(id =>
+    `<span class="bt-cve" onclick="sendToCve('${id}',event)" title="Filter to ${esc(id)}">${esc(id)}</span>`).join('');
+  const dl = (b.downloadable && b.url)
+    ? `<a class="pd-dl pd-patched" href="${esc(b.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Download ${esc(b.version)}">⭳</a>` +
+      `<button class="bt-pick" onclick="binPick('${file}','${grp.winver}','${grp.arch}','${esc(b.version)}',event)" title="Pick for compare">⇄</button>`
+    : `<span class="pd-noid">no direct link</span>`;
+  return `<tr class="bt-row" data-t="${esc(grp.winver + '|' + grp.arch)}" data-v="${esc(b.version)}">
+    <td class="bt-ver">${esc(b.version)}</td>
+    <td class="bt-sha" title="${esc(b.sha256 || '')}">${esc((b.sha256 || '').slice(0, 12))}</td>
+    <td class="bt-fixes">${fixes || '<span class="bt-nofix">·</span>'}</td>
+    <td class="bt-dl">${dl}</td>
+  </tr>`;
+}
+
+function openBinary(file, ev) {
+  if (ev) ev.stopPropagation();
+  if (!BINARIES) BINARIES = buildBinaryIndex();
+  binSel = [];
+  const bin = BINARIES[file];
+  const title = document.getElementById('bin-title');
+  const body = document.getElementById('bin-body');
+  if (!bin) {
+    title.textContent = file;
+    body.innerHTML = '<div class="pd-empty">No indexed builds for this binary yet.</div>';
+  } else {
+    title.innerHTML = `${esc(file)}<span class="bin-sub">${esc(bin.component || '')} · ${bin.cves.length} CVE${bin.cves.length === 1 ? '' : 's'}</span>`;
+    const groups = Object.values(bin.targets).sort((a, b) => b.winver.localeCompare(a.winver));
+    const sections = groups.map(grp => `<div class="bt-sec">
+        <div class="bt-hd">${esc(prettyWinver(grp.winver))} · ${esc(grp.arch)} <span class="bt-count">${grp.buildList.length} builds</span></div>
+        <table class="bt-tbl"><tbody>${grp.buildList.map(b => binBuildRow(file, grp, b)).join('')}</tbody></table>
+      </div>`).join('');
+    body.innerHTML = `<div class="bin-compare" id="bin-compare"></div>${sections}`;
+    renderBinCompareBar();
+  }
+  document.getElementById('bin-overlay').classList.add('on');
+}
+function closeBin() { document.getElementById('bin-overlay').classList.remove('on'); }
+function sendToCve(id, ev) {
+  if (ev) ev.stopPropagation();
+  closeBin();
+  document.getElementById('q').value = id;
+  applyFilters();
+}
+
+// ── export ────────────────────────────────────────────────────
+function dlBlob(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], { type }));
+  a.download = filename; a.click();
+}
+document.getElementById('exp-json').addEventListener('click', () => {
+  dlBlob(JSON.stringify(FILTERED, null, 2), 'winsight.json', 'application/json');
+});
+document.getElementById('exp-csv').addEventListener('click', () => {
+  const hdr = 'CVE,Date,Title,CVSS,Severity,Type,Exploited,Disclosed,KBs,Versions\n';
+  const rows = FILTERED.map(c => [
+    c.id, c.date || '', `"${(c.title || '').replace(/"/g, '""')}"`,
+    c.cvss ?? '', SEV_LABEL[cvssToSev(c.cvss)], IMPACT_LABEL[c.impact] || c.impact,
+    c.exploited ? 'yes' : 'no', c.disclosed ? 'yes' : 'no',
+    `"${(c.kbs || []).join(';')}"`, `"${(c.versions || []).join(';')}"`
+  ].join(',')).join('\n');
+  dlBlob(hdr + rows, 'winsight.csv', 'text/csv');
+});
+
+// ── interactions ──────────────────────────────────────────────
+// Delegation: example chips are generated dynamically from data.
+document.getElementById('eq-list').addEventListener('click', e => {
+  const btn = e.target.closest('.eq');
+  if (!btn) return;
+  document.getElementById('q').value = btn.dataset.q;
+  applyFilters();
+});
+
+['f-sev','f-type','f-assess','f-cwe','f-ver','sortby'].forEach(id => {
+  document.getElementById(id).addEventListener('change', applyFilters);
+});
+document.getElementById('q').addEventListener('input', applyFilters);
+
+// toggle buttons
+document.querySelectorAll('.tog').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const f = btn.dataset.f;
+    if (activeToggles.has(f)) { activeToggles.delete(f); btn.classList.remove('on'); }
+    else                       { activeToggles.add(f);    btn.classList.add('on');    }
+    applyFilters();
+  });
+});
+
+document.querySelectorAll('th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    document.getElementById('sortby').value = th.dataset.sort;
+    document.querySelectorAll('th.sorted').forEach(t => t.classList.remove('sorted'));
+    th.classList.add('sorted');
+    applyFilters();
+  });
+});
+
+document.getElementById('rst').addEventListener('click', () => {
+  document.getElementById('q').value = '';
+  ['f-sev','f-type','f-assess','f-cwe','f-ver'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('sortby').value = 'cve_desc';
+  activeToggles.clear();
+  document.querySelectorAll('.tog').forEach(b => b.classList.remove('on'));
+  applyFilters();
+});
+
+document.getElementById('pg-prev').addEventListener('click', () => { currentPage--; render(); });
+document.getElementById('pg-next').addEventListener('click', () => { currentPage++; render(); });
+document.getElementById('page-size').addEventListener('change', e => {
+  pageSize = parseInt(e.target.value);
+  currentPage = 1;
+  render();
+});
+
+// overview + binary + help modals
+document.getElementById('stats-btn').addEventListener('click', openStats);
+document.getElementById('stats-close').addEventListener('click', closeStats);
+document.getElementById('stats-overlay').addEventListener('click', e => {
+  if (e.target.id === 'stats-overlay') closeStats();
+});
+document.getElementById('bin-close').addEventListener('click', closeBin);
+document.getElementById('bin-overlay').addEventListener('click', e => {
+  if (e.target.id === 'bin-overlay') closeBin();
+});
+function closeHelp() { document.getElementById('help-overlay').classList.remove('on'); }
+document.getElementById('help-btn').addEventListener('click', () => {
+  document.getElementById('help-overlay').classList.add('on');
+});
+document.getElementById('help-close').addEventListener('click', closeHelp);
+document.getElementById('help-overlay').addEventListener('click', e => {
+  if (e.target.id === 'help-overlay') closeHelp();
+});
+
+// mobile filter drawer
+const sidebarEl = document.querySelector('.sidebar');
+const sidebarScrim = document.getElementById('sidebar-scrim');
+function openSidebar() { sidebarEl.classList.add('open'); sidebarScrim.classList.add('on'); }
+function closeSidebar() { sidebarEl.classList.remove('open'); sidebarScrim.classList.remove('on'); }
+document.getElementById('filter-toggle').addEventListener('click', () => {
+  if (sidebarEl.classList.contains('open')) closeSidebar(); else openSidebar();
+});
+document.getElementById('sidebar-close').addEventListener('click', closeSidebar);
+sidebarScrim.addEventListener('click', closeSidebar);
+
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+    e.preventDefault(); document.getElementById('q').focus();
+  }
+  if (e.key === 'Escape') { closeStats(); closeBin(); closeHelp(); closeSidebar(); document.activeElement.blur(); }
+});
+
+// ── theme toggle ──────────────────────────────────────────────
+const html = document.documentElement;
+const themeBtn = document.getElementById('theme-toggle');
+
+function applyTheme(t) {
+  html.setAttribute('data-theme', t);
+  themeBtn.textContent = t === 'dark' ? '☀' : '☾';
+  try { localStorage.setItem('ws-theme', t); } catch(e) {}
+}
+
+themeBtn.addEventListener('click', () => {
+  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+// restore saved theme
+try {
+  const saved = localStorage.getItem('ws-theme');
+  if (saved === 'light' || saved === 'dark') applyTheme(saved);
+} catch(e) {}
+
+loadData();
+</script>
+</body>
+</html>

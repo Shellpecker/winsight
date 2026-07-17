@@ -1,0 +1,140 @@
+name: Build & deploy
+
+# Single workflow for GitHub Pages. Having two workflows deploy to the same
+# `github-pages` environment caused deployment contention ("Deployment failed,
+# try again later"), so build + deploy live here together. The data rebuild
+# (slow: MSRC + Winbindex) only runs on cron / manual dispatch / scripts changes;
+# frontend-only pushes (index.html, data, assets) skip straight to deploy.
+on:
+  schedule:
+    - cron: "0 9 * * 3"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "index.html"
+      - "favicon.svg"
+      - "og.png"
+      - "data/**"
+      - ".github/workflows/pages.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 2  # need the previous commit to detect scripts/ changes
+
+      # Rebuild data on schedule / manual dispatch, or when a push touched
+      # scripts/. Otherwise (index.html / data / asset pushes) just deploy.
+      - name: Decide whether to rebuild data
+        id: decide
+        run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "rebuild=true" >> "$GITHUB_OUTPUT"
+          else
+            changed=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" 2>/dev/null) || changed="__FAILED__"
+            if [ "$changed" = "__FAILED__" ]; then
+              echo "rebuild=true" >> "$GITHUB_OUTPUT"   # couldn't diff -> rebuild to be safe
+            elif echo "$changed" | grep -q '^scripts/'; then
+              echo "rebuild=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "rebuild=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Set up Python
+        if: steps.decide.outputs.rebuild == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache Winbindex data
+        if: steps.decide.outputs.rebuild == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/winbindex-cache
+          key: winbindex-${{ github.run_id }}
+          restore-keys: |
+            winbindex-
+
+      - name: Run build_index.py
+        if: steps.decide.outputs.rebuild == 'true'
+        env:
+          WINSIGHT_BACKFILL_MONTHS: "24"
+          WINSIGHT_OUTPUT: "data/index.json"
+          WINSIGHT_FEED_OUTPUT: "data/feed.xml"
+        run: |
+          python scripts/build_index.py
+
+      - name: Run build_modules.py
+        if: steps.decide.outputs.rebuild == 'true'
+        continue-on-error: true
+        env:
+          WINSIGHT_OUTPUT: "data/index.json"
+          WINSIGHT_MODULES_OUTPUT: "data/cve_modules.json"
+          WINSIGHT_WINBINDEX_CACHE: ${{ runner.temp }}/winbindex-cache
+        run: |
+          python scripts/build_modules.py
+
+      - name: Show summary
+        if: steps.decide.outputs.rebuild == 'true'
+        run: |
+          python -c "
+          import json, os
+          d = json.load(open('data/index.json'))
+          print(f\"Generated: {d['generated_at']}\")
+          print(f\"Total CVEs: {d['count']}\")
+          print(f\"Months with data: {len(d['months_with_data'])} / {len(d['months_requested'])} requested\")
+          print(f\"Distinct versions seen: {len(d['filters']['versions'])}\")
+          if os.path.exists('data/cve_modules.json'):
+              m = json.load(open('data/cve_modules.json'))
+              print(f\"CVEs with affected modules: {m.get('count_with_modules', 0)}\")
+              print(f\"CVEs with a downloadable build: {m.get('count_downloadable_cves', 0)}\")
+              print(f\"Downloadable patch-diff builds: {m.get('count_downloadable_builds', 0)}\")
+          " >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit refreshed data
+        if: steps.decide.outputs.rebuild == 'true'
+        run: |
+          git config user.name "winsight-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/index.json
+          [ -f data/cve_modules.json ] && git add data/cve_modules.json
+          [ -f data/feed.xml ] && git add data/feed.xml
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: refresh index $(date -u +%Y-%m-%d)"
+            git pull --rebase origin main
+            git push
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
