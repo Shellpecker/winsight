@@ -13,13 +13,13 @@ fetches and filters them entirely client-side.
 
 ## What it does
 
-- **Browse & filter** ~1,600+ Windows CVEs from the last 24 months: severity,
+- **Browse & filter** ~2,000+ Windows CVEs from the last 24 months: severity,
   vulnerability type, CWE, affected Windows version, exploited / publicly
   disclosed / listed in CISA's KEV catalog, EPSS score, and whether a
   downloadable patch-diff build exists. Free-text search covers CVE ID,
   title, KB numbers, version labels, *and* affected binary filenames (try
   `clfs.sys` or `win32kfull.sys`).
-- **Patch-diff panel** — for ~1,050 of those CVEs (and counting), one click
+- **Patch-diff panel** — for ~1,400 of those CVEs (and counting), one click
   downloads the exact unpatched and patched build of the affected binary,
   sourced live from Microsoft's own symbol server. IDA, Ghidra, and BinDiff
   resolve symbols for these automatically, no extra setup.
@@ -98,8 +98,8 @@ JSON files. There is no runtime backend.
 
 ## Honest limitations
 
-- **Patch-diff coverage is real but partial.** ~1,050 of ~1,600 CVEs
-  (roughly two-thirds) currently resolve to a downloadable build. Gaps:
+- **Patch-diff coverage is real but partial.** ~1,400 of ~2,000 CVEs
+  (roughly three-quarters) currently resolve to a downloadable build. Gaps:
   CVE titles that don't map to a known component, Windows Server 2022+
   (Winbindex has no key for it — only 2016/2019 are reachable, since they
   share build numbers with client Windows), and components with no binary at

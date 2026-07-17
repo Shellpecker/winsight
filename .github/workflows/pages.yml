@@ -13,6 +13,7 @@ on:
     branches: [main]
     paths:
       - "scripts/**"
+      - "tests/**"
       - "index.html"
       - "favicon.svg"
       - "og.png"
@@ -29,7 +30,29 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Fast, always-runs job: unit tests for the CVRF/Winbindex parsers. Gates the
+  # rest of the pipeline — a failing test blocks the deploy instead of a parser
+  # regression silently reaching production (this has happened before: MSRC
+  # format changes have quietly broken KB extraction and the exploited-flag
+  # logic in the past, with nothing catching it until someone noticed by hand).
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
