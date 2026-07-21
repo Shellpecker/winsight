@@ -2,6 +2,21 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
+<script>
+// winsight uses no service worker. But GitHub Pages project sites share one
+// origin (<user>.github.io), so an SW registered by another repo with scope '/'
+// can control /winsight/ and serve a stale app shell for weeks, ignoring the
+// HTTP cache. Proactively unregister any controlling SW, drop its caches, and
+// reload once. Only reloads when an SW is actually found, so it never loops.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function (regs) {
+    if (!regs.length) return;
+    Promise.all(regs.map(function (r) { return r.unregister(); }))
+      .then(function () { return caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }); })
+      .then(function () { location.reload(); });
+  }).catch(function () {});
+}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>winsight — Windows CVE Intelligence</title>
 <meta name="description" content="Browse Microsoft Windows CVEs for patch-diffing: affected modules plus one-click downloads of the patched and unpatched binaries. Refreshed weekly from the MSRC security update guide.">
