@@ -267,6 +267,16 @@ input, select { font-family: inherit; }
 .sf select:hover { border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
 .sf select:focus { border-color: var(--acc); }
 .sf select option { background: var(--s2); }
+.cvss-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: stretch; }
+.cvss-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+/* Cells in a row stretch to equal height; margin-top:auto on the label sinks the
+   label+select block to the bottom, so a single-line label sits right above its
+   dropdown and lines up with the last line of a neighbour's wrapped label. */
+.cvss-cell > span {
+  font-size: 9.5px; color: var(--fg3); cursor: help; line-height: 1.25;
+  margin-top: auto;
+}
+.sf-hint { font-size: 9.5px; color: var(--fg3); margin-top: 7px; letter-spacing: .02em; }
 [data-theme="light"] .sf select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238D90A3'/%3E%3C/svg%3E");
 }
@@ -818,6 +828,10 @@ table.cvt thead th {
       </select>
     </div>
     <div class="sf">
+      <div class="sf-lbl">CVSS vector</div>
+      <div id="cvss-filters" class="cvss-grid"></div>
+    </div>
+    <div class="sf">
       <div class="sf-lbl">Exploitability</div>
       <div class="toggle-row">
         <button class="tog" id="tog-exploited" data-f="exploited"><span class="tog-txt">Exploited</span><span class="tog-sw"></span></button>
@@ -829,6 +843,7 @@ table.cvt thead th {
       <div class="sf-lbl">Patch-diff</div>
       <div class="toggle-row">
         <button class="tog" id="tog-patchdiff" data-f="patchdiff"><span class="tog-txt">Downloadable builds</span><span class="tog-sw"></span></button>
+        <button class="tog" id="tog-zdi" data-f="zdi" title="Affected binary named by a Zero Day Initiative advisory"><span class="tog-txt">ZDI advisory</span><span class="tog-sw"></span></button>
       </div>
     </div>
     <div class="sf">
@@ -991,54 +1006,15 @@ const IMPACT_LABEL = {
   spoofing:'Spoofing', bypass:'Sec Bypass', tamper:'Tampering', other:'Other'
 };
 
-const COMP_MAP = [
-  [/common log file system|clfs/i,        'CLFS',                   'clfs.sys'],
-  [/dwm core|desktop window manager/i,    'DWM Core',               'dwm.exe'],
-  [/print spooler/i,                      'Print Spooler',          'spoolsv.exe'],
-  [/win32k/i,                             'Win32k',                 'win32k.sys'],
-  [/hyper-v/i,                            'Hyper-V',                'vmwp.exe'],
-  [/task scheduler/i,                     'Task Scheduler',         'schedsvc.dll'],
-  [/netlogon/i,                           'Netlogon',               'netlogon.dll'],
-  [/kerberos/i,                           'Kerberos',               'kerberos.dll'],
-  [/remote desktop|rdp/i,                'Remote Desktop',         'rdpcorets.dll'],
-  [/smb server/i,                         'SMB Server',             'srv2.sys'],
-  [/dns server/i,                         'DNS Server',             'dns.exe'],
-  [/http\.sys/i,                          'HTTP.sys',               'http.sys'],
-  [/lsass|local security authority/i,     'LSASS',                  'lsass.exe'],
-  [/windows kernel/i,                     'Kernel',                 'ntoskrnl.exe'],
-  [/rpc runtime|rpc\/dcom/i,             'RPC Runtime',            'rpcrt4.dll'],
-  [/ntlm/i,                               'NTLM',                   'msv1_0.dll'],
-  [/bitlocker/i,                          'BitLocker',              'fveapi.dll'],
-  [/secure boot/i,                        'Secure Boot',            'bootmgr'],
-  [/cryptographic|cng/i,                  'CNG',                    'bcrypt.dll'],
-  [/wmi/i,                                'WMI',                    'winmgmt.exe'],
-  [/bluetooth/i,                          'Bluetooth',              'bthport.sys'],
-  [/wi-?fi|wlan/i,                        'Wi-Fi',                  'wificlass.sys'],
-  [/defender|antimalware/i,               'Windows Defender',       'MpEngine.dll'],
-  [/scripting engine|jscript|chakra/i,    'Scripting Engine',       'jscript9.dll'],
-  [/mshtml/i,                             'MSHTML',                 'mshtml.dll'],
-  [/mark of the web/i,                    'Mark of the Web',        ''],
-  [/smartscreen/i,                        'SmartScreen',            ''],
-  [/installer/i,                          'Windows Installer',      'msiexec.exe'],
-  [/error reporting/i,                    'WER',                    'werfault.exe'],
-  [/gdi\+|graphics device/i,             'GDI+',                   'gdi32.dll'],
-  [/storage spaces/i,                     'Storage Spaces',         ''],
-  [/kernel streaming/i,                   'Kernel Streaming',       'ks.sys'],
-  [/ole|com\+/i,                          'COM/OLE',                'ole32.dll'],
-  [/usb/i,                                'USB Hub',                'usbhub3.sys'],
-  [/network policy/i,                     'Network Policy Server',  'ias.dll'],
-  [/windows search/i,                     'Windows Search',         'SearchIndexer.exe'],
-  [/powershell/i,                         'PowerShell',             'pwsh.exe'],
-  [/iis|internet information/i,           'IIS',                    'w3wp.exe'],
-  [/exchange/i,                           'Exchange Server',        ''],
-  [/sharepoint/i,                         'SharePoint',             ''],
-];
-
-function extractComp(title) {
-  for (const [re, name, bin] of COMP_MAP) {
-    if (re.test(title)) return { name, bin };
-  }
-  return { name: '—', bin: '' };
+// The Component column (and detail view) prefer the resolved affected module from
+// cve_modules.json — the same heuristic + ZDI cross-reference the patch-diff panel
+// uses — so the column always agrees with the panel and reflects ZDI corrections.
+// Falls back to the MSRC component phrase parsed from the title when a CVE has no
+// resolved module, so nearly every row is populated instead of a hardcoded subset.
+function extractComp(c) {
+  const m = MODULES[c.id];
+  if (m && m.component) return { name: m.component, bin: (m.files && m.files[0]) || '' };
+  return { name: componentPhrase(c.title), bin: '' };
 }
 
 function cvssToSev(v) {
@@ -1203,6 +1179,53 @@ function populateCwes() {
 // Filters, search, sort, toggles and open CVEs live in location.hash so any view
 // can be linked or shared. replaceState keeps it out of the back-button history.
 const URL_SELECTS = { sev: 'f-sev', type: 'f-type', assess: 'f-assess', cwe: 'f-cwe', ver: 'f-ver' };
+
+// Parse a CVSS vector string ("CVSS:3.1/AV:L/AC:L/...") into {AV:'L', AC:'L', ...}.
+// Keyed match (not substring) is essential: "I:N" is a substring of "UI:N" and
+// "C:L" of "AC:L", so naive contains() would cross-match metrics.
+function parseVector(s) {
+  const out = {};
+  if (s) for (const part of s.split('/')) {
+    const i = part.indexOf(':');
+    if (i > 0) out[part.slice(0, i).toUpperCase()] = part.slice(i + 1).toUpperCase();
+  }
+  return out;
+}
+// CVSS 3.x base metrics -> one sidebar dropdown each, so any combination of the
+// full vector is filterable. `key` is the URL param + element-id suffix, `m` the
+// metric abbreviation as it appears in the vector string, `opts` = [value, label].
+const CVSS_METRICS = [
+  { key: 'av', m: 'AV', label: 'Attack Vector',     opts: [['N', 'Network'], ['A', 'Adjacent'], ['L', 'Local'], ['P', 'Physical']] },
+  { key: 'ac', m: 'AC', label: 'Attack Complexity', opts: [['L', 'Low'], ['H', 'High']] },
+  { key: 'pr', m: 'PR', label: 'Privileges Required', opts: [['N', 'None'], ['L', 'Low'], ['H', 'High']] },
+  { key: 'ui', m: 'UI', label: 'User Interaction',  opts: [['N', 'None'], ['R', 'Required']] },
+  { key: 'sc', m: 'S',  label: 'Scope',             opts: [['U', 'Unchanged'], ['C', 'Changed']] },
+  { key: 'ci', m: 'C',  label: 'Confidentiality',   opts: [['H', 'High'], ['L', 'Low'], ['N', 'None']] },
+  { key: 'ii', m: 'I',  label: 'Integrity',         opts: [['H', 'High'], ['L', 'Low'], ['N', 'None']] },
+  { key: 'ai', m: 'A',  label: 'Availability',      opts: [['H', 'High'], ['L', 'Low'], ['N', 'None']] },
+];
+
+// Build the metric dropdowns and register each as a URL-synced select. Runs at
+// parse time (the container is already in the DOM above this script), so the
+// selects exist before restoreFromUrl / the change-listener wiring below.
+(function buildCvssFilters() {
+  const box = document.getElementById('cvss-filters');
+  if (!box) return;
+  for (const { key, m, label, opts } of CVSS_METRICS) {
+    const cell = document.createElement('label');
+    cell.className = 'cvss-cell';
+    const cap = document.createElement('span');
+    cap.textContent = label; cap.title = m;
+    const sel = document.createElement('select');
+    sel.id = 'f-' + key;
+    sel.innerHTML = '<option value="">Any</option>' +
+      opts.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+    sel.addEventListener('change', applyFilters);
+    cell.append(cap, sel);
+    box.appendChild(cell);
+    URL_SELECTS[key] = 'f-' + key;
+  }
+})();
 let deepLinkPending = null; // first open CVE from the URL, focused once after load
 
 function syncUrl() {
@@ -1262,6 +1285,7 @@ function applyFilters(preservePage = false) {
   const q      = document.getElementById('q').value.trim().toLowerCase();
   const sev    = document.getElementById('f-sev').value;
   const type   = document.getElementById('f-type').value;
+  const vecSel = CVSS_METRICS.map(x => [x.m, document.getElementById('f-' + x.key).value]).filter(([, v]) => v);
   const assess = document.getElementById('f-assess').value;
   const cwe    = document.getElementById('f-cwe').value;
   const ver    = document.getElementById('f-ver').value;
@@ -1270,9 +1294,14 @@ function applyFilters(preservePage = false) {
   FILTERED = DATA.filter(c => {
     if (sev && cvssToSev(c.cvss) !== sev) return false;
     if (type && c.impact !== type) return false;
+    if (vecSel.length) {
+      const mv = c._v || (c._v = parseVector(c.cvss_vector));
+      for (const [m, v] of vecSel) if (mv[m] !== v) return false;
+    }
     if (activeToggles.has('exploited') && !c.exploited) return false;
     if (activeToggles.has('disclosed') && !c.disclosed) return false;
     if (activeToggles.has('patchdiff') && !hasDownloadable(c)) return false;
+    if (activeToggles.has('zdi') && !hasZdi(c)) return false;
     if (activeToggles.has('kev') && !c.kev) return false;
     if (activeToggles.has('latest') && monthKey(c.month) !== LATEST_MONTH) return false;
     if (assess && c.exploitability !== assess) return false;
@@ -1344,7 +1373,7 @@ function render() {
 
   page.forEach(c => {
     const sev  = cvssToSev(c.cvss);
-    const comp = extractComp(c.title);
+    const comp = extractComp(c);
     const isOpen = openRows.has(c.id);
 
     const tr = document.createElement('tr');
@@ -1431,6 +1460,7 @@ function buildDetail(c, comp, sev) {
       <div><div class="mk">Released</div><div class="mv">${esc(c.date || 'unknown')}</div></div>
       <div><div class="mk">CVSS base</div><div class="mv">${c.cvss != null ? c.cvss.toFixed(1) : 'not scored'}</div></div>
       <div><div class="mk">Severity</div><div class="mv">${SEV_LABEL[sev]}</div></div>
+      ${c.cvss_vector ? `<div style="grid-column:1/-1"><div class="mk">CVSS vector</div><div class="mv mv-mono">${esc(c.cvss_vector)}</div></div>` : ''}
       <div><div class="mk">Type</div><div class="mv">${IMPACT_LABEL[c.impact] || esc(c.impact)}</div></div>
       <div><div class="mk">Component</div><div class="mv">${esc(comp.name)}${comp.bin ? ' · ' + esc(comp.bin) : ''}</div></div>
       ${c.cwe ? `<div><div class="mk">CWE</div><div class="mv">${esc(c.cwe.id)}${c.cwe.name ? ': ' + esc(c.cwe.name) : ''}</div></div>` : ''}
@@ -1465,6 +1495,11 @@ function hasDownloadable(c) {
   if (!m || !m.targets) return false;
   return m.targets.some(t =>
     (t.patched && t.patched.downloadable) || (t.unpatched && t.unpatched.downloadable));
+}
+
+// True when a ZDI (advisory) cross-reference named the affected binary.
+function hasZdi(c) {
+  return !!MODULES[c.id]?.advisory;
 }
 
 // Confidence wording for the patch-diff header. Manual entries read "curated";
@@ -1850,6 +1885,7 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
 document.getElementById('rst').addEventListener('click', () => {
   document.getElementById('q').value = '';
   ['f-sev','f-type','f-assess','f-cwe','f-ver'].forEach(id => { document.getElementById(id).value = ''; });
+  CVSS_METRICS.forEach(x => { document.getElementById('f-' + x.key).value = ''; });
   document.getElementById('sortby').value = 'cve_desc';
   activeToggles.clear();
   document.querySelectorAll('.tog').forEach(b => b.classList.remove('on'));

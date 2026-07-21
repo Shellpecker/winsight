@@ -5,7 +5,7 @@
     <link>https://shellpecker.github.io/winsight/</link>
     <description>Recent Microsoft Windows CVEs with affected modules and patch-diff binaries, refreshed weekly from MSRC.</description>
     <language>en</language>
-    <lastBuildDate>Tue, 21 Jul 2026 13:08:13 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 21 Jul 2026 13:43:45 GMT</lastBuildDate>
     <item>
       <title>CVE-2026-42982 — Windows Secure Kernel Mode Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-42982</link>

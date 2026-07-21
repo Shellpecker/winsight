@@ -284,6 +284,19 @@ def extract_score(vuln):
     return None
 
 
+def extract_vector(vuln):
+    """The full CVSS base vector string, e.g. "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/...".
+
+    MSRC ships it in CVSSScoreSets[0].Vector alongside the BaseScore. Stored whole
+    so the UI can filter on ANY metric (attack vector, privileges required, user
+    interaction, scope, impact, ...) — parsed client-side. None when absent.
+    """
+    sets = vuln.get("CVSSScoreSets") or []
+    if not sets:
+        return None
+    return sets[0].get("Vector") or None
+
+
 def extract_exploited(vuln):
     """
     MSRC encodes exploit status in Type=1 Threat entries.  The Description.Value
@@ -427,6 +440,7 @@ def parse_cvrf(doc, month_id):
             "date": release_date[:10] if release_date else "",
             "title": title,
             "cvss": extract_score(vuln),
+            "cvss_vector": extract_vector(vuln),
             "exploited": exploited,
             "disclosed": disclosed,
             "exploitability": exploitability,

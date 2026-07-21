@@ -76,6 +76,21 @@ class ExtractCweTests(unittest.TestCase):
         self.assertIsNone(bi.extract_cwe({"CWE": {"ID": "", "Value": "x"}}))
 
 
+class ExtractVectorTests(unittest.TestCase):
+    def test_returns_full_vector_string(self):
+        vuln = {"CVSSScoreSets": [{"BaseScore": 7.8,
+                "Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H"}]}
+        self.assertEqual(bi.extract_vector(vuln), "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H")
+
+    def test_no_score_sets_returns_none(self):
+        self.assertIsNone(bi.extract_vector({}))
+        self.assertIsNone(bi.extract_vector({"CVSSScoreSets": []}))
+
+    def test_empty_vector_returns_none(self):
+        self.assertIsNone(bi.extract_vector({"CVSSScoreSets": [{"BaseScore": 5.0, "Vector": ""}]}))
+        self.assertIsNone(bi.extract_vector({"CVSSScoreSets": [{"BaseScore": 5.0}]}))
+
+
 class ExtractExploitedTests(unittest.TestCase):
     def test_exploited_and_disclosed_yes(self):
         vuln = {"Threats": [{"Type": 1, "Description": {

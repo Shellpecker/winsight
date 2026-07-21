@@ -15,8 +15,10 @@ fetches and filters them entirely client-side.
 
 - **Browse & filter** ~2,000+ Windows CVEs from the last 24 months: severity,
   vulnerability type, CWE, affected Windows version, exploited / publicly
-  disclosed / listed in CISA's KEV catalog, EPSS score, and whether a
-  downloadable patch-diff build exists. Free-text search covers CVE ID,
+  disclosed / listed in CISA's KEV catalog / covered by a ZDI advisory, EPSS
+  score, and whether a downloadable patch-diff build exists. A **CVSS vector** filter adds a dropdown
+  per base metric (AV, AC, PR, UI, S, C, I, A) so any combination is
+  filterable — e.g. AV=Network + PR=None + UI=None for the wormable-RCE hunt. Free-text search covers CVE ID,
   title, KB numbers, version labels, *and* affected binary filenames (try
   `clfs.sys` or `win32kfull.sys`).
 - **Patch-diff panel** — for ~1,400 of those CVEs (and counting), one click
