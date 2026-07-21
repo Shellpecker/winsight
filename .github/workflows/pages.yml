@@ -103,12 +103,24 @@ jobs:
         run: |
           python scripts/build_index.py
 
+      # Cross-reference ZDI advisories (names the specific affected binary where
+      # MSRC gives a vague title). Best-effort: on failure the existing map is
+      # left in place and build_modules.py falls back to the title heuristic.
+      - name: Run zdi.py
+        if: steps.decide.outputs.rebuild == 'true'
+        continue-on-error: true
+        env:
+          WINSIGHT_ZDI_OUTPUT: "data/zdi_map.json"
+        run: |
+          python scripts/zdi.py
+
       - name: Run build_modules.py
         if: steps.decide.outputs.rebuild == 'true'
         continue-on-error: true
         env:
           WINSIGHT_OUTPUT: "data/index.json"
           WINSIGHT_MODULES_OUTPUT: "data/cve_modules.json"
+          WINSIGHT_ZDI_OUTPUT: "data/zdi_map.json"
           WINSIGHT_WINBINDEX_CACHE: ${{ runner.temp }}/winbindex-cache
         run: |
           python scripts/build_modules.py
@@ -128,6 +140,8 @@ jobs:
               print(f\"CVEs with affected modules: {m.get('count_with_modules', 0)}\")
               print(f\"CVEs with a downloadable build: {m.get('count_downloadable_cves', 0)}\")
               print(f\"Downloadable patch-diff builds: {m.get('count_downloadable_builds', 0)}\")
+              print(f\"ZDI-corroborated modules: {m.get('count_zdi_advisories', 0)}\")
+              print(f\"Low-confidence (verify) guesses: {m.get('count_low_confidence', 0)}\")
           " >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit refreshed data
@@ -137,6 +151,7 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/index.json
           [ -f data/cve_modules.json ] && git add data/cve_modules.json
+          [ -f data/zdi_map.json ] && git add data/zdi_map.json
           [ -f data/feed.xml ] && git add data/feed.xml
           if git diff --cached --quiet; then
             echo "No changes to commit"

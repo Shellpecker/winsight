@@ -55,6 +55,77 @@ class GuessModuleTests(unittest.TestCase):
         self.assertNotIn("not-a-real-file.sys", files2)
 
 
+class ResolveComponentTests(unittest.TestCase):
+    """The ZDI-override + confidence-tier decision. Pure: no Winbindex network."""
+
+    def _cve(self, title):
+        return {"title": title, "fixes": []}
+
+    def test_heuristic_specific_is_heuristic_confidence(self):
+        comp, files, source, conf = bm.resolve_component(
+            self._cve("Windows Common Log File System Driver Elevation of Privilege Vulnerability"))
+        self.assertEqual((source, conf), ("heuristic", "heuristic"))
+        self.assertEqual(files, ["clfs.sys"])
+
+    def test_vague_kernel_guess_is_low_confidence(self):
+        # "Windows Kernel ..." -> ntoskrnl.exe, the exact false-positive class:
+        # ntoskrnl.exe changes every cumulative update so Winbindex can't disprove
+        # the guess. With no advisory it must be flagged low.
+        comp, files, source, conf = bm.resolve_component(
+            self._cve("Windows Kernel Elevation of Privilege Vulnerability"))
+        self.assertEqual(files, ["ntoskrnl.exe"])
+        self.assertEqual((source, conf), ("heuristic", "low"))
+
+    def test_zdi_files_override_the_title_guess(self):
+        # ZDI says securekernel.exe; the vague-kernel ntoskrnl.exe guess is replaced.
+        zdi = {"id": "ZDI-26-276", "url": "u", "component": "Secure Kernel",
+               "files": ["securekernel.exe"]}
+        comp, files, source, conf = bm.resolve_component(
+            self._cve("Windows Kernel Elevation of Privilege Vulnerability"), zdi)
+        self.assertEqual((comp, files, source, conf),
+                         ("Secure Kernel", ["securekernel.exe"], "zdi", "advisory"))
+
+    def test_zdi_provides_new_coverage_when_heuristic_empty(self):
+        zdi = {"id": "ZDI-26-416", "url": "u", "component": "netvsc", "files": ["netvsc.sys"]}
+        comp, files, source, conf = bm.resolve_component(
+            self._cve("Some Totally Unmapped Component Vulnerability"), zdi)
+        self.assertEqual((files, source, conf), (["netvsc.sys"], "zdi", "advisory"))
+
+    def test_zdi_component_without_file_still_surfaces_advisory(self):
+        # ServerManager isn't a Winbindex core binary -> no files, but the advisory
+        # link should still be attachable (source=zdi, empty files).
+        zdi = {"id": "ZDI-26-417", "url": "u", "component": "ServerManager", "files": []}
+        comp, files, source, conf = bm.resolve_component(
+            self._cve("Some Totally Unmapped Component Vulnerability"), zdi)
+        self.assertEqual((comp, files, source), ("ServerManager", [], "zdi"))
+
+    def test_nothing_matches_returns_none(self):
+        self.assertIsNone(bm.resolve_component(self._cve("Some Totally Unmapped Component Vulnerability")))
+
+
+class BuildEntryAdvisoryTests(unittest.TestCase):
+    def test_advisory_only_entry_has_no_targets_but_keeps_link(self):
+        # files=[] path never touches Winbindex, so this is network-free.
+        cve = {"title": "Some Totally Unmapped Component Vulnerability", "fixes": []}
+        zdi = {"id": "ZDI-26-417", "url": "https://z/ZDI-26-417/",
+               "component": "ServerManager", "files": []}
+        entry = bm.build_entry_for_cve(cve, zdi)
+        self.assertEqual(entry["source"], "zdi")
+        self.assertEqual(entry["files"], [])
+        self.assertEqual(entry["targets"], [])
+        self.assertEqual(entry["advisory"]["id"], "ZDI-26-417")
+        self.assertEqual(entry["advisory"]["source"], "ZDI")
+
+    def test_no_match_no_advisory_returns_none(self):
+        cve = {"title": "Some Totally Unmapped Component Vulnerability", "fixes": []}
+        self.assertIsNone(bm.build_entry_for_cve(cve, None))
+
+    def test_advisory_ref_shape(self):
+        self.assertIsNone(bm._advisory_ref(None))
+        ref = bm._advisory_ref({"id": "ZDI-26-1", "url": "u", "component": "X"})
+        self.assertEqual(ref, {"source": "ZDI", "id": "ZDI-26-1", "url": "u", "component": "X"})
+
+
 def _wb_entry(sha256, timestamp, virtual_size, version, machine_type, windows_versions):
     return {
         "fileInfo": {

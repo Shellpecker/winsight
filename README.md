@@ -22,7 +22,10 @@ fetches and filters them entirely client-side.
 - **Patch-diff panel** — for ~1,400 of those CVEs (and counting), one click
   downloads the exact unpatched and patched build of the affected binary,
   sourced live from Microsoft's own symbol server. IDA, Ghidra, and BinDiff
-  resolve symbols for these automatically, no extra setup.
+  resolve symbols for these automatically, no extra setup. Each guess shows a
+  confidence: `advisory-confirmed` when a **ZDI advisory** named the binary
+  (with a link to it), or `best guess — verify` when it rests only on a
+  high-churn binary MSRC's vague title couldn't pin down.
 - **Binary biography** — click any binary's name to see its *entire* history:
   every CVE that ever touched it, its full build chain per Windows version,
   and pick any two builds (not just one CVE's pair) to diff.
@@ -42,8 +45,10 @@ MSRC CVRF API   ──┐
 FIRST EPSS      ──┼──>  scripts/build_index.py   ──>  data/index.json
 CISA KEV        ──┘                                    data/feed.xml
                                                               │
-                                                              ▼
-Winbindex       ────>  scripts/build_modules.py  ──>  data/cve_modules.json
+ZDI advisories  ────>  scripts/zdi.py  ──>  data/zdi_map.json │
+                                                       │      │
+                                                       ▼      ▼
+Winbindex       ─────────────────>  scripts/build_modules.py  ──>  data/cve_modules.json
                                                               │
                                                               ▼
                                                         index.html
@@ -62,7 +67,15 @@ the data refresh and the deploy:
    probability, from FIRST.org) and **CISA KEV** (confirmed exploited in the
    wild) — both best-effort, null on fetch failure — and emits an RSS feed of
    the most recent entries.
-2. **`build_modules.py`** takes each CVE's title, maps it to a small set of
+2. **`zdi.py`** cross-references those CVEs against
+   [Zero Day Initiative](https://www.zerodayinitiative.com/) advisories. ZDI
+   is often the party that found the bug, so its advisory title names the
+   *actual* affected binary — where MSRC frequently gives a vague component
+   ("Windows Kernel Elevation of Privilege Vulnerability") that maps to any of
+   dozens of drivers. It parses ZDI's published RSS + per-year listing pages
+   into `data/zdi_map.json` (`CVE → {advisory, binary}`), a persistent,
+   hand-correctable file that grows over time.
+3. **`build_modules.py`** takes each CVE's title, maps it to a small set of
    candidate binaries (`COMPONENT_MAP`), and confirms each against
    [Winbindex](https://winbindex.m417z.com/)'s build index. For every
    Windows-version fix it resolves the exact patched build and its
@@ -71,10 +84,15 @@ the data refresh and the deploy:
    the file's whole history. Some files (notably `win32k.sys`) reuse a
    constant timestamp+size across many builds, so the server can only serve
    one of them; those are shown as version + sha256 with a Winbindex
-   fallback link instead of a broken download. `cve_modules.json` is
+   fallback link instead of a broken download. Each mapping carries a
+   **confidence**: a ZDI advisory that named the binary *replaces* the title
+   guess and shows as `advisory-confirmed` (with a link to the advisory); a
+   guess resting only on a high-churn binary like `ntoskrnl.exe` with nothing
+   to corroborate it is flagged `best guess — verify`, because Winbindex can't
+   disprove it (that file changes in every update). `cve_modules.json` is
    persistent across refreshes: entries with `"source": "manual"` are never
    overwritten, so a hand-corrected mapping sticks.
-3. The workflow **only re-runs the data build** on its weekly cron, manual
+4. The workflow **only re-runs the data build** on its weekly cron, manual
    dispatch, or a push touching `scripts/**`. A push that only touches
    `index.html` / `data/**` / the SVG assets skips straight to deploy —
    fast iteration on the frontend without waiting on MSRC + Winbindex.
@@ -91,6 +109,10 @@ JSON files. There is no runtime backend.
 - [Winbindex](https://winbindex.m417z.com/) — per-file build history
   (version, sha256, timestamp/size, which KB shipped it) used to resolve
   patch-diff targets. Not affiliated with this project.
+- [Zero Day Initiative](https://www.zerodayinitiative.com/) — published
+  advisories, cross-referenced to pin the specific affected binary when
+  MSRC's title is vague. Public advisories only, no API key. Not affiliated
+  with this project.
 - [FIRST EPSS](https://www.first.org/epss/) — daily exploit-probability
   scores.
 - [CISA KEV](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) —
@@ -109,8 +131,15 @@ JSON files. There is no runtime backend.
   advisories name a *component* ("Windows Common Log File System Driver"),
   not a filename. `COMPONENT_MAP` in `build_modules.py` maps titles to
   binaries by keyword match, then Winbindex gates the guess (a wrong
-  filename simply produces no download, never a broken one). Corrections
-  are welcome — see below.
+  filename simply produces no download, never a broken one). **One case
+  slips that gate**: a vague "Windows Kernel" title guessed as `ntoskrnl.exe`,
+  which changes in every cumulative update and so always resolves — the guess
+  can be wrong yet still serve a (wrong) download. Two mitigations: where a
+  **ZDI advisory** names the real binary it overrides the guess and is marked
+  `advisory-confirmed`; otherwise an uncorroborated high-churn guess is marked
+  `best guess — verify` rather than presented as fact. ZDI coverage is a
+  minority of CVEs, so this corrects the worst false positives, not all of
+  them. Corrections are welcome — see below.
 - **Not affiliated with Microsoft, Winbindex, FIRST, or CISA.** Independent,
   unofficial, best-effort.
 
@@ -120,6 +149,12 @@ If a CVE's binary guess is wrong, hand-edit its entry in
 `data/cve_modules.json` and set `"source": "manual"` — the refresh workflow
 preserves manual entries and never overwrites them.
 
+To supply or fix an advisory cross-reference (e.g. add a binary for a CVE ZDI
+named but `zdi.py` couldn't map), edit its entry in `data/zdi_map.json` and set
+`"source": "manual"` there; `zdi.py` preserves manual entries the same way, and
+`build_modules.py` will pick up the corrected binary on the next build. New
+`ZDI_COMPONENT_MAP` keywords in `scripts/zdi.py` fix it for every CVE at once.
+
 ## Local development
 
 There's no build step for the frontend — `index.html` is a single static
@@ -128,6 +163,7 @@ MSRC/Winbindex/FIRST/CISA:
 
 ```bash
 WINSIGHT_BACKFILL_MONTHS=2 WINSIGHT_FEED_OUTPUT=data/feed.xml python scripts/build_index.py
+python scripts/zdi.py                                          # -> data/zdi_map.json
 WINSIGHT_MODULES_OUTPUT=data/cve_modules.json python scripts/build_modules.py
 python -m http.server 8000   # then open localhost:8000
 ```

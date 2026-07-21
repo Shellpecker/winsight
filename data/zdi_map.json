@@ -1,0 +1,502 @@
+{
+  "generated_at": "2026-07-21",
+  "source": "Zero Day Initiative (published advisories)",
+  "count": 69,
+  "count_with_files": 36,
+  "map": {
+    "CVE-2024-49082": {
+      "id": "ZDI-24-1657",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1657/",
+      "component": "Directory Traversal Vulnerability",
+      "files": []
+    },
+    "CVE-2024-43556": {
+      "id": "ZDI-24-1330",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1330/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2024-38066": {
+      "id": "ZDI-24-1311",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1311/",
+      "component": "Menu DC Path",
+      "files": []
+    },
+    "CVE-2024-38249": {
+      "id": "ZDI-24-1293",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1293/",
+      "component": "BeginPaint Brush",
+      "files": []
+    },
+    "CVE-2024-38213": {
+      "id": "ZDI-24-1210",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1210/",
+      "component": "Drag and Drop SmartScreen Bypass Vulnerability",
+      "files": []
+    },
+    "CVE-2024-43461": {
+      "id": "ZDI-24-1207",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1207/",
+      "component": "Internet Explorer File Extension",
+      "files": []
+    },
+    "CVE-2024-38163": {
+      "id": "ZDI-24-1147",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1147/",
+      "component": "WinREUpdateInstaller_2401B_amd64",
+      "files": []
+    },
+    "CVE-2024-30082": {
+      "id": "ZDI-24-1076",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1076/",
+      "component": "Menu DC Color Space",
+      "files": []
+    },
+    "CVE-2024-21371": {
+      "id": "ZDI-24-1035",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-1035/",
+      "component": "NTFS Junction",
+      "files": [
+        "ntfs.sys"
+      ]
+    },
+    "CVE-2024-30089": {
+      "id": "ZDI-24-607",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-607/",
+      "component": "mskssrv Driver",
+      "files": [
+        "mskssrv.sys"
+      ]
+    },
+    "CVE-2024-30088": {
+      "id": "ZDI-24-606",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-606/",
+      "component": "NtQueryInformationToken",
+      "files": []
+    },
+    "CVE-2024-30087": {
+      "id": "ZDI-24-605",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-605/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2024-35250": {
+      "id": "ZDI-24-604",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-604/",
+      "component": "UnserializePropertySet Privilege Context Switching Error",
+      "files": []
+    },
+    "CVE-2024-30084": {
+      "id": "ZDI-24-603",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-603/",
+      "component": "UnserializePropertySet",
+      "files": []
+    },
+    "CVE-2024-30086": {
+      "id": "ZDI-24-602",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-602/",
+      "component": "DirectComposition",
+      "files": []
+    },
+    "CVE-2024-30085": {
+      "id": "ZDI-24-601",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-601/",
+      "component": "cldflt",
+      "files": [
+        "cldflt.sys"
+      ]
+    },
+    "CVE-2024-30037": {
+      "id": "ZDI-24-495",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-495/",
+      "component": "CLFS Integer Underflow",
+      "files": [
+        "clfs.sys"
+      ]
+    },
+    "CVE-2024-30034": {
+      "id": "ZDI-24-452",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-452/",
+      "component": "cldflt",
+      "files": [
+        "cldflt.sys"
+      ]
+    },
+    "CVE-2024-30033": {
+      "id": "ZDI-24-451",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-451/",
+      "component": "Search Service",
+      "files": []
+    },
+    "CVE-2023-24948": {
+      "id": "ZDI-24-439",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-439/",
+      "component": "Bluetooth AVDTP Protocol Integer Underflow",
+      "files": [
+        "bthport.sys"
+      ]
+    },
+    "CVE-2024-29991": {
+      "id": "ZDI-24-399",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-399/",
+      "component": "MHT File Mark-Of-The-Web Bypass",
+      "files": []
+    },
+    "CVE-2024-26158": {
+      "id": "ZDI-24-363",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-363/",
+      "component": "Installer Service",
+      "files": [
+        "msiexec.exe",
+        "msi.dll"
+      ]
+    },
+    "CVE-2024-29988": {
+      "id": "ZDI-24-361",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-361/",
+      "component": "Internet Shortcut SmartScreen Bypass Vulnerability",
+      "files": []
+    },
+    "CVE-2024-21412": {
+      "id": "ZDI-24-165",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-165/",
+      "component": "Internet Shortcut SmartScreen Bypass Vulnerability",
+      "files": []
+    },
+    "CVE-2024-21310": {
+      "id": "ZDI-24-031",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-24-031/",
+      "component": "cldflt",
+      "files": [
+        "cldflt.sys"
+      ]
+    },
+    "CVE-2025-62458": {
+      "id": "ZDI-25-1049",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1049/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2025-60709": {
+      "id": "ZDI-25-1001",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1001/",
+      "component": "Common Log File System",
+      "files": [
+        "clfs.sys"
+      ]
+    },
+    "CVE-2025-50154": {
+      "id": "ZDI-25-964",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-964/",
+      "component": "LNK File Parsing Improper Input Validation NTLM Relay Vulnerability",
+      "files": []
+    },
+    "CVE-2025-48982": {
+      "id": "ZDI-25-963",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-963/",
+      "component": "Veeam Agent for Microsoft Windows",
+      "files": []
+    },
+    "CVE-2025-59284": {
+      "id": "ZDI-25-953",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-953/",
+      "component": "TAR File Parsing NTLM Relay Vulnerability",
+      "files": []
+    },
+    "CVE-2025-53132": {
+      "id": "ZDI-25-845",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-845/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2025-53788": {
+      "id": "ZDI-25-844",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-844/",
+      "component": "Subsystem for Linux WslCoreVm::Initialize Incorrect Privilege Management",
+      "files": []
+    },
+    "CVE-2025-50168": {
+      "id": "ZDI-25-843",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-843/",
+      "component": "win32kbase",
+      "files": [
+        "win32kbase.sys"
+      ]
+    },
+    "CVE-2025-53156": {
+      "id": "ZDI-25-842",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-842/",
+      "component": "",
+      "files": []
+    },
+    "CVE-2025-53723": {
+      "id": "ZDI-25-841",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-841/",
+      "component": "vhdmp",
+      "files": [
+        "vhdmp.sys"
+      ]
+    },
+    "CVE-2025-53155": {
+      "id": "ZDI-25-840",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-840/",
+      "component": "vhdmp",
+      "files": [
+        "vhdmp.sys"
+      ]
+    },
+    "CVE-2025-50167": {
+      "id": "ZDI-25-838",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-838/",
+      "component": "vhdmp",
+      "files": [
+        "vhdmp.sys"
+      ]
+    },
+    "CVE-2025-24287": {
+      "id": "ZDI-25-649",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-649/",
+      "component": "Veeam Agent for Microsoft Windows",
+      "files": []
+    },
+    "CVE-2025-49727": {
+      "id": "ZDI-25-584",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-584/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2025-49732": {
+      "id": "ZDI-25-583",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-583/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2025-49740": {
+      "id": "ZDI-25-582",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-582/",
+      "component": "Startup Folder SmartScreen Bypass Vulnerability",
+      "files": []
+    },
+    "CVE-2025-49742": {
+      "id": "ZDI-25-578",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-578/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2025-48820": {
+      "id": "ZDI-25-577",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-577/",
+      "component": "AppX Deployment Service",
+      "files": []
+    },
+    "CVE-2025-30394": {
+      "id": "ZDI-25-334",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-334/",
+      "component": "Remote Desktop Gateway Service",
+      "files": []
+    },
+    "CVE-2025-32714": {
+      "id": "ZDI-25-333",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-333/",
+      "component": "Installer Service",
+      "files": [
+        "msiexec.exe",
+        "msi.dll"
+      ]
+    },
+    "CVE-2025-33075": {
+      "id": "ZDI-25-332",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-332/",
+      "component": "Installer Service",
+      "files": [
+        "msiexec.exe",
+        "msi.dll"
+      ]
+    },
+    "CVE-2025-29837": {
+      "id": "ZDI-25-293",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-293/",
+      "component": "Installer Service",
+      "files": [
+        "msiexec.exe",
+        "msi.dll"
+      ]
+    },
+    "CVE-2025-29812": {
+      "id": "ZDI-25-234",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-234/",
+      "component": "dxkrnl",
+      "files": [
+        "dxgkrnl.sys"
+      ]
+    },
+    "CVE-2025-26633": {
+      "id": "ZDI-25-150",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-150/",
+      "component": "MSC File Insufficient UI Warning",
+      "files": []
+    },
+    "CVE-2025-9491": {
+      "id": "ZDI-25-148",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-148/",
+      "component": "LNK File UI Misrepresentation",
+      "files": []
+    },
+    "CVE-2025-21373": {
+      "id": "ZDI-25-091",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-091/",
+      "component": "Installer Service",
+      "files": [
+        "msiexec.exe",
+        "msi.dll"
+      ]
+    },
+    "CVE-2025-21331": {
+      "id": "ZDI-25-029",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-029/",
+      "component": "Installer Service",
+      "files": [
+        "msiexec.exe",
+        "msi.dll"
+      ]
+    },
+    "CVE-2026-50311": {
+      "id": "ZDI-26-417",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-417/",
+      "component": "ServerManager",
+      "files": []
+    },
+    "CVE-2026-54129": {
+      "id": "ZDI-26-416",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-416/",
+      "component": "netvsc",
+      "files": [
+        "netvsc.sys"
+      ]
+    },
+    "CVE-2026-49805": {
+      "id": "ZDI-26-415",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-415/",
+      "component": "WMI Providers",
+      "files": [
+        "wmiprvse.exe",
+        "wbemcomn.dll"
+      ]
+    },
+    "CVE-2026-48565": {
+      "id": "ZDI-26-339",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-339/",
+      "component": "Narrator Braille Support brlapi",
+      "files": []
+    },
+    "CVE-2026-34342": {
+      "id": "ZDI-26-310",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-310/",
+      "component": "splwow64",
+      "files": [
+        "splwow64.exe"
+      ]
+    },
+    "CVE-2026-33838": {
+      "id": "ZDI-26-309",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-309/",
+      "component": "Message Queueing",
+      "files": [
+        "mqqm.dll",
+        "mqsvc.exe"
+      ]
+    },
+    "CVE-2026-32183": {
+      "id": "ZDI-26-279",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-279/",
+      "component": "Snipping Tool",
+      "files": []
+    },
+    "CVE-2026-33104": {
+      "id": "ZDI-26-278",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-278/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2026-32073": {
+      "id": "ZDI-26-277",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-277/",
+      "component": "afd.sys",
+      "files": [
+        "afd.sys"
+      ]
+    },
+    "CVE-2026-26179": {
+      "id": "ZDI-26-276",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-276/",
+      "component": "Secure Kernel",
+      "files": [
+        "securekernel.exe"
+      ]
+    },
+    "CVE-2026-25181": {
+      "id": "ZDI-26-185",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-185/",
+      "component": "GDI Bitmap Parsing Out-Of-Bound Read",
+      "files": []
+    },
+    "CVE-2026-24289": {
+      "id": "ZDI-26-184",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-184/",
+      "component": "NDIS Driver",
+      "files": [
+        "ndis.sys"
+      ]
+    },
+    "CVE-2026-24285": {
+      "id": "ZDI-26-183",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-183/",
+      "component": "win32full Improper Release",
+      "files": []
+    },
+    "CVE-2026-23668": {
+      "id": "ZDI-26-180",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-180/",
+      "component": "cdd",
+      "files": []
+    },
+    "CVE-2026-21249": {
+      "id": "ZDI-26-083",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-083/",
+      "component": "searchConnector-ms NTLM Response",
+      "files": []
+    },
+    "CVE-2026-21235": {
+      "id": "ZDI-26-081",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-081/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2026-20871": {
+      "id": "ZDI-26-044",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-044/",
+      "component": "Desktop Window Manager",
+      "files": [
+        "dwmcore.dll"
+      ]
+    }
+  }
+}

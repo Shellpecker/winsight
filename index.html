@@ -497,6 +497,10 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 
 /* ── patch-diff panel ── */
 .pd-hint { font-size: 8.5px; color: var(--fg3); background: var(--s3); border: 1px solid var(--b1); padding: 1px 5px; border-radius: var(--r-xs); letter-spacing: .04em; text-transform: none; }
+.pd-hint.adv { color: var(--acc-fg); background: var(--acc-bg); border-color: var(--acc); }
+.pd-hint.low { color: var(--med); background: var(--med-bg); border-color: var(--med); }
+.pd-adv { font-size: 9px; font-weight: 600; color: var(--acc-fg); background: var(--acc-bg); border: 1px solid var(--acc); padding: 1px 6px; border-radius: var(--r-xs); letter-spacing: .03em; text-transform: none; white-space: nowrap; }
+.pd-adv:hover { text-decoration: none; border-color: var(--acc-fg); filter: brightness(1.08); }
 .pd-files { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 8px; }
 .pd-file { font-size: 11px; font-weight: 600; color: var(--fg); background: var(--s3); border: 1px solid var(--b2); padding: 2px 8px; border-radius: var(--r-xs); font-variant-numeric: tabular-nums; }
 .pd-wb { font-size: 10px; color: var(--fg3); border: 1px solid var(--b1); padding: 2px 7px; border-radius: var(--r-xs); margin-left: 2px; }
@@ -1463,13 +1467,46 @@ function hasDownloadable(c) {
     (t.patched && t.patched.downloadable) || (t.unpatched && t.unpatched.downloadable));
 }
 
+// Confidence wording for the patch-diff header. Manual entries read "curated";
+// a ZDI (or other) advisory that named the binary reads "advisory-confirmed";
+// a guess resting only on a high-churn binary (ntoskrnl.exe) with nothing to
+// corroborate it reads "best guess — verify" so it isn't mistaken for fact.
+function pdHint(m) {
+  if (m.source === 'manual') return { cls: 'pd-hint', txt: 'curated' };
+  if (m.confidence === 'advisory') return { cls: 'pd-hint adv', txt: 'advisory-confirmed' };
+  if (m.confidence === 'low') return { cls: 'pd-hint low', txt: 'best guess — verify' };
+  return { cls: 'pd-hint', txt: 'suggested' };
+}
+
+// The advisory (ZDI) badge — a link to the advisory that named the binary.
+function advBadge(m) {
+  const a = m.advisory;
+  if (!a || !a.url) return '';
+  const tip = (a.source || 'Advisory') + (a.component ? ': ' + a.component : '') + ' — affected binary named by this advisory';
+  return `<a class="pd-adv" href="${esc(a.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="${esc(tip)}">${esc(a.id || a.source || 'advisory')} ↗</a>`;
+}
+
 function buildPatchDiff(c) {
   const m = MODULES[c.id];
-  if (!m || !m.files || !m.files.length) return '';
+  if (!m) return '';
+  const hasFiles = m.files && m.files.length;
+  if (!hasFiles && !m.advisory) return '';
+
+  const h = pdHint(m);
+  const label = hasFiles ? `affected module${m.files.length > 1 ? 's' : ''}` : 'affected component';
+  const secLbl = `<div class="sec-lbl">Patch-diff <span class="${h.cls}">${h.txt} ${label}</span>${advBadge(m)}</div>`;
+
+  // Advisory named a component with no individually-diffable Windows binary
+  // (e.g. ServerManager, Snipping Tool). Surface the real component + link
+  // rather than a wrong download.
+  if (!hasFiles) {
+    const a = m.advisory;
+    return secLbl + `<div class="pd-empty">${esc(a.source || 'The advisory')} identifies <strong>${esc(a.component || m.component || 'this component')}</strong>, which has no individually diffable Windows binary indexed. See the advisory above.</div>` +
+      `<div style="margin-bottom:14px"></div>`;
+  }
 
   const fileChips = m.files.map(f => `<span class="pd-file clickable" onclick="openBinary('${f}',event)" title="View the ${esc(f)} timeline — every CVE + build">${esc(f)}</span>`).join('');
-  const head =
-    `<div class="sec-lbl">Patch-diff <span class="pd-hint">${m.source === 'manual' ? 'curated' : 'suggested'} affected module${m.files.length > 1 ? 's' : ''}</span></div>` +
+  const head = secLbl +
     `<div class="pd-files">${fileChips}` +
       `<a class="pd-wb" href="https://winbindex.m417z.com/?file=${encodeURIComponent(m.files[0])}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Browse all builds on Winbindex">Winbindex ↗</a>` +
     `</div>`;

@@ -35,11 +35,31 @@ How it works
    history; otherwise the build is reported (version + sha256) but flagged
    downloadable=false, with a Winbindex fallback link in the UI.
 
+Advisory cross-reference (ZDI)
+------------------------------
+MSRC sometimes ships a deliberately vague title ("Windows Kernel Elevation of
+Privilege Vulnerability") that maps to many different drivers. scripts/zdi.py
+cross-references those CVEs against Zero Day Initiative advisories, which name
+the actual affected binary. When data/zdi_map.json has a resolved binary for a
+CVE, it REPLACES the title-based guess (source="zdi", confidence="advisory") and
+the advisory link is attached. This is the authoritative fix for the one
+false-positive class the Winbindex gate can't catch (see HIGH_CHURN_FILES).
+
+Confidence
+----------
+Every entry carries a "confidence":
+  - "advisory"  — a ZDI advisory named the binary. Trust it.
+  - "heuristic" — title keyword match, gated by Winbindex. Solid but a guess.
+  - "low"       — the guess is only a high-churn binary (ntoskrnl.exe) with no
+                  advisory corroboration; Winbindex can't disprove it, so the UI
+                  presents it as "verify" rather than a confident download.
+
 Persistence
 -----------
 data/cve_modules.json is intended to outlive the rolling MSRC window and to be
 hand-correctable: any entry whose "source" is "manual" is preserved verbatim
-across runs. Everything else is regenerated from the heuristic each build.
+across runs. Everything else is regenerated from the heuristic (plus the ZDI
+cross-reference) each build.
 """
 
 import gzip
@@ -54,6 +74,11 @@ from datetime import date
 
 INDEX_PATH = os.environ.get("WINSIGHT_OUTPUT", "data/index.json")
 MODULES_PATH = os.environ.get("WINSIGHT_MODULES_OUTPUT", "data/cve_modules.json")
+# Optional CVE -> ZDI advisory map (produced by scripts/zdi.py). When a CVE is
+# present here with resolved files, the ZDI-named binary REPLACES the title-based
+# guess and the advisory link is attached. Best-effort: a missing file just means
+# the pipeline runs on the heuristic alone.
+ZDI_MAP_PATH = os.environ.get("WINSIGHT_ZDI_OUTPUT", "data/zdi_map.json")
 USER_AGENT = "winsight/1.0 (+https://github.com/) build_modules.py"
 WINBINDEX_URL = "https://winbindex.m417z.com/data/by_filename_compressed/{}.json.gz"
 SYMBOL_BASE = "https://msdl.microsoft.com/download/symbols"
@@ -70,6 +95,15 @@ CACHE_TTL_SECONDS = int(os.environ.get("WINSIGHT_WINBINDEX_TTL_DAYS", "6")) * 86
 # and it keeps cve_modules.json lean. arm64/x86 fixes are ignored for now.
 ARCHS = ("x64",)
 MACHINE_TYPE = {0x8664: "x64", 0xAA64: "arm64", 0x14C: "x86"}
+
+# Ubiquitous binaries that change in essentially every cumulative update. A guess
+# landing on one of these is NOT confirmed by the fact that Winbindex resolves it
+# (it always will), so the usual "wrong filename -> no download" safety net can't
+# fire. When a heuristic guess consists ONLY of these and nothing corroborates it
+# (no ZDI advisory), the entry is marked confidence="low" so the UI can present it
+# as a guess to verify rather than a confident download. This is exactly the
+# vague "Windows Kernel ... Vulnerability" -> ntoskrnl.exe false-positive class.
+HIGH_CHURN_FILES = {"ntoskrnl.exe"}
 
 
 # ---------------------------------------------------------------------------
@@ -418,11 +452,51 @@ def build_dl(name, build, wb):
 # Main
 # ---------------------------------------------------------------------------
 
-def build_entry_for_cve(cve):
-    """Return a module entry dict (source=heuristic) or None if nothing matched."""
-    component, files = guess_module(cve.get("title", ""))
-    if not files:
+def _advisory_ref(zdi):
+    """Shape a ZDI map entry into the `advisory` block stored on a module."""
+    if not zdi:
         return None
+    return {
+        "source": "ZDI",
+        "id": zdi.get("id", ""),
+        "url": zdi.get("url", ""),
+        "component": zdi.get("component", ""),
+    }
+
+
+def resolve_component(cve, zdi=None):
+    """Decide the (component, files, source, confidence) for a CVE.
+
+    Precedence:
+      1. ZDI advisory that resolved to file(s) -> those files win (source=zdi,
+         confidence=advisory). This is the authoritative correction for MSRC's
+         vague titles.
+      2. Title heuristic -> its files (source=heuristic). Confidence is "low" when
+         the guess is only high-churn binaries with no advisory to back it,
+         otherwise "heuristic".
+      3. ZDI named a component but no diffable binary -> keep the advisory link so
+         the real component is still surfaced, with no files (source=zdi).
+    Returns (component, files, source, confidence) or None when nothing applies.
+    """
+    h_component, h_files = guess_module(cve.get("title", ""))
+    zdi_files = (zdi or {}).get("files") or []
+
+    if zdi_files:
+        return (zdi.get("component") or h_component, list(zdi_files), "zdi", "advisory")
+    if h_files:
+        confidence = "low" if all(f in HIGH_CHURN_FILES for f in h_files) else "heuristic"
+        return (h_component, h_files, "heuristic", confidence)
+    if zdi:
+        return (zdi.get("component") or None, [], "zdi", "advisory")
+    return None
+
+
+def build_entry_for_cve(cve, zdi=None):
+    """Return a module entry dict, or None if neither heuristic nor ZDI matched."""
+    resolved = resolve_component(cve, zdi)
+    if resolved is None:
+        return None
+    component, files, source, confidence = resolved
 
     fixes = [f for f in (cve.get("fixes") or []) if f.get("winver") and f.get("arch") in ARCHS]
     targets = []
@@ -452,12 +526,17 @@ def build_entry_for_cve(cve):
 
     # Sort targets for stable output: by file, then version label.
     targets.sort(key=lambda t: (files.index(t["file"]), t["version"]))
-    return {
-        "source": "heuristic",
+    entry = {
+        "source": source,
+        "confidence": confidence,
         "component": component,
         "files": files,
         "targets": targets,
     }
+    advisory = _advisory_ref(zdi)
+    if advisory:
+        entry["advisory"] = advisory
+    return entry
 
 
 def main():
@@ -471,6 +550,15 @@ def main():
                 existing = (json.load(f) or {}).get("modules", {})
         except (json.JSONDecodeError, OSError) as e:
             print(f"  ! could not read existing {MODULES_PATH}: {e}", file=sys.stderr)
+
+    zdi_map = {}
+    if os.path.exists(ZDI_MAP_PATH):
+        try:
+            with open(ZDI_MAP_PATH, encoding="utf-8") as f:
+                zdi_map = (json.load(f) or {}).get("map", {})
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"  ! could not read {ZDI_MAP_PATH}: {e}", file=sys.stderr)
+    print(f"Loaded {len(zdi_map)} ZDI advisory cross-references from {ZDI_MAP_PATH}")
 
     cves = index.get("cves", [])
     print(f"Resolving affected modules for {len(cves)} CVEs ...")
@@ -486,7 +574,7 @@ def main():
         if not cve_id or cve_id in modules:  # manual entry already kept
             continue
         try:
-            entry = build_entry_for_cve(cve)
+            entry = build_entry_for_cve(cve, zdi_map.get(cve_id))
         except Exception as e:  # noqa: BLE001 — never let one CVE break the build
             print(f"  ! {cve_id}: {e}", file=sys.stderr)
             entry = None
@@ -498,9 +586,15 @@ def main():
     # count_with_modules counts every CVE we could name a binary for; many of those
     # have no downloadable build (Server-only, unmapped winver, symbol-id collision),
     # so count_downloadable_cves is the honest "can actually start diffing" number.
-    n_modules = len(modules)
-    n_targets = n_downloads = n_downloadable_cves = 0
+    n_modules = n_targets = n_downloads = n_downloadable_cves = 0
+    n_zdi = n_low = 0
     for entry in modules.values():
+        if entry.get("files"):
+            n_modules += 1
+        if entry.get("advisory"):
+            n_zdi += 1
+        if entry.get("confidence") == "low":
+            n_low += 1
         targets = entry.get("targets") or []
         n_targets += len(targets)
         cve_has_download = False
@@ -520,6 +614,8 @@ def main():
         "count_downloadable_cves": n_downloadable_cves,
         "count_targets": n_targets,
         "count_downloadable_builds": n_downloads,
+        "count_zdi_advisories": n_zdi,
+        "count_low_confidence": n_low,
         "modules": modules,
     }
     os.makedirs(os.path.dirname(MODULES_PATH) or ".", exist_ok=True)
@@ -530,6 +626,7 @@ def main():
         f"Wrote {MODULES_PATH}: {n_modules} CVEs with modules "
         f"({n_downloadable_cves} with a downloadable build), "
         f"{n_targets} version targets, {n_downloads} downloadable builds, "
+        f"{n_zdi} ZDI-corroborated, {n_low} low-confidence, "
         f"{len(_wb_cache)} winbindex files fetched"
     )
 
