@@ -4,8 +4,8 @@
   "winbindex": "https://winbindex.m417z.com/",
   "count_with_modules": 1566,
   "count_downloadable_cves": 1498,
-  "count_targets": 8983,
-  "count_downloadable_builds": 16532,
+  "count_targets": 8948,
+  "count_downloadable_builds": 16462,
   "count_zdi_advisories": 45,
   "count_low_confidence": 97,
   "modules": {
@@ -2373,25 +2373,6 @@
             "sha256": "9348bf199fbc71cbb093ab25af226c9e6383ce3ce0a843d9a915163f70073e6d",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
-          }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
           }
         }
       ]
@@ -4990,25 +4971,6 @@
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
           }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
-          }
         }
       ]
     },
@@ -6431,44 +6393,6 @@
             "sha256": "f4294fdbf21a4f7b9bd542d85d06fb12a7a4ee21b7d562d4ea974d7b645b0a2f",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/bootmgfw.efi/6A23A330163000/bootmgfw.efi"
-          }
-        },
-        {
-          "file": "bootmgfw.efi",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "abbd2b5c9efe5e384632fb5931ac88efb33b34a602357a32307ace604472942d",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/bootmgfw.efi/C9631E151df000/bootmgfw.efi"
-          },
-          "unpatched": {
-            "build": "10.0.19041.7417",
-            "sha256": "f742623e31226810eafbf49ac4bbc8e6412de9cfe5fe9dfd8e29dc924a2086c8",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/bootmgfw.efi/387AF02C1de000/bootmgfw.efi"
-          }
-        },
-        {
-          "file": "bootmgfw.efi",
-          "version": "Windows 11 24H2",
-          "winver": "11-24H2",
-          "arch": "x64",
-          "kb": "KB5101650",
-          "patched": {
-            "build": "10.0.28000.352",
-            "sha256": "490d08f90808a75b5f7d077523799149fd36cc6306fc23ed8853a90b3d857274",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/bootmgfw.efi/B0263A4433a000/bootmgfw.efi"
-          },
-          "unpatched": {
-            "build": "10.0.28000.342",
-            "sha256": "456de3c04ea6a39b03964181e23a725e9a27a1097d79d02355cba0a061bd96c1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/bootmgfw.efi/C59E3891332000/bootmgfw.efi"
           }
         },
         {
@@ -13398,25 +13322,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -13432,25 +13337,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -13523,25 +13409,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -13557,25 +13424,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -14698,25 +14546,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -14732,25 +14561,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -14823,25 +14633,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -14857,25 +14648,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -15466,25 +15238,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -15500,25 +15253,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -19087,25 +18821,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -19121,25 +18836,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -22554,25 +22250,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -23923,25 +23600,6 @@
         },
         {
           "file": "wwansvc.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "10bf48c24944b7b598248a640af82bb22f88848d7e34430dcc86c1788e0ffb71",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/wwansvc.dll/C7449862179000/wwansvc.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.5848",
-            "sha256": "52dd41815acdcb43a1efb17eec606578efb662352b6bae23c981ca244887dc12",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/wwansvc.dll/4A8DA0C0179000/wwansvc.dll"
-          }
-        },
-        {
-          "file": "wwansvc.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -24283,25 +23941,6 @@
             "sha256": "9348bf199fbc71cbb093ab25af226c9e6383ce3ce0a843d9a915163f70073e6d",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
-          }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
           }
         }
       ]
@@ -25356,25 +24995,6 @@
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
           }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
-          }
         }
       ]
     },
@@ -25482,25 +25102,6 @@
             "sha256": "9348bf199fbc71cbb093ab25af226c9e6383ce3ce0a843d9a915163f70073e6d",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
-          }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
           }
         }
       ]
@@ -26511,25 +26112,6 @@
       "targets": [
         {
           "file": "windows.staterepository.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "1ea8fd17f3d88d32f4813d64a1774ba33049d224b306038049c2bfbf2fb48724",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/052B007058c000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.6807",
-            "sha256": "573ac06d0d17d436215f183b36ebd651bfba5af17e4a6fd8b2d78aa35d7ba9a9",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/A5E2EEC858c000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
           "arch": "x64",
@@ -26545,44 +26127,6 @@
             "sha256": "508a53fca43c92ef55c60b048d87356f69b6148e90f813448fedc07f8845e2de",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4B01BA4D51e000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "windows.staterepository.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "fde1d86054fbf12bd8ed0579a8542d46698885ee4a3fcde8675c81966437f422",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/C23C882E523000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2336",
-            "sha256": "4c101414b718ac73211096d4d96aa267c68b64826166dbc643aa36cc0f2bb0d3",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4548153B523000/windows.staterepository.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 10 1809",
-          "winver": "1809",
-          "arch": "x64",
-          "kb": "KB5099538",
-          "patched": {
-            "build": "10.0.17763.9020",
-            "sha256": "bf3bc7ddafe159473154db5c61cb690a4d5e09dd682a0fc49d73db98111801e1",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/AB20F87F20c000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.17763.8641",
-            "sha256": "5532b9f8228fd2a9acf71a5e402813e969077623d26d8df34b2d1394c5c33fc6",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/8B35886820c000/twinapi.appcore.dll"
           }
         },
         {
@@ -26621,25 +26165,6 @@
             "sha256": "cd61052b848b6ee2b4a4f191207153299c223295f84432f45cc707d3ffb0f404",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/D2E1456124f000/twinapi.appcore.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "f7091e0a0d4afc3985bd7b9fa5cff24d0f26a75de5990212b8f673f3efbb2693",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/33D542C5254000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2336",
-            "sha256": "8ef928d2d50fbbbb1b9d86eb7b39af6868de704ced1e9c754d9a738afe66eaf8",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/D55CE011254000/twinapi.appcore.dll"
           }
         }
       ]
@@ -27053,25 +26578,6 @@
             "sha256": "9761d61a4639cfc5c819cc0d733d82324f7f4f59458a272d48e4d9841f480d79",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/dhcpcore6.dll/6A23A80848000/dhcpcore6.dll"
-          }
-        },
-        {
-          "file": "dhcpcore6.dll",
-          "version": "Windows 10 21H2",
-          "winver": "21H2",
-          "arch": "x64",
-          "kb": "KB5099539",
-          "patched": {
-            "build": "10.0.19041.7548",
-            "sha256": "8ed4bb099986e7f30b34a895c1d2da1268aab3ad08595adbe28014a2fb939eac",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/dhcpcore6.dll/B2BD006052000/dhcpcore6.dll"
-          },
-          "unpatched": {
-            "build": "10.0.19041.7417",
-            "sha256": "63fb7a449708cb073f68655b4c8cfc6cf5450a37a6df01be7cd26e718dc5853c",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/dhcpcore6.dll/7BBBACE852000/dhcpcore6.dll"
           }
         },
         {
@@ -28249,25 +27755,6 @@
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
           }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
-          }
         }
       ]
     },
@@ -28886,25 +28373,6 @@
             "sha256": "9348bf199fbc71cbb093ab25af226c9e6383ce3ce0a843d9a915163f70073e6d",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
-          }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
           }
         }
       ]
@@ -29655,25 +29123,6 @@
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
           }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
-          }
         }
       ]
     },
@@ -29932,25 +29381,6 @@
             "sha256": "9348bf199fbc71cbb093ab25af226c9e6383ce3ce0a843d9a915163f70073e6d",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
-          }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
           }
         }
       ]
@@ -30608,25 +30038,6 @@
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
           }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
-          }
         }
       ]
     },
@@ -31014,25 +30425,6 @@
           }
         },
         {
-          "file": "windows.staterepository.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "fde1d86054fbf12bd8ed0579a8542d46698885ee4a3fcde8675c81966437f422",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/C23C882E523000/windows.staterepository.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2336",
-            "sha256": "4c101414b718ac73211096d4d96aa267c68b64826166dbc643aa36cc0f2bb0d3",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/windows.staterepository.dll/4548153B523000/windows.staterepository.dll"
-          }
-        },
-        {
           "file": "twinapi.appcore.dll",
           "version": "Windows 11 24H2",
           "winver": "11-24H2",
@@ -31049,25 +30441,6 @@
             "sha256": "cd61052b848b6ee2b4a4f191207153299c223295f84432f45cc707d3ffb0f404",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/D2E1456124f000/twinapi.appcore.dll"
-          }
-        },
-        {
-          "file": "twinapi.appcore.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "f7091e0a0d4afc3985bd7b9fa5cff24d0f26a75de5990212b8f673f3efbb2693",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/33D542C5254000/twinapi.appcore.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2336",
-            "sha256": "8ef928d2d50fbbbb1b9d86eb7b39af6868de704ced1e9c754d9a738afe66eaf8",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/twinapi.appcore.dll/D55CE011254000/twinapi.appcore.dll"
           }
         }
       ]
@@ -32355,25 +31728,6 @@
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/EA217B16223000/mfplat.dll"
           }
-        },
-        {
-          "file": "mfplat.dll",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2525",
-            "sha256": "a3350253ac8620c623b040b1b41c2ac3d22af4692d7fd8be033b9e72757d2b2b",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/B3D1406E215000/mfplat.dll"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "1e6086d404c9df17cf8c6fb0723dfdb45edd2f560e1e7bb5e5928c1b79054175",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/mfplat.dll/755BD724212000/mfplat.dll"
-          }
         }
       ]
     },
@@ -33424,25 +32778,6 @@
             "sha256": "b4dd04979c77aeef1f60e27754b9efe76d1c67234d55222b5f937c16762d4318",
             "downloadable": true,
             "url": "https://msdl.microsoft.com/download/symbols/csc.sys/D5B50FA89a000/csc.sys"
-          }
-        },
-        {
-          "file": "csc.sys",
-          "version": "Windows 11 version 26H1",
-          "winver": "11-26H1",
-          "arch": "x64",
-          "kb": "KB5101649",
-          "patched": {
-            "build": "10.0.28000.2336",
-            "sha256": "3a79a93800ce792b610bbaa7c44057cd5df002b5f96edbf7807564c07e69bcdb",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/csc.sys/843BFBFE9a000/csc.sys"
-          },
-          "unpatched": {
-            "build": "10.0.28000.2179",
-            "sha256": "b4dfc16bdb83092f522259226fb53577dc079aabc94115c3cf9783dff0af7635",
-            "downloadable": true,
-            "url": "https://msdl.microsoft.com/download/symbols/csc.sys/F01080409a000/csc.sys"
           }
         }
       ]
