@@ -13,15 +13,17 @@ fetches and filters them entirely client-side.
 
 ## What it does
 
-- **Browse & filter** ~2,000+ Windows CVEs from the last 24 months: severity,
-  vulnerability type, CWE, affected Windows version, exploited / publicly
-  disclosed / listed in CISA's KEV catalog / covered by a ZDI advisory, EPSS
-  score, and whether a downloadable patch-diff build exists. A **CVSS vector** filter adds a dropdown
+- **Browse & filter** every Windows CVE back to ~2016 — the most recent 24
+  months load instantly and the older archive streams in a moment later, so a
+  deep history never blocks first paint. Filter by severity, vulnerability
+  type, CWE, affected Windows version, exploited / publicly disclosed / listed
+  in CISA's KEV catalog / covered by a ZDI advisory, EPSS score, and whether a
+  downloadable patch-diff build exists. A **CVSS vector** filter adds a dropdown
   per base metric (AV, AC, PR, UI, S, C, I, A) so any combination is
   filterable — e.g. AV=Network + PR=None + UI=None for the wormable-RCE hunt. Free-text search covers CVE ID,
   title, KB numbers, version labels, *and* affected binary filenames (try
   `clfs.sys` or `win32kfull.sys`).
-- **Patch-diff panel** — for ~1,400 of those CVEs (and counting), one click
+- **Patch-diff panel** — for roughly three-quarters of those CVEs, one click
   downloads the exact unpatched and patched build of the affected binary,
   sourced live from Microsoft's own symbol server. IDA, Ghidra, and BinDiff
   resolve symbols for these automatically, no extra setup. Each guess shows a
@@ -62,8 +64,9 @@ Winbindex       ─────────────────>  scripts/bu
 A single GitHub Actions workflow (`.github/workflows/pages.yml`) handles both
 the data refresh and the deploy:
 
-1. **`build_index.py`** walks the last 24 months of MSRC's `/cvrf/{yyyy-Mon}`
-   documents and normalizes them into flat CVE records (severity, CVSS, CWE,
+1. **`build_index.py`** walks the MSRC `/cvrf/{yyyy-Mon}` archive (back to ~2016;
+   older months 404 and are skipped) and normalizes them into flat CVE records
+   (severity, CVSS, CWE,
    affected products/versions, KBs, exploited/disclosed status, per-KB
    `fixes` mapping). It also enriches every record with **EPSS** (exploit
    probability, from FIRST.org) and **CISA KEV** (confirmed exploited in the
@@ -122,8 +125,8 @@ JSON files. There is no runtime backend.
 
 ## Honest limitations
 
-- **Patch-diff coverage is real but partial.** ~1,400 of ~2,000 CVEs
-  (roughly three-quarters) currently resolve to a downloadable build. Gaps:
+- **Patch-diff coverage is real but partial.** Roughly three-quarters of CVEs
+  resolve to a downloadable build. Gaps:
   CVE titles that don't map to a known component, Windows Server 2022+
   (Winbindex has no key for it — only 2016/2019 are reachable, since they
   share build numbers with client Windows), and components with no binary at
@@ -187,9 +190,12 @@ Winbindex responses on disk (the CI workflow uses this via
 
 ## Extending
 
-- **More history**: raise `WINSIGHT_BACKFILL_MONTHS` in
-  `.github/workflows/pages.yml`. MSRC's archive doesn't go back forever —
-  very old months 404 and are skipped gracefully.
+- **History depth**: `WINSIGHT_BACKFILL_MONTHS` in
+  `.github/workflows/pages.yml` controls how far back to walk (default 130 ≈
+  the whole MSRC archive; very old months 404 and are skipped gracefully).
+  `WINSIGHT_RECENT_MONTHS` (default 24) sets how many recent months ship in
+  `index.json` for instant first paint — the rest go to `index-archive.json`,
+  which the page streams in afterward.
 - **More binaries**: add entries to `COMPONENT_MAP` in
   `scripts/build_modules.py`. Winbindex gates every guess, so it's safe to
   be aggressive.

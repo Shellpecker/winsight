@@ -1116,6 +1116,7 @@ let pageSize = 50;
 // ── data load ─────────────────────────────────────────────────
 async function loadData() {
   const warn = document.getElementById('warn');
+  let cwesFacet = [];
   try {
     const res = await fetch('data/index.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -1123,6 +1124,7 @@ async function loadData() {
     if (!json.cves?.length) throw new Error('empty');
     DATA = json.cves;
     populateVersions(json.filters?.versions || []);
+    cwesFacet = json.filters?.cwes || [];   // full union, so the dropdown is complete pre-archive
     // Newest patch cycle from the CVRF month field (reliable, unlike c.date).
     LATEST_MONTH = DATA.reduce((m, c) => { const k = monthKey(c.month); return k > m ? k : m; }, '');
     const latestBtn = document.getElementById('tog-latest')?.querySelector('.tog-txt');
@@ -1136,14 +1138,30 @@ async function loadData() {
     warn.textContent = 'No data — run the "Refresh index" GitHub Action to populate data/index.json, then reload.';
   }
   // Populate CWE dropdown outside try-catch so an error here never wipes DATA
-  populateCwes();
+  populateCwes(cwesFacet);
   restoreFromUrl();      // apply any shared filters/search/sort/open-CVE from the hash
   populateExamples();
   applyFilters();
   focusDeepLink();       // page to & scroll the deep-linked CVE, if any
+  // Older CVEs stream in after first paint so a deep archive never blocks it.
+  loadArchive();
   // Affected-module / patch-diff data is optional: load it lazily and never let
   // its absence or failure affect the main listing.
   loadModules();
+}
+
+// Append the older CVE slice (index-archive.json) once the recent view is up.
+// Optional and best-effort: a 404 (shallow build) just means no archive.
+async function loadArchive() {
+  try {
+    const res = await fetch('data/index-archive.json', { cache: 'no-store' });
+    if (!res.ok) return;
+    const json = await res.json();
+    if (!json.cves?.length) return;
+    DATA = DATA.concat(json.cves);
+    populateCwes();          // fold in any archive-only CWEs (fallback derives from DATA)
+    applyFilters(true);      // re-render, preserving current page & filters
+  } catch (e) { /* archive is optional — ignore */ }
 }
 
 async function loadModules() {
@@ -1169,15 +1187,22 @@ function populateVersions(vers) {
   });
 }
 
-function populateCwes() {
+// Fill the CWE dropdown. Prefers the full union from index.json's filters (so it's
+// complete before the archive slice loads); falls back to deriving from DATA.
+// Idempotent — rebuilds cleanly and preserves the current selection — so it can be
+// called again after the archive streams in.
+function populateCwes(cwes) {
   const sel = document.getElementById('f-cwe');
   if (!sel) return;
-  const seen = new Map();
-  for (const c of DATA) {
-    if (c.cwe && !seen.has(c.cwe.id)) seen.set(c.cwe.id, c.cwe);
+  let list = cwes;
+  if (!list || !list.length) {
+    const seen = new Map();
+    for (const c of DATA) if (c.cwe && !seen.has(c.cwe.id)) seen.set(c.cwe.id, c.cwe);
+    list = [...seen.values()];
   }
-  // Sort by numeric CWE id (CWE-79 before CWE-122)
-  const sorted = [...seen.values()].sort((a, b) => {
+  const cur = sel.value;                          // preserve selection across rebuilds
+  while (sel.options.length > 1) sel.remove(1);    // keep the leading "All" option
+  const sorted = list.slice().sort((a, b) => {     // numeric id: CWE-79 before CWE-122
     const na = parseInt(a.id.replace(/\D/g, ''), 10) || 0;
     const nb = parseInt(b.id.replace(/\D/g, ''), 10) || 0;
     return na - nb;
@@ -1188,6 +1213,7 @@ function populateCwes() {
     o.textContent = name ? `${id}: ${name}` : id;
     sel.appendChild(o);
   }
+  sel.value = cur;
 }
 
 // ── shareable URL state ───────────────────────────────────────

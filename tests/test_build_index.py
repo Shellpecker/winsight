@@ -91,6 +91,36 @@ class ExtractVectorTests(unittest.TestCase):
         self.assertIsNone(bi.extract_vector({"CVSSScoreSets": [{"BaseScore": 5.0}]}))
 
 
+class SplitRecentTests(unittest.TestCase):
+    def _cves(self):
+        return [{"id": "A", "month": "2026-Jul"},
+                {"id": "B", "month": "2026-Jun"},
+                {"id": "C", "month": "2024-Jan"}]
+
+    def test_partitions_by_month_membership(self):
+        recent, archive = bi.split_recent(self._cves(), ["2026-Jul", "2026-Jun"])
+        self.assertEqual([c["id"] for c in recent], ["A", "B"])
+        self.assertEqual([c["id"] for c in archive], ["C"])
+
+    def test_empty_recent_set_sends_everything_to_archive(self):
+        recent, archive = bi.split_recent(self._cves(), [])
+        self.assertEqual(recent, [])
+        self.assertEqual(len(archive), 3)
+
+
+class CweUnionTests(unittest.TestCase):
+    def test_dedups_and_sorts_numerically(self):
+        cves = [
+            {"cwe": {"id": "CWE-122", "name": "Heap Overflow"}},
+            {"cwe": {"id": "CWE-79", "name": "XSS"}},
+            {"cwe": {"id": "CWE-122", "name": "Heap Overflow"}},  # duplicate
+            {"cwe": None},
+            {},
+        ]
+        out = bi.cwe_union(cves)
+        self.assertEqual([c["id"] for c in out], ["CWE-79", "CWE-122"])  # 79 before 122
+
+
 class ExtractExploitedTests(unittest.TestCase):
     def test_exploited_and_disclosed_yes(self):
         vuln = {"Threats": [{"Type": 1, "Description": {

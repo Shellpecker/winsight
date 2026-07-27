@@ -79,6 +79,8 @@ MODULES_PATH = os.environ.get("WINSIGHT_MODULES_OUTPUT", "data/cve_modules.json"
 # guess and the advisory link is attached. Best-effort: a missing file just means
 # the pipeline runs on the heuristic alone.
 ZDI_MAP_PATH = os.environ.get("WINSIGHT_ZDI_OUTPUT", "data/zdi_map.json")
+# build_index.py splits the CVE list across two files; modules must cover both.
+ARCHIVE_PATH = os.environ.get("WINSIGHT_ARCHIVE_OUTPUT", "data/index-archive.json")
 USER_AGENT = "winsight/1.0 (+https://github.com/) build_modules.py"
 WINBINDEX_URL = "https://winbindex.m417z.com/data/by_filename_compressed/{}.json.gz"
 SYMBOL_BASE = "https://msdl.microsoft.com/download/symbols"
@@ -560,7 +562,15 @@ def main():
             print(f"  ! could not read {ZDI_MAP_PATH}: {e}", file=sys.stderr)
     print(f"Loaded {len(zdi_map)} ZDI advisory cross-references from {ZDI_MAP_PATH}")
 
-    cves = index.get("cves", [])
+    # index.json holds only the recent slice; the older CVEs live in the archive
+    # file. Resolve modules for both so every CVE gets a patch-diff entry.
+    cves = list(index.get("cves", []))
+    if os.path.exists(ARCHIVE_PATH):
+        try:
+            with open(ARCHIVE_PATH, encoding="utf-8") as f:
+                cves.extend((json.load(f) or {}).get("cves", []))
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"  ! could not read {ARCHIVE_PATH}: {e}", file=sys.stderr)
     print(f"Resolving affected modules for {len(cves)} CVEs ...")
 
     modules = {}

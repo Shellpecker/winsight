@@ -97,8 +97,14 @@ jobs:
       - name: Run build_index.py
         if: steps.decide.outputs.rebuild == 'true'
         env:
-          WINSIGHT_BACKFILL_MONTHS: "24"
+          # Full MSRC archive (~back to 2016); months older than MSRC has 404 and
+          # are skipped. The output is split by recency: the newest
+          # WINSIGHT_RECENT_MONTHS ship in index.json (fast first paint), the rest
+          # in data/index-archive.json (streamed in client-side afterward).
+          WINSIGHT_BACKFILL_MONTHS: "130"
+          WINSIGHT_RECENT_MONTHS: "24"
           WINSIGHT_OUTPUT: "data/index.json"
+          WINSIGHT_ARCHIVE_OUTPUT: "data/index-archive.json"
           WINSIGHT_FEED_OUTPUT: "data/feed.xml"
         run: |
           python scripts/build_index.py
@@ -119,6 +125,7 @@ jobs:
         continue-on-error: true
         env:
           WINSIGHT_OUTPUT: "data/index.json"
+          WINSIGHT_ARCHIVE_OUTPUT: "data/index-archive.json"
           WINSIGHT_MODULES_OUTPUT: "data/cve_modules.json"
           WINSIGHT_ZDI_OUTPUT: "data/zdi_map.json"
           WINSIGHT_WINBINDEX_CACHE: ${{ runner.temp }}/winbindex-cache
@@ -150,6 +157,7 @@ jobs:
           git config user.name "winsight-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/index.json
+          [ -f data/index-archive.json ] && git add data/index-archive.json
           [ -f data/cve_modules.json ] && git add data/cve_modules.json
           [ -f data/zdi_map.json ] && git add data/zdi_map.json
           [ -f data/feed.xml ] && git add data/feed.xml

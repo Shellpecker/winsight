@@ -49,6 +49,11 @@ MSRC_VULN_URL = "https://msrc.microsoft.com/update-guide/vulnerability/"
 
 BACKFILL_MONTHS = int(os.environ.get("WINSIGHT_BACKFILL_MONTHS", "24"))
 OUTPUT_PATH = os.environ.get("WINSIGHT_OUTPUT", "data/index.json")
+# The index is split by recency so the page paints fast even with a deep archive:
+# index.json holds the most-recent RECENT_MONTHS (loaded first), and the older
+# remainder goes to index-archive.json, which the frontend streams in afterward.
+ARCHIVE_PATH = os.environ.get("WINSIGHT_ARCHIVE_OUTPUT", "data/index-archive.json")
+RECENT_MONTHS = int(os.environ.get("WINSIGHT_RECENT_MONTHS", "24"))
 FEED_PATH = os.environ.get("WINSIGHT_FEED_OUTPUT", "")  # set to emit data/feed.xml
 FEED_MAX_ITEMS = 60
 REQUEST_DELAY_SEC = 0.3
@@ -568,6 +573,31 @@ def fetch_kev():
 # Main
 # ---------------------------------------------------------------------------
 
+def split_recent(cves, recent_month_ids):
+    """Partition CVEs into (recent, archive) by CVRF month membership."""
+    recent_set = set(recent_month_ids)
+    recent, archive = [], []
+    for c in cves:
+        (recent if c.get("month") in recent_set else archive).append(c)
+    return recent, archive
+
+
+def cwe_union(cves):
+    """Distinct {id, name} CWEs across all CVEs, numeric-id sorted. The CWE filter
+    dropdown reads this so it's complete even before the archive slice loads."""
+    seen = {}
+    for c in cves:
+        cw = c.get("cwe")
+        if cw and cw.get("id") and cw["id"] not in seen:
+            seen[cw["id"]] = {"id": cw["id"], "name": cw.get("name", "")}
+
+    def num(x):
+        digits = "".join(ch for ch in x["id"] if ch.isdigit())
+        return int(digits) if digits else 0
+
+    return sorted(seen.values(), key=num)
+
+
 def main():
     months = month_ids(BACKFILL_MONTHS)
     print(f"Fetching {len(months)} months of MSRC CVRF data: {months[-1]} .. {months[0]}")
@@ -604,6 +634,12 @@ def main():
 
     all_versions = sorted({v for c in all_cves for v in c["versions"]})
     all_impacts = sorted({c["impact"] for c in all_cves})
+    all_cwes = cwe_union(all_cves)
+
+    # Split by recency: recent slice ships in index.json (fast first paint), the
+    # older remainder in index-archive.json (streamed in after). Filter facets are
+    # the FULL union so the dropdowns are complete before the archive arrives.
+    recent_cves, archive_cves = split_recent(all_cves, months[:RECENT_MONTHS])
 
     out = {
         "generated_at": date.today().isoformat(),
@@ -614,18 +650,33 @@ def main():
         "months_requested": months,
         "months_with_data": months_with_data,
         "count": len(all_cves),
+        "count_recent": len(recent_cves),
+        "count_archive": len(archive_cves),
+        "archive": os.path.basename(ARCHIVE_PATH) if archive_cves else None,
         "filters": {
             "versions": all_versions,
             "impacts": all_impacts,
+            "cwes": all_cwes,
         },
-        "cves": all_cves,
+        "cves": recent_cves,
     }
 
     os.makedirs(os.path.dirname(OUTPUT_PATH) or ".", exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2, ensure_ascii=False)
 
-    print(f"Wrote {OUTPUT_PATH}: {len(all_cves)} CVEs across {len(months_with_data)} months")
+    # Always (re)write the archive file so a deeper previous run's leftover can't
+    # linger and double-count; it's just the older CVEs the frontend appends.
+    archive_out = {
+        "generated_at": date.today().isoformat(),
+        "count": len(archive_cves),
+        "cves": archive_cves,
+    }
+    with open(ARCHIVE_PATH, "w", encoding="utf-8") as f:
+        json.dump(archive_out, f, indent=2, ensure_ascii=False)
+
+    print(f"Wrote {OUTPUT_PATH}: {len(recent_cves)} recent CVEs "
+          f"(+{len(archive_cves)} in {ARCHIVE_PATH}) across {len(months_with_data)} months")
 
     if FEED_PATH:
         try:
