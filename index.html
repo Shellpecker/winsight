@@ -241,9 +241,16 @@ input, select { font-family: inherit; }
   border-right: 1px solid var(--b1);
   background: var(--s1);
   padding: 12px 12px 16px;
+  scrollbar-width: thin;                      /* Firefox: match the webkit thin bar */
+  scrollbar-color: var(--b2) transparent;     /* Firefox: themed thumb, no track */
 }
-.sidebar::-webkit-scrollbar { width: 3px; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--b2); }
+.sidebar::-webkit-scrollbar { width: 10px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--b2); border-radius: 5px;
+  border: 3px solid transparent; background-clip: padding-box;  /* inset, ~4px visible */
+}
+.sidebar:hover::-webkit-scrollbar-thumb { background: var(--fg3); }
 /* Only meaningful once the <=900px rule turns the sidebar into a drawer. */
 .sidebar-mobile-hd {
   display: none; align-items: center; justify-content: space-between;
