@@ -112,7 +112,9 @@ if ('serviceWorker' in navigator) {
 
 /* ── reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
+/* Global UI scale — bumps every font, control, and gap uniformly (reflows like
+   browser zoom). Tune this one number to taste. */
+html { height: 100%; zoom: 1.2; }
 body {
   font-family: var(--ui);
   font-size: 13px;
