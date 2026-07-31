@@ -144,39 +144,39 @@ input, select { font-family: inherit; }
   display: flex; align-items: center; gap: 9px;
   margin-right: 24px; white-space: nowrap; flex-shrink: 0;
 }
-.brand-mark { width: 29px; height: 29px; color: var(--acc-fg); flex-shrink: 0; display: block; }
+.brand-mark { width: 31px; height: 31px; color: var(--acc-fg); flex-shrink: 0; display: block; }
 .brand-mark .eye, .brand-mark .iris { transition: stroke .2s; }
 .brand-mark .pane { fill: var(--acc-fg); transition: fill .2s; }
 .brand-mark .pane-hot { fill: var(--crit); }
 .brand-mark .lash { stroke: var(--acc-fg); opacity: .55; }
 .brand:hover .brand-mark .pane { fill: var(--acc); }
 .brand-txt {
-  font-size: 16.5px; font-weight: 700; color: var(--fg);
+  font-size: 18px; font-weight: 700; color: var(--fg);
   letter-spacing: -.03em;
 }
 .brand-txt span { color: var(--acc-fg); }
 .nav-links { display: flex; gap: 1px; flex: 1; }
 .nav-links a {
-  font-size: 12px; color: var(--fg2);
-  padding: 5px 9px; border-radius: var(--r-xs); white-space: nowrap;
+  font-size: 13px; color: var(--fg2);
+  padding: 6px 10px; border-radius: var(--r-xs); white-space: nowrap;
 }
 .nav-links a:hover { color: var(--fg); background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); text-decoration: none; }
 .nav-btn {
-  font-size: 12px; color: var(--fg2); background: none;
-  padding: 5px 9px; border-radius: var(--r-xs); white-space: nowrap;
+  font-size: 13px; color: var(--fg2); background: none;
+  padding: 6px 10px; border-radius: var(--r-xs); white-space: nowrap;
 }
 .nav-btn:hover { color: var(--fg); background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); }
 .nav-r { display: flex; align-items: center; gap: 6px; margin-left: auto; }
 .nav-r a {
-  font-size: 11.5px; color: var(--fg3);
-  display: flex; align-items: center; gap: 4px; padding: 4px 7px;
+  font-size: 12.5px; color: var(--fg3);
+  display: flex; align-items: center; gap: 4px; padding: 5px 8px;
   border-radius: var(--r-xs);
 }
 .nav-r a:hover { color: var(--fg2); background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); text-decoration: none; }
 .nav-sep { width: 1px; height: 18px; background: var(--b1); margin: 0 4px; }
 .theme-btn {
-  font-size: 11.5px; color: var(--fg3);
-  padding: 4px 8px; border: 1px solid transparent; border-radius: var(--r-xs);
+  font-size: 12.5px; color: var(--fg3);
+  padding: 5px 9px; border: 1px solid transparent; border-radius: var(--r-xs);
   background: none; line-height: 1;
 }
 .theme-btn:hover { color: var(--fg2); border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
@@ -195,25 +195,25 @@ input, select { font-family: inherit; }
   color: var(--fg3); pointer-events: none;
 }
 #q {
-  width: 100%; height: 36px;
+  width: 100%; height: 40px;
   background: var(--s2); border: 1px solid var(--b1);
-  color: var(--fg); font-family: inherit; font-size: 12.5px;
-  padding: 0 10px 0 32px; outline: none; border-radius: var(--r-xs);
+  color: var(--fg); font-family: inherit; font-size: 14px;
+  padding: 0 10px 0 34px; outline: none; border-radius: var(--r-xs);
 }
 #q::placeholder { color: var(--fg3); }
 #q:focus { border-color: var(--acc); outline: 2px solid var(--acc-bg); outline-offset: 0; }
 .search-go {
-  height: 36px; padding: 0 14px;
+  height: 40px; padding: 0 16px;
   background: var(--s3); border: 1px solid var(--b1);
-  color: var(--fg2); font-size: 12px; border-radius: var(--r-xs); white-space: nowrap;
+  color: var(--fg2); font-size: 13px; border-radius: var(--r-xs); white-space: nowrap;
 }
 .search-go:hover { color: var(--fg); border-color: var(--b2); box-shadow: inset 0 1px 0 var(--reveal); }
 /* Hidden on desktop — the sidebar is always visible there. Shown at the same
    <=900px breakpoint where the sidebar switches to an off-canvas drawer. */
 .filter-toggle-btn {
-  display: none; height: 36px; padding: 0 14px;
+  display: none; height: 40px; padding: 0 16px;
   background: var(--s3); border: 1px solid var(--b1);
-  color: var(--fg2); font-size: 12px; border-radius: var(--r-xs); white-space: nowrap;
+  color: var(--fg2); font-size: 13px; border-radius: var(--r-xs); white-space: nowrap;
   align-items: center; gap: 6px;
 }
 .filter-toggle-btn:hover { color: var(--fg); border-color: var(--b2); }
@@ -276,6 +276,22 @@ input, select { font-family: inherit; }
   font-size: 11px; font-weight: 600;
   color: var(--fg2); margin-bottom: 7px;
 }
+/* Collapsible filter section (CVSS vector): the summary is the clickable header
+   with a rotating chevron; the body only takes space when open. NOTE: the summary
+   must keep its default (list-item) display — giving it display:flex breaks
+   Chromium's native content-hiding — so the chevron is positioned absolutely. */
+details.sf > summary.sf-lbl {
+  cursor: pointer; list-style: none; user-select: none; margin-bottom: 0;
+  position: relative; padding-right: 14px;
+}
+details.sf[open] > summary.sf-lbl { margin-bottom: 9px; }
+details.sf > summary.sf-lbl::-webkit-details-marker { display: none; }
+details.sf > summary.sf-lbl::after {
+  content: ''; position: absolute; right: 2px; top: 3px; width: 7px; height: 7px;
+  border-right: 1.5px solid var(--fg3); border-bottom: 1.5px solid var(--fg3);
+  transform: rotate(-45deg); transition: transform .15s;
+}
+details.sf[open] > summary.sf-lbl::after { transform: rotate(45deg); }
 .sf select {
   width: 100%; background: var(--s3); border: 1px solid transparent;
   color: var(--fg); font-family: inherit; font-size: 11.5px;
@@ -849,10 +865,10 @@ table.cvt thead th {
         <option value="other">Other</option>
       </select>
     </div>
-    <div class="sf">
-      <div class="sf-lbl">CVSS vector</div>
+    <details class="sf" id="cvss-sf">
+      <summary class="sf-lbl">CVSS vector</summary>
       <div id="cvss-filters" class="cvss-grid"></div>
-    </div>
+    </details>
     <div class="sf">
       <div class="sf-lbl">Exploitability</div>
       <div class="toggle-row">
@@ -1147,6 +1163,10 @@ async function loadData() {
   // Populate CWE dropdown outside try-catch so an error here never wipes DATA
   populateCwes(cwesFacet);
   restoreFromUrl();      // apply any shared filters/search/sort/open-CVE from the hash
+  // Reveal the collapsed CVSS-vector section if a shared URL activated a metric.
+  if (CVSS_METRICS.some(x => document.getElementById('f-' + x.key).value)) {
+    document.getElementById('cvss-sf')?.setAttribute('open', '');
+  }
   populateExamples();
   applyFilters();
   focusDeepLink();       // page to & scroll the deep-linked CVE, if any
