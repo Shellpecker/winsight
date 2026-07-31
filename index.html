@@ -401,12 +401,12 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 .th-type { width: 110px; }
 .th-flag { width: 90px; }
 .th-cvss { width: 52px; text-align: right !important; }
-.ctitle  { font-size: 12.5px; color: var(--fg2); margin-top: 3px; line-height: 1.45; }
+.ctitle  { font-size: 14px; color: var(--fg2); margin-top: 3px; line-height: 1.45; }
 .ccwe    { font-size: 9.5px; color: var(--fg3); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
 .tr { border-bottom: 1px solid var(--b1); cursor: pointer; }
 .tr:hover td, .tr.open td { background: var(--s2); box-shadow: inset 0 1px 0 var(--reveal); }
-.tr td { padding: 12px 12px; vertical-align: top; background: var(--s1); }
+.tr td { padding: 14px 14px; vertical-align: top; background: var(--s1); }
 .tr td.td-bar { padding: 0; width: 3px; position: relative; }
 /* A short centered capsule rather than an edge-to-edge bar — the Windows 11
    list-selection-indicator idiom (File Explorer / Settings / Mail). */
@@ -420,7 +420,7 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 .tr.sl .td-bar::after { background: var(--low);  }
 .tr.sn .td-bar::after { background: var(--fg3);  }
 
-.cid { font-size: 13.5px; font-weight: 600; color: var(--fg); letter-spacing: -.01em; display: flex; align-items: center; gap: 6px; }
+.cid { font-size: 15px; font-weight: 600; color: var(--fg); letter-spacing: -.01em; display: flex; align-items: center; gap: 6px; }
 .cid-link {
   font-size: 9.5px; color: var(--fg3); opacity: 0; transition: opacity .12s;
   padding: 1px 4px; border: 1px solid var(--b1); border-radius: var(--r-xs);
@@ -428,12 +428,12 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 }
 .tr:hover .cid-link { opacity: 1; }
 .cid-link:hover { color: var(--acc-fg); border-color: var(--acc); text-decoration: none; }
-.cdt { font-size: 11px; color: var(--fg3); margin-top: 2px; }
+.cdt { font-size: 11.5px; color: var(--fg3); margin-top: 2px; }
 
 /* Pill-shaped, not rounded-rect — Fluent's InfoBadge/status convention. */
 .sv {
-  font-size: 11px; font-weight: 700; letter-spacing: .04em;
-  padding: 3px 9px; border-radius: 999px; text-transform: uppercase;
+  font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  padding: 3px 10px; border-radius: 999px; text-transform: uppercase;
   display: inline-block; white-space: nowrap;
 }
 .sv.c { background: var(--crit-bg); color: var(--crit); }
@@ -442,13 +442,13 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
 .sv.l { background: var(--low-bg);  color: var(--low);  }
 .sv.n { background: rgba(128,128,128,.1); color: var(--fg3); }
 
-.cn { font-size: 13px; color: var(--fg); line-height: 1.35; }
-.cb { font-size: 11px; color: var(--fg3); margin-top: 2px; }
+.cn { font-size: 14px; color: var(--fg); line-height: 1.35; }
+.cb { font-size: 11.5px; color: var(--fg3); margin-top: 2px; }
 
 /* Plain text, not a boxed pill — the severity pill already carries the row's
    status signal, so Type doesn't need a second badge competing for attention. */
 .ty {
-  font-size: 12.5px; color: var(--fg2); font-family: var(--ui);
+  font-size: 13.5px; color: var(--fg2); font-family: var(--ui);
 }
 
 .fl-ex {
@@ -484,7 +484,7 @@ table.cvt thead th.sorted::after { content: ' ↓'; font-size: 9px; }
   font-variant-numeric: tabular-nums; letter-spacing: .02em;
 }
 
-.cs { font-size: 14.5px; font-weight: 600; text-align: right; display: block; }
+.cs { font-size: 16px; font-weight: 600; text-align: right; display: block; }
 .cs.c { color: var(--crit); } .cs.h { color: var(--high); }
 .cs.m { color: var(--med);  } .cs.l { color: var(--low);  }
 .cs.n { color: var(--fg3);  }
