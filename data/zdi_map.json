@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29",
+  "generated_at": "2026-08-05",
   "source": "Zero Day Initiative (published advisories)",
   "count": 71,
   "count_with_files": 38,
@@ -405,7 +405,7 @@
     },
     "CVE-2026-34342": {
       "id": "ZDI-26-310",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-310/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-310/",
       "component": "splwow64",
       "files": [
         "splwow64.exe"
@@ -413,7 +413,7 @@
     },
     "CVE-2026-33838": {
       "id": "ZDI-26-309",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-309/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-309/",
       "component": "Message Queueing",
       "files": [
         "mqqm.dll",
@@ -422,13 +422,13 @@
     },
     "CVE-2026-32183": {
       "id": "ZDI-26-279",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-279/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-279/",
       "component": "Snipping Tool",
       "files": []
     },
     "CVE-2026-33104": {
       "id": "ZDI-26-278",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-278/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-278/",
       "component": "win32kfull",
       "files": [
         "win32kfull.sys"
@@ -436,7 +436,7 @@
     },
     "CVE-2026-32073": {
       "id": "ZDI-26-277",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-277/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-277/",
       "component": "afd.sys",
       "files": [
         "afd.sys"
@@ -444,7 +444,7 @@
     },
     "CVE-2026-26179": {
       "id": "ZDI-26-276",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-276/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-276/",
       "component": "Secure Kernel",
       "files": [
         "securekernel.exe"
