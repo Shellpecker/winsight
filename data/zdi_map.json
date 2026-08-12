@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-05",
+  "generated_at": "2026-08-12",
   "source": "Zero Day Initiative (published advisories)",
-  "count": 71,
-  "count_with_files": 38,
+  "count": 79,
+  "count_with_files": 42,
   "map": {
     "CVE-2024-49082": {
       "id": "ZDI-24-1657",
@@ -399,7 +399,7 @@
     },
     "CVE-2026-48565": {
       "id": "ZDI-26-339",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-339/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-339/",
       "component": "Narrator Braille Support brlapi",
       "files": []
     },
@@ -514,6 +514,62 @@
       "files": [
         "wmiprvse.exe",
         "wbemcomn.dll"
+      ]
+    },
+    "CVE-2026-62893": {
+      "id": "ZDI-26-544",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-544/",
+      "component": "Deployment Services",
+      "files": []
+    },
+    "CVE-2026-54984": {
+      "id": "ZDI-26-543",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-543/",
+      "component": "ICC File Parsing",
+      "files": []
+    },
+    "CVE-2026-62712": {
+      "id": "ZDI-26-542",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-542/",
+      "component": "UMPDDrvBitBlt Improper Object Management",
+      "files": []
+    },
+    "CVE-2026-65775": {
+      "id": "ZDI-26-541",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-541/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2026-65776": {
+      "id": "ZDI-26-540",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-540/",
+      "component": "win32kfull",
+      "files": [
+        "win32kfull.sys"
+      ]
+    },
+    "CVE-2026-65773": {
+      "id": "ZDI-26-539",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-539/",
+      "component": "ipt.sys",
+      "files": [
+        "ipt.sys"
+      ]
+    },
+    "CVE-2026-65814": {
+      "id": "ZDI-26-537",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-537/",
+      "component": "storport",
+      "files": []
+    },
+    "CVE-2026-62735": {
+      "id": "ZDI-26-536",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-536/",
+      "component": "http.sys",
+      "files": [
+        "http.sys"
       ]
     }
   }
