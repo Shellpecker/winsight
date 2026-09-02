@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26",
+  "generated_at": "2026-09-02",
   "source": "Zero Day Initiative (published advisories)",
   "count": 80,
   "count_with_files": 42,
@@ -390,7 +390,7 @@
     },
     "CVE-2026-49805": {
       "id": "ZDI-26-415",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-415/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-415/",
       "component": "WMI Providers",
       "files": [
         "wmiprvse.exe",
