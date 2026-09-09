@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-02",
+  "generated_at": "2026-09-09",
   "source": "Zero Day Initiative (published advisories)",
-  "count": 80,
+  "count": 82,
   "count_with_files": 42,
   "map": {
     "CVE-2024-49082": {
@@ -376,13 +376,13 @@
     },
     "CVE-2026-50311": {
       "id": "ZDI-26-417",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-417/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-417/",
       "component": "ServerManager",
       "files": []
     },
     "CVE-2026-54129": {
       "id": "ZDI-26-416",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-416/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-416/",
       "component": "netvsc",
       "files": [
         "netvsc.sys"
@@ -529,9 +529,9 @@
       "files": []
     },
     "CVE-2026-62712": {
-      "id": "ZDI-26-542",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-542/",
-      "component": "UMPDDrvBitBlt Improper Object Management",
+      "id": "ZDI-26-621",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-621/",
+      "component": "UMPDDrvRealizeBrush Improper Object Management",
       "files": []
     },
     "CVE-2026-65775": {
@@ -576,6 +576,18 @@
       "id": "ZDI-26-605",
       "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-605/",
       "component": "Localized Filenames Improper Input Validation NTLM Response",
+      "files": []
+    },
+    "CVE-2026-50696": {
+      "id": "ZDI-26-622",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-622/",
+      "component": "IKEv2 AES-GCM Decryption Integer Underflow",
+      "files": []
+    },
+    "CVE-2026-66804": {
+      "id": "ZDI-26-617",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-617/",
+      "component": "MIDI Service",
       "files": []
     }
   }
