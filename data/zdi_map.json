@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09",
+  "generated_at": "2026-09-16",
   "source": "Zero Day Initiative (published advisories)",
   "count": 82,
   "count_with_files": 42,
@@ -500,7 +500,7 @@
     },
     "CVE-2026-50297": {
       "id": "ZDI-26-446",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-446/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-446/",
       "component": "WMI Providers",
       "files": [
         "wmiprvse.exe",
@@ -509,7 +509,7 @@
     },
     "CVE-2026-50325": {
       "id": "ZDI-26-445",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-445/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-445/",
       "component": "WMI Providers",
       "files": [
         "wmiprvse.exe",
