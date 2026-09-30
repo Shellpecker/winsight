@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-23",
+  "generated_at": "2026-09-30",
   "source": "Zero Day Initiative (published advisories)",
   "count": 82,
   "count_with_files": 42,
@@ -518,13 +518,13 @@
     },
     "CVE-2026-62893": {
       "id": "ZDI-26-544",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-544/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-544/",
       "component": "Deployment Services",
       "files": []
     },
     "CVE-2026-54984": {
       "id": "ZDI-26-543",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-543/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-543/",
       "component": "ICC File Parsing",
       "files": []
     },
@@ -536,7 +536,7 @@
     },
     "CVE-2026-65775": {
       "id": "ZDI-26-541",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-541/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-541/",
       "component": "win32kfull",
       "files": [
         "win32kfull.sys"
@@ -544,7 +544,7 @@
     },
     "CVE-2026-65776": {
       "id": "ZDI-26-540",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-540/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-540/",
       "component": "win32kfull",
       "files": [
         "win32kfull.sys"
@@ -552,7 +552,7 @@
     },
     "CVE-2026-65773": {
       "id": "ZDI-26-539",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-539/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-539/",
       "component": "ipt.sys",
       "files": [
         "ipt.sys"
@@ -560,13 +560,13 @@
     },
     "CVE-2026-65814": {
       "id": "ZDI-26-537",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-537/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-537/",
       "component": "storport",
       "files": []
     },
     "CVE-2026-62735": {
       "id": "ZDI-26-536",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-536/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-536/",
       "component": "http.sys",
       "files": [
         "http.sys"
