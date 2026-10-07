@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-30",
+  "generated_at": "2026-10-07",
   "source": "Zero Day Initiative (published advisories)",
-  "count": 82,
-  "count_with_files": 42,
+  "count": 83,
+  "count_with_files": 43,
   "map": {
     "CVE-2024-49082": {
       "id": "ZDI-24-1657",
@@ -589,6 +589,14 @@
       "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-617/",
       "component": "MIDI Service",
       "files": []
+    },
+    "CVE-2026-50375": {
+      "id": "ZDI-26-751",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-751/",
+      "component": "dxgkrnl",
+      "files": [
+        "dxgkrnl.sys"
+      ]
     }
   }
 }

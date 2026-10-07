@@ -5,7 +5,7 @@
     <link>https://shellpecker.github.io/winsight/</link>
     <description>Recent Microsoft Windows CVEs with affected modules and patch-diff binaries, refreshed weekly from MSRC.</description>
     <language>en</language>
-    <lastBuildDate>Wed, 30 Sep 2026 15:47:28 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 07 Oct 2026 16:14:36 GMT</lastBuildDate>
     <item>
       <title>CVE-2026-50349 — Windows Ancillary Function Driver for WinSock Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-50349</link>
