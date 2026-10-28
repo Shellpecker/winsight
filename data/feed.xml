@@ -5,12 +5,12 @@
     <link>https://shellpecker.github.io/winsight/</link>
     <description>Recent Microsoft Windows CVEs with affected modules and patch-diff binaries, refreshed weekly from MSRC.</description>
     <language>en</language>
-    <lastBuildDate>Wed, 21 Oct 2026 14:26:20 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 28 Oct 2026 15:51:46 GMT</lastBuildDate>
     <item>
       <title>ADV260001 — ADV260001 Hardening changes for ReFS volumes on removable media</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/ADV260001</link>
       <guid isPermaLink="false">ADV260001</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>OTHER
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2</description>
     </item>
@@ -18,7 +18,7 @@ Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Wi
       <title>CVE-2026-100200 — Windows Update Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100200</link>
       <guid isPermaLink="false">CVE-2026-100200</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126646, KB5126653, KB5127646, KB5127648</description>
@@ -27,7 +27,7 @@ KB: KB5126646, KB5126653, KB5127646, KB5127648</description>
       <title>CVE-2026-100201 — Windows Client License Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100201</link>
       <guid isPermaLink="false">CVE-2026-100201</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5127646, KB5127648</description>
@@ -36,7 +36,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5127646, KB5127648<
       <title>CVE-2026-100202 — Windows Message Queuing Queue Manager Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100202</link>
       <guid isPermaLink="false">CVE-2026-100202</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 9.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -45,7 +45,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-100203 — Windows Update Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100203</link>
       <guid isPermaLink="false">CVE-2026-100203</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646, KB5127648</description>
@@ -54,7 +54,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646,
       <title>CVE-2026-100215 — Microsoft Graphics Component Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100215</link>
       <guid isPermaLink="false">CVE-2026-100215</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -63,7 +63,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126836, KB5126868,
       <title>CVE-2026-100216 — Windows Storage Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100216</link>
       <guid isPermaLink="false">CVE-2026-100216</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5127646, KB5127648</description>
@@ -72,7 +72,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5127646, KB5127648<
       <title>CVE-2026-100217 — Windows Group Policy Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100217</link>
       <guid isPermaLink="false">CVE-2026-100217</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -81,7 +81,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126836, KB5126868,
       <title>CVE-2026-100218 — Remote Desktop Gateway Service Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100218</link>
       <guid isPermaLink="false">CVE-2026-100218</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.1 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127648</description>
@@ -90,7 +90,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-100219 — Microsoft QUIC Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100219</link>
       <guid isPermaLink="false">CVE-2026-100219</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 9.8 · RCE
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
@@ -99,7 +99,7 @@ KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
       <title>CVE-2026-100220 — Windows Media Video Decoder Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100220</link>
       <guid isPermaLink="false">CVE-2026-100220</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -108,7 +108,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-100222 — Network Policy Server (NPS) Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100222</link>
       <guid isPermaLink="false">CVE-2026-100222</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 9.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -117,7 +117,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-100225 — Windows Storage Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-100225</link>
       <guid isPermaLink="false">CVE-2026-100225</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -126,7 +126,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102186 — Windows Network File System Information Disclosure Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102186</link>
       <guid isPermaLink="false">CVE-2026-102186</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 4.7 · INFO
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -135,7 +135,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102187 — Windows Kernel Information Disclosure Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102187</link>
       <guid isPermaLink="false">CVE-2026-102187</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 5.5 · INFO
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -144,7 +144,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102188 — Windows Storage Port Driver Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102188</link>
       <guid isPermaLink="false">CVE-2026-102188</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 6.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -153,7 +153,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102189 — Windows Storage Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102189</link>
       <guid isPermaLink="false">CVE-2026-102189</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
@@ -162,7 +162,7 @@ KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
       <title>CVE-2026-102191 — Windows Storage Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102191</link>
       <guid isPermaLink="false">CVE-2026-102191</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
@@ -171,7 +171,7 @@ KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
       <title>CVE-2026-102192 — Windows Failover Cluster Denial of Service Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102192</link>
       <guid isPermaLink="false">CVE-2026-102192</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.5 · DOS
 Affected: Windows Server 2019, Windows Server 2022, Windows Server 2025
 KB: KB5126646, KB5126651, KB5126655</description>
@@ -180,7 +180,7 @@ KB: KB5126646, KB5126651, KB5126655</description>
       <title>CVE-2026-102193 — Windows Broadcast DVR User Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102193</link>
       <guid isPermaLink="false">CVE-2026-102193</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -189,7 +189,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-102194 — Windows Graphics Kernel Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102194</link>
       <guid isPermaLink="false">CVE-2026-102194</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -198,7 +198,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102195 — Windows Broadcast DVR User Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102195</link>
       <guid isPermaLink="false">CVE-2026-102195</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126653, KB5127646, KB5127648</description>
@@ -207,7 +207,7 @@ KB: KB5126653, KB5127646, KB5127648</description>
       <title>CVE-2026-102196 — Windows Broadcast DVR User Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102196</link>
       <guid isPermaLink="false">CVE-2026-102196</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -216,7 +216,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-102197 — Windows Broadcast DVR User Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102197</link>
       <guid isPermaLink="false">CVE-2026-102197</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -225,7 +225,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-102198 — Windows Remote Desktop Protocol Information Disclosure Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102198</link>
       <guid isPermaLink="false">CVE-2026-102198</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 5.3 · INFO
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -234,7 +234,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102199 — Microsoft Windows Codecs Library Denial of Service Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102199</link>
       <guid isPermaLink="false">CVE-2026-102199</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 6.5 · DOS
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -243,7 +243,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102201 — Microsoft Windows Media Foundation Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102201</link>
       <guid isPermaLink="false">CVE-2026-102201</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -252,7 +252,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-102202 — Windows Container Isolation FS Filter Driver (unionfs.sys) Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102202</link>
       <guid isPermaLink="false">CVE-2026-102202</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
@@ -261,7 +261,7 @@ KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
       <title>CVE-2026-102203 — RPC Runtime Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102203</link>
       <guid isPermaLink="false">CVE-2026-102203</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -270,7 +270,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102205 — Windows Universal Disk Format File System Driver (UDFS) Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102205</link>
       <guid isPermaLink="false">CVE-2026-102205</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -279,7 +279,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102206 — Windows Portable Device MTP Driver Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102206</link>
       <guid isPermaLink="false">CVE-2026-102206</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 6.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -288,7 +288,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102207 — Windows Kernel Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102207</link>
       <guid isPermaLink="false">CVE-2026-102207</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646, KB5127648</description>
@@ -297,7 +297,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646,
       <title>CVE-2026-102208 — Windows Win32 Kernel Subsystem Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102208</link>
       <guid isPermaLink="false">CVE-2026-102208</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows Server 2012
 KB: KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868</description>
@@ -306,7 +306,7 @@ KB: KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868<
       <title>CVE-2026-102209 — Microsoft Graphics Component Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102209</link>
       <guid isPermaLink="false">CVE-2026-102209</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 11 26H1, Windows 11 version 26H1
 KB: KB5127646</description>
@@ -315,7 +315,7 @@ KB: KB5127646</description>
       <title>CVE-2026-102210 — Windows Text Shaping Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102210</link>
       <guid isPermaLink="false">CVE-2026-102210</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 9.8 · RCE
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5127646, KB5127648</description>
@@ -324,7 +324,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5127646, KB5127648<
       <title>CVE-2026-102211 — Windows Virtualization-Based Security (VBS) Enclave Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102211</link>
       <guid isPermaLink="false">CVE-2026-102211</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646, KB5127648</description>
@@ -333,7 +333,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646,
       <title>CVE-2026-102214 — Windows Hyper-V Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102214</link>
       <guid isPermaLink="false">CVE-2026-102214</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646, KB5127648</description>
@@ -342,7 +342,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646,
       <title>CVE-2026-102215 — Windows Universal Disk Format File System Driver (UDFS) Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102215</link>
       <guid isPermaLink="false">CVE-2026-102215</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -351,7 +351,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102216 — Windows StateRepository API Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102216</link>
       <guid isPermaLink="false">CVE-2026-102216</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -360,7 +360,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102217 — WebDAV Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102217</link>
       <guid isPermaLink="false">CVE-2026-102217</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -369,7 +369,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102218 — Windows Universal Disk Format File System Driver (UDFS) Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102218</link>
       <guid isPermaLink="false">CVE-2026-102218</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -378,7 +378,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102220 — Windows VHD miniport driver Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102220</link>
       <guid isPermaLink="false">CVE-2026-102220</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -387,7 +387,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102221 — Secure Boot Security Feature Bypass Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102221</link>
       <guid isPermaLink="false">CVE-2026-102221</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 4.4 · BYPASS
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646, KB5127648</description>
@@ -396,7 +396,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646,
       <title>CVE-2026-102225 — Windows Text Shaping Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102225</link>
       <guid isPermaLink="false">CVE-2026-102225</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -405,7 +405,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-102227 — Windows Resilient File System (ReFS) Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-102227</link>
       <guid isPermaLink="false">CVE-2026-102227</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646, KB5127648</description>
@@ -414,7 +414,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126868, KB5127646,
       <title>CVE-2026-103553 — Windows Partition Management Driver Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103553</link>
       <guid isPermaLink="false">CVE-2026-103553</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -423,7 +423,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-103554 — Windows Broadcast DVR User Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103554</link>
       <guid isPermaLink="false">CVE-2026-103554</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -432,7 +432,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-103555 — Virtual Hard Disk (VHD) Miniport Driver Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103555</link>
       <guid isPermaLink="false">CVE-2026-103555</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -441,7 +441,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-103558 — Windows Routing and Remote Access Service (RRAS) Denial of Service Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103558</link>
       <guid isPermaLink="false">CVE-2026-103558</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.5 · DOS
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -450,7 +450,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-103560 — Role: DNS Server Tampering Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103560</link>
       <guid isPermaLink="false">CVE-2026-103560</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 5.5 · TAMPER
 Affected: Windows Server 2012, Windows Server 2012 R2, Windows Server 2016, Windows Server 2019, Windows Server 2022, Windows Server 2025
 KB: KB5126646, KB5126651, KB5126655, KB5126835, KB5126836, KB5126868</description>
@@ -459,7 +459,7 @@ KB: KB5126646, KB5126651, KB5126655, KB5126835, KB5126836, KB5126868</descriptio
       <title>CVE-2026-103565 — Windows Broadcast DVR User Service Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103565</link>
       <guid isPermaLink="false">CVE-2026-103565</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.0 · EOP
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -468,7 +468,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-103567 — Windows Broadcast DVR User Service Information Disclosure Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103567</link>
       <guid isPermaLink="false">CVE-2026-103567</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 5.5 · INFO
 Affected: Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2, Windows 11 25H2
 KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
@@ -477,7 +477,7 @@ KB: KB5126651, KB5126653, KB5126657, KB5127646, KB5127648</description>
       <title>CVE-2026-103568 — Windows Credential Providers Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103568</link>
       <guid isPermaLink="false">CVE-2026-103568</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -486,7 +486,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-103569 — Windows IKE Extension Information Disclosure Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103569</link>
       <guid isPermaLink="false">CVE-2026-103569</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.5 · INFO
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -495,7 +495,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-103575 — Remote Desktop Client Remote Code Execution Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103575</link>
       <guid isPermaLink="false">CVE-2026-103575</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 8.8 · RCE
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -504,7 +504,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836,
       <title>CVE-2026-103576 — Active Directory Federation Services (AD FS) Spoofing Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103576</link>
       <guid isPermaLink="false">CVE-2026-103576</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 6.5 · SPOOFING
 Affected: Windows 10 1607, Windows 10 1809, Windows Server 2016, Windows Server 2019, Windows Server 2022, Windows Server 2025
 KB: KB5126646, KB5126651, KB5126655, KB5126868</description>
@@ -513,7 +513,7 @@ KB: KB5126646, KB5126651, KB5126655, KB5126868</description>
       <title>CVE-2026-103577 — Microsoft QUIC Security Feature Bypass Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103577</link>
       <guid isPermaLink="false">CVE-2026-103577</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.5 · BYPASS
 Affected: Windows 11 23H2, Windows 11 24H2, Windows 11 25H2, Windows 11 26H1, Windows 11 26H2, Windows 11 version 26H1
 KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
@@ -522,7 +522,7 @@ KB: KB5126646, KB5126653, KB5126655, KB5127646, KB5127648</description>
       <title>CVE-2026-103578 — Windows Kernel Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-103578</link>
       <guid isPermaLink="false">CVE-2026-103578</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 6.8 · EOP
 Affected: Windows 11 26H1, Windows 11 version 26H1
 KB: KB5127646</description>
@@ -531,7 +531,7 @@ KB: KB5127646</description>
       <title>CVE-2026-105003 — HID Class Driver Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-105003</link>
       <guid isPermaLink="false">CVE-2026-105003</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126836, KB5126868, KB5127646, KB5127648</description>
@@ -540,7 +540,7 @@ KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126836, KB5126868,
       <title>CVE-2026-105004 — Windows Overlay Filter Elevation of Privilege Vulnerability</title>
       <link>https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-105004</link>
       <guid isPermaLink="false">CVE-2026-105004</guid>
-      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
       <description>CVSS 7.8 · EOP
 Affected: Windows 10 1607, Windows 10 1809, Windows 10 21H2, Windows 10 22H2, Windows 11 23H2, Windows 11 24H2
 KB: KB5126646, KB5126651, KB5126653, KB5126655, KB5126657, KB5126835, KB5126836, KB5126868, KB5127646, KB5127648</description>

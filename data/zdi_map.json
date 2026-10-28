@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-21",
+  "generated_at": "2026-10-28",
   "source": "Zero Day Initiative (published advisories)",
   "count": 83,
   "count_with_files": 43,
@@ -574,7 +574,7 @@
     },
     "CVE-2026-50508": {
       "id": "ZDI-26-605",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-605/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-605/",
       "component": "Localized Filenames Improper Input Validation NTLM Response",
       "files": []
     },
