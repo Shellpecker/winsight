@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28",
+  "generated_at": "2026-11-04",
   "source": "Zero Day Initiative (published advisories)",
   "count": 83,
   "count_with_files": 43,
@@ -530,7 +530,7 @@
     },
     "CVE-2026-62712": {
       "id": "ZDI-26-621",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-621/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-621/",
       "component": "UMPDDrvRealizeBrush Improper Object Management",
       "files": []
     },
@@ -580,13 +580,13 @@
     },
     "CVE-2026-50696": {
       "id": "ZDI-26-622",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-622/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-622/",
       "component": "IKEv2 AES-GCM Decryption Integer Underflow",
       "files": []
     },
     "CVE-2026-66804": {
       "id": "ZDI-26-617",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-617/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-617/",
       "component": "MIDI Service",
       "files": []
     },
