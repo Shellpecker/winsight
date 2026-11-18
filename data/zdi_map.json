@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-11",
+  "generated_at": "2026-11-18",
   "source": "Zero Day Initiative (published advisories)",
-  "count": 83,
+  "count": 84,
   "count_with_files": 43,
   "map": {
     "CVE-2024-49082": {
@@ -592,11 +592,17 @@
     },
     "CVE-2026-50375": {
       "id": "ZDI-26-751",
-      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-751/",
+      "url": "https://www.zerodayinitiative.com/advisories/ZDI-26-751/",
       "component": "dxgkrnl",
       "files": [
         "dxgkrnl.sys"
       ]
+    },
+    "CVE-2026-119824": {
+      "id": "ZDI-26-967",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-967/",
+      "component": "Remote Desktop Connection Client",
+      "files": []
     }
   }
 }
