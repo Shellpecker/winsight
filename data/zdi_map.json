@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-18",
+  "generated_at": "2026-11-25",
   "source": "Zero Day Initiative (published advisories)",
-  "count": 84,
+  "count": 85,
   "count_with_files": 43,
   "map": {
     "CVE-2024-49082": {
@@ -602,6 +602,12 @@
       "id": "ZDI-26-967",
       "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-967/",
       "component": "Remote Desktop Connection Client",
+      "files": []
+    },
+    "CVE-2026-121680": {
+      "id": "ZDI-26-1109",
+      "url": "http://www.zerodayinitiative.com/advisories/ZDI-26-1109/",
+      "component": "EMF File Parsing NTLM Response",
       "files": []
     }
   }
